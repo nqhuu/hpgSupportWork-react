@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from "connected-react-router";
-// import * as actions from "../store/actions";
 import * as actions from "../../redux/actions";
+import { Redirect } from 'react-router-dom';
 import './Login.scss';
 import { handleLoginApi } from '../../services/userService'
-// import { FormattedMessage } from 'react-intl';
-// import { userService } from '../../services';
 
 
 class Login extends Component {
@@ -43,8 +41,9 @@ class Login extends Component {
             }
 
             if (data && data.errCode === 0) {
-                // this.props.userLoginSuccess(data.user)
-                // this.props.navigate('/system/user-manage')
+                console.log(data.user)
+                await this.props.userLoginSuccess(data.user)
+                this.props.history.push('/');
             }
 
         } catch (e) {
@@ -115,6 +114,8 @@ class Login extends Component {
 const mapStateToProps = state => {
     return {
         // language: state.app.language
+        isLoggedIn: state.user.isLoggedIn
+
     };
 };
 
