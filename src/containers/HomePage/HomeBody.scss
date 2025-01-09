@@ -1,0 +1,45 @@
+.home-body-container {
+    width: 100%;
+    // padding: 0 20px;
+    background-color: #f8f4f4;
+    display: flex;
+
+    .body-left,
+    .body-right {
+        /* Cả 2 phần đều chiếm không gian bằng nhau */
+        height: 600px;
+
+        /* Chiều cao 100% để căn chỉnh đúng */
+
+
+    }
+
+    .body-left {
+        flex: 1;
+        border: 1px solid green;
+
+        .menu-container {}
+
+        button {
+            border-radius: 0 !important;
+            width: 170px !important;
+            margin-top: 10px !important;
+            font-size: 16px !important;
+            font-family: Arial, Helvetica, sans-serif !important;
+            outline: none !important;
+            text-align: left;
+
+            &:hover {
+                background-color: orange;
+            }
+        }
+    }
+
+
+
+    .body-right {
+        flex: 11;
+        border: 1px solid rgb(126, 128, 0);
+
+    }
+}
