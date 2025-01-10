@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import './index.scss';
 import App from './containers/System/App';
 import { PersistGate } from 'redux-persist/integration/react'; // Thêm PersistGate  là component đặc biệt được sử dụng để kết nối persistor với ứng dụng của bạn và đảm bảo rằng Redux state sẽ được phục hồi chính xác trước khi ứng dụng được render.
-// import { persistor }
 import reportWebVitals from './reportWebVitals';
 import { Provider } from 'react-redux'
 import { store, persistor } from './redux/store';

@@ -18,7 +18,7 @@ class BookingCar extends Component {
     render() {
         return (
             <>
-                <HomeHeader />
+                {/* <HomeHeader /> */}
                 <div >
                     BookingCar.................
                 </div>

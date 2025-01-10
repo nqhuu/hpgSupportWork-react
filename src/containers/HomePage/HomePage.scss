@@ -1,36 +1,33 @@
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 .home-container {
     display: flex;
     flex-direction: column;
     /* Chiều cao toàn bộ màn hình */
-    height: 100vh;
+    // height: 100vh;
 
-    justify-content: space-between;
+    // justify-content: space-between;
 
     /* Chỉ cho phép cuộn theo chiều dọc khi cần thiết */
-    overflow-y: auto;
+    // overflow-y: auto;
 
     .home-header {
         position: sticky;
-        border: 1px solid red;
-        // height: 60px; /* Chiều cao cố định cho header */
     }
 
     .home-body {
-        border: 1px solid blue;
-
+        height: 100vh;
         /* Đây sẽ giúp HomeBody chiếm hết không gian còn lại */
         flex: 1;
-
         /* Cho phép cuộn nếu nội dung vượt quá */
-        overflow: auto;
+        // overflow-y: auto;
+
+        // overflow: auto;
     }
 
-    .home-footer {
-        border: 1px solid green;
-        // height: 50px; /* Chiều cao cố định cho footer */
-    }
+    .home-footer {}
 }

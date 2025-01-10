@@ -1,9 +1,42 @@
-.home-header-container {
-    height: 60px;
-    width: 100%;
-    padding: 0 20px;
-    position: sticky;
-    top: 0;
-    background-color: #fff;
-    // z-index: 1000;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-bar-container {
+    .nav-bar {
+        .container-fluid {
+            .logo-hpg {
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+
+        .infor-user {
+            display: flex;
+            gap: 15px;
+
+            .user-name,
+            .logout,
+            .img-user {
+                color: #fff;
+
+            }
+
+            .img-user {}
+
+            .logout {
+                font-weight: 500;
+                background-color: red;
+
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+
+
+        }
+    }
 }

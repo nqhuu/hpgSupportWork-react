@@ -18,7 +18,7 @@ class BookingRoom extends Component {
     render() {
         return (
             <>
-                <HomeHeader />
+                {/* <HomeHeader /> */}
                 <div >
                     BookingRoom.................
                 </div>

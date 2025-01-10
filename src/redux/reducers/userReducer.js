@@ -3,7 +3,8 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
     isLoggedIn: false,
-    userInfo: null
+    userInfo: null,
+    dataHome: []
 }
 
 const userReducer = (state = initialState, action) => {
@@ -25,6 +26,11 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 isLoggedIn: false,
                 userInfo: null
+            }
+        case actionTypes.GET_DATA_HOME_SUCCESS:
+            return {
+                ...state,
+                dataHome: action.dataHome
             }
         default:
             return state;

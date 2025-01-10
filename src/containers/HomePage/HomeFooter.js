@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import './HomeFooter.scss'
 
 
 class HomeFooter extends Component {
@@ -8,7 +9,7 @@ class HomeFooter extends Component {
 
         return (
             <div className='home-footer' >
-                <p> &copy; Kính hồng Phúc <a target='_blank' href='https://kinhhongphuc.vn/'>More information</a></p>
+                <div className='company-name'> &copy; Kính hồng Phúc <a target='_blank' href='https://kinhhongphuc.vn/'>More information</a></div>
             </div>
 
         );

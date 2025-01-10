@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import appReducer from './appReducer'
+// import appReducer from './appReducer'
 import userReducer from './userReducer';
 import { history } from '../../history';
 import { persistReducer } from 'redux-persist';
@@ -9,15 +9,15 @@ import { connectRouter } from 'connected-react-router';
 
 // Giả sử bạn có các reducer app và user
 
-const appPersistConfig = {
-    key: 'app',
-    storage: storageSession
-};
+// const appPersistConfig = {
+//     key: 'app',
+//     storage: storageSession
+// };
 
 const userPersistConfig = {
     key: 'user',
     storage: storageSession, // Lưu trong sessionStorage
-    whitelist: ['userInfo'], // Chỉ lưu thông tin người dùng,
+    whitelist: ['isLoggedIn', 'userInfo'], // Chỉ lưu thông tin người dùng,
 };
 
 // Kết hợp các reducer
@@ -25,11 +25,9 @@ const rootReducer = combineReducers({
     router: connectRouter(history), // Kết hợp router với history
 
     // Các reducer khác của bạn
-    app: persistReducer(appPersistConfig, appReducer),
+    // app: persistReducer(appPersistConfig, appReducer),
     user: persistReducer(userPersistConfig, userReducer),
 
-    // app: appReducer,
-    // user: userReducer,
 });
 
 export default rootReducer;

@@ -16,3 +16,10 @@ export const userLoginFail = () => ({
 export const processLogout = () => ({
     type: actionTypes.PROCESS_LOGOUT
 })
+
+export const handleDataHomeRedux = (data) => (
+    {
+        type: actionTypes.GET_DATA_HOME_SUCCESS,
+        dataHome: data
+    }
+)

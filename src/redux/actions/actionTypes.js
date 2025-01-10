@@ -10,7 +10,8 @@ const actionTypes = Object.freeze({
     USER_LOGIN_FAIL: 'USER_LOGIN_FAIL',
     PROCESS_LOGOUT: 'PROCESS_LOGOUT',
 
-
+    GET_DATA_HOME_SUCCESS: 'GET_DATA_HOME_SUCCESS',
+    GET_DATA_HOME_FAIL: 'GET_DATA_HOME_FAIL',
     //admin
 
 

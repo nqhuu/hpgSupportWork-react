@@ -15,6 +15,16 @@ class Login extends Component {
         errMessage: ''
     }
 
+    componentDidMount() {
+        // Lắng nghe sự kiện keydown toàn cục
+        document.addEventListener('keydown', this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        // Gỡ bỏ sự kiện khi component bị unmount
+        document.removeEventListener('keydown', this.handleKeyDown);
+    }
+
     handleOnChangeInput = (event) => {
         this.setState({
             username: event.target.value,
@@ -64,6 +74,9 @@ class Login extends Component {
     }
 
     render() {
+        if (this.props.isLoggedIn) {
+            return <Redirect to="/" />;
+        }
         return (
             <div className='login-background'>
                 <div className='login-container'>
@@ -93,13 +106,13 @@ class Login extends Component {
                             <button
                                 className='btn-login'
                                 onClick={() => { this.handleLogin() }}
-                            // onKeyDown={(event) => this.handleKeyDown(event)}
+                                onKeyDown={(event) => this.handleKeyDown(event)}
                             >
                                 Login
                             </button>
                         </div>
                         <div className='col-12'>
-                            <span className='forgot-password'>Liên hệ admin để được cung cấp tài khoản chính xác</span>
+                            <span className='forgot-password'>Liên hệ admin để được cung cấp tài khoản</span>
                         </div>
                         <div className='col-12 social-login'>
 
@@ -113,7 +126,6 @@ class Login extends Component {
 
 const mapStateToProps = state => {
     return {
-        // language: state.app.language
         isLoggedIn: state.user.isLoggedIn
 
     };
@@ -122,7 +134,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         // navigate: (path) => dispatch(push(path)),
-        // userLoginFail: () => dispatch(actions.adminLoginFail()),
+        userLoginFail: () => dispatch(actions.userLoginFail()),
         userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo))
     };
 };

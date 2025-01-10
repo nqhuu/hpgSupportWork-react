@@ -1,36 +1,44 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
 .home-body-container {
     width: 100%;
-    // padding: 0 20px;
     background-color: #f8f4f4;
     display: flex;
-
-    .body-left,
-    .body-right {
-        /* Cả 2 phần đều chiếm không gian bằng nhau */
-        height: 600px;
-
-        /* Chiều cao 100% để căn chỉnh đúng */
-
-
-    }
+    padding-top: 20px;
+    padding-right: 10px;
 
     .body-left {
         flex: 1;
-        border: 1px solid green;
+        background-color: #fff;
+        /* Màu nền cho hiệu ứng nổi bật */
+        border-radius: 0 8px 8px 0;
+        /* Bo tròn các góc */
+        box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        /* Hiệu ứng đổ bóng */
+        margin: 0 0 10px 10px;
+
 
         .menu-container {}
 
         button {
             border-radius: 0 !important;
-            width: 170px !important;
-            margin-top: 10px !important;
+            width: 200px !important;
+            padding: 10px 0 10px 10px !important;
             font-size: 16px !important;
             font-family: Arial, Helvetica, sans-serif !important;
-            outline: none !important;
+            box-shadow: none;
+            /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
             text-align: left;
+            // color: #fff;
+            border-bottom: 1px solid #aca9a9;
 
             &:hover {
-                background-color: orange;
+                background-color: rgb(248, 233, 204);
             }
         }
     }
@@ -39,7 +47,69 @@
 
     .body-right {
         flex: 11;
-        border: 1px solid rgb(126, 128, 0);
+        font-size: 14px !important;
 
+        .it-support-container {
+            display: flex;
+            justify-content: space-between;
+
+            .it-suport {
+                overflow: auto;
+
+            }
+        }
+
+        .cd-support-container {
+
+            .cd-suport {}
+        }
+
+        .personnel-Reports-container {
+            .personnel-Reports {}
+        }
+
+
+        .table-content,
+        .bar-chart {
+            background-color: #fff;
+            /* Màu nền cho hiệu ứng nổi bật */
+            border-radius: 8px;
+            /* Bo tròn các góc */
+            box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+            /* Hiệu ứng đổ bóng */
+        }
+
+        .table-content {
+            flex: 0 0 80%;
+            height: 300px;
+            background-color: #fff;
+            margin: 0 10px 10px 10px;
+
+            position: relative
+        }
+
+        .bar-chart {
+            flex: 0 0 19%;
+            margin: 0 10px 10px 0;
+
+        }
+
+        .header {
+            padding: 10px 0;
+            font-size: 16px;
+            font-weight: 700;
+            background-color: rgb(67, 163, 252);
+            padding-left: 10px;
+        }
+
+        .view {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            padding: 4px 20px;
+            box-shadow: none;
+            /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+
+        }
     }
 }
