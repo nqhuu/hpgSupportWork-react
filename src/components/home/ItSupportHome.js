@@ -2,6 +2,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from "connected-react-router";
 import * as actions from "../../redux/actions";
+import ReactPaginate from 'react-paginate';
+import './ItSupportHome.scss'
+import { current } from '@reduxjs/toolkit';
+import { handleDataHome } from '../../services/userService'
+import { VALUE } from '../../ultil/constant';
+
+
 
 
 
@@ -10,27 +17,46 @@ import * as actions from "../../redux/actions";
 class ItSupportHome extends Component {
 
     state = {
+        showHide: false,
         reqSupport: [],
+        currentPage: 0,
+        limit: VALUE.LIMIT,
+        totalPages: 0,
+        isDeparment: VALUE.IT_HOME
         // personnelReport: [],
     }
 
     componentDidMount = async () => {
-
+        await this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit)
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
-        if (prevProps.dataHome.reqSupport !== this.props.dataHome.reqSupport) {
+
+    }
+
+    getRequestSupport = async (isDeparment, page, limit) => {
+        let response = await handleDataHome(isDeparment, page, limit)
+        if (response && response.errCode === 0) {
+            let data = response.data
             this.setState({
-                reqSupport: this.props.dataHome.reqSupport
+                reqSupport: response.data.reqSupport.rows,
+                totalPages: response.data.reqSupport.totalPages,
             })
+            // await this.props.handleDataHomeRedux(data)
         }
     }
 
+    // Xử lý khi chuyển trang
+    handlePageClick = async (event) => {
+        const newOffset = (event.selected);
+        this.setState({
+            currentPage: newOffset
+        }, () => this.getRequestSupport(this.state.isCompleted, this.state.currentPage, this.state.limit))
+    };
 
     render() {
         let { reqSupport } = this.state
-        let req = reqSupport.filter((reqS, index) => reqS.statusId !== "ER2" && reqS.mngDepartmentId === 'B6')
-        console.log(req)
+        let req = reqSupport.filter(reqS => reqS.statusId !== VALUE.COMPLETE);
         return (
             <div className='container mt-3'>
                 <table className="table">
@@ -50,29 +76,57 @@ class ItSupportHome extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {req && req.length > 0 &&
+                        {req && req.length > 0
+                            ?
                             req.map((item, index) => {
                                 return (
                                     <>
-                                        <tr className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                        <tr key={index} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
                                             <td>{index + 1}</td>
-                                            <td>{item.userId}</td>
-                                            <td>{item.repairer ? item.repairer : ''}</td>
-                                            <td>{item.errorData.typeError.value ? item.errorData.typeError.value : ''}</td>
+                                            <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
+                                            <td>{item.repairerData?.id ? `${item.repairerData.firstName} ${item.repairerData.lastName}` : ''}</td>
+                                            <td>{item.errorData?.typeError?.value || ''}</td>
                                             <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
-                                            <td>{item.locationRequetData && item.locationRequetData.locationName ? item.locationRequetData.locationName : ''}</td>
+                                            <td>{item.locationRequetData?.locationName || ''}</td>
                                             <td>{item.description ? item.description : ''}</td>
-                                            <td>{item.priorityData.value ? item.priorityData.value : ''}</td>
+                                            <td>{item.priorityData?.value || ''}</td>
                                             <td>{item.createdAt ? item.createdAt : ''}</td>
                                             <td>{item.repairStartTime ? item.repairStartTime : ''}</td>
-                                            <td>{item.statusRequest.value ? item.statusRequest.value : ''}</td>
+                                            <td>{item.statusRequest?.value || ''}</td>
                                         </tr>
                                     </>
                                 )
                             })
+                            :
+                            <tr>
+                                <td>Tuyệt vời, bộ phận bạn đang xử lý công việc rất tốt</td>
+                            </tr>
                         }
                     </tbody>
                 </table>
+                <button className='view btn btn-warning'>View</button>
+                <div className='paginate'>
+                    <ReactPaginate
+                        nextLabel="next >"
+                        onPageChange={this.handlePageClick}
+                        pageRangeDisplayed={3}
+                        marginPagesDisplayed={2}
+                        pageCount={this.state.totalPages}
+                        previousLabel="< previous"
+                        pageClassName="page-item"
+                        pageLinkClassName="page-link"
+                        previousClassName="page-item"
+                        previousLinkClassName="page-link"
+                        nextClassName="page-item"
+                        nextLinkClassName="page-link"
+                        breakLabel="..."
+                        breakClassName="page-item"
+                        breakLinkClassName="page-link"
+                        containerClassName="pagination"
+                        activeClassName="active"
+                        renderOnZeroPageCount={null}
+                    />
+                </div>
             </div>
         )
     }
@@ -81,12 +135,12 @@ class ItSupportHome extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
-        dataHome: state.user.dataHome
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
+        // handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data))
     };
 };
 

@@ -1,0 +1,28 @@
+.container {
+    position: relative;
+    height: 300px;
+
+
+    .table {}
+
+    .view {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        padding: 4px 20px;
+        box-shadow: none;
+        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+
+    }
+
+    .paginate {
+        display: inline;
+        position: absolute;
+        left: 0px;
+        bottom: 0;
+        padding: 4px 20px;
+        box-shadow: none;
+        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+
+    }
+}

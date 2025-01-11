@@ -79,6 +79,30 @@ class Homebody extends Component {
                                 </div>
 
 
+
+                                <div className="dropdown dropend">
+                                    <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Manager
+                                    </button>
+                                    <ul className="dropdown-menu">
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-room">
+                                                Quản lý thiết bị
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-car">
+                                                Quản ly nhân viên
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-car">
+                                                Phân quyền
+                                            </NavLink>
+                                        </li>
+                                    </ul>
+                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -89,7 +113,6 @@ class Homebody extends Component {
                                     <div className='table-content it-suport' >
                                         <div className='header'>IT Support</div>
                                         <ItSupportHome />
-                                        <button className='view btn btn-warning'>View</button>
                                     </div>
                                     <div className='bar-chart'>
                                         biểu đồ cột kết quả hoàn thành
@@ -99,8 +122,6 @@ class Homebody extends Component {
                                     <div className='table-content cd-suport ' >
                                         <div className='header'>Cơ Điện</div>
                                         <ElectricalSupportHome />
-                                        <button className='view btn btn-warning'>View</button>
-
                                     </div>
                                     <div className='bar-chart'>
                                         biểu đồ cột kết quả hoàn thành
@@ -110,8 +131,6 @@ class Homebody extends Component {
                                     <div className='table-content personnel-Reports ' >
                                         <div className='header'>Báo cáo nhân sự</div>
                                         <ElectricalSupportHome />
-                                        <button className='view btn btn-warning'>View</button>
-
                                     </div>
                                     <div className='bar-chart'>
                                         bảng phụ gì đó
