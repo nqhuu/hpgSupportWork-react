@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
-import { history } from '../../history';
+// import { push } from "connected-react-router";
+// import { history } from '../../history';
 import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { path } from '../../ultil/constant';

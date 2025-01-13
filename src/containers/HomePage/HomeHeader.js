@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import logo from '../../assets/Logo/logo-hpg.png'
 import { connect } from 'react-redux';
 import './HomeHeader.scss';
-import { withRouter, Redirect, NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import * as actions from "../../redux/actions";
 
 

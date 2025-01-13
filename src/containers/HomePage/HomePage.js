@@ -1,15 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import './HomePage.scss'
-import { push } from "connected-react-router";
-import { history } from '../../history';
-import { ConnectedRouter as Router } from 'connected-react-router'; // điều hướng trang react-router-dom sẽ tìm các route được đặt trong ConnectedRouter
-import { Route, Switch } from 'react-router-dom';
+// import { push } from "connected-react-router";
+// import { history } from '../../history';
+// import { ConnectedRouter as Router } from 'connected-react-router'; // điều hướng trang react-router-dom sẽ tìm các route được đặt trong ConnectedRouter
+// import { Route, Switch } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
-// import { handleDataHome } from '../../services/userService'
-import * as actions from "../../redux/actions";
+// import * as actions from "../../redux/actions";
 import HomeFooter from './HomeFooter';
-import HomeHeader from './HomeHeader';
 import HomeBody from './HomeBody';
 
 

@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
-import * as actions from "../../redux/actions";
+// import { push } from "connected-react-router";
+// import * as actions from "../../redux/actions";
 import ReactPaginate from 'react-paginate';
 import './ItSupportHome.scss'
-import { current } from '@reduxjs/toolkit';
+// import { current } from '@reduxjs/toolkit';
 import { handleDataHome } from '../../services/userService'
 import { VALUE } from '../../ultil/constant';
 
@@ -27,20 +27,20 @@ class ItSupportHome extends Component {
     }
 
     componentDidMount = async () => {
-        await this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit)
+        await this.getRequestSupport()
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
 
     }
 
-    getRequestSupport = async (isDeparment, page, limit) => {
-        let response = await handleDataHome(isDeparment, page, limit)
+    getRequestSupport = async () => {
+        let response = await handleDataHome(this.state.isDeparment, this.state.currentPage, this.state.limit)
         if (response && response.errCode === 0) {
             let data = response.data
             this.setState({
-                reqSupport: response.data.reqSupport.rows,
-                totalPages: response.data.reqSupport.totalPages,
+                reqSupport: data.reqSupport.rows,
+                totalPages: data.reqSupport.totalPages,
             })
             // await this.props.handleDataHomeRedux(data)
         }
@@ -51,12 +51,12 @@ class ItSupportHome extends Component {
         const newOffset = (event.selected);
         this.setState({
             currentPage: newOffset
-        }, () => this.getRequestSupport(this.state.isCompleted, this.state.currentPage, this.state.limit))
+        }, () => this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit))
     };
 
     render() {
-        let { reqSupport } = this.state
-        let req = reqSupport.filter(reqS => reqS.statusId !== VALUE.COMPLETE);
+        let { reqSupport, currentPage, limit } = this.state
+        let stt = currentPage * limit + 1
         return (
             <div className='container mt-3'>
                 <table className="table">
@@ -76,13 +76,13 @@ class ItSupportHome extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {req && req.length > 0
+                        {reqSupport && reqSupport.length > 0
                             ?
-                            req.map((item, index) => {
+                            reqSupport.map((item, index) => {
                                 return (
                                     <>
-                                        <tr key={index} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                            <td>{index + 1}</td>
+                                        <tr key={item.id || index} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                            <td>{index + stt}</td>
                                             <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                             <td>{item.repairerData?.id ? `${item.repairerData.firstName} ${item.repairerData.lastName}` : ''}</td>
                                             <td>{item.errorData?.typeError?.value || ''}</td>

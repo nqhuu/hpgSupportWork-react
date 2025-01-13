@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
-import * as actions from "../../redux/actions";
+// import { push } from "connected-react-router";
+// import * as actions from "../../redux/actions";
 import ReactPaginate from 'react-paginate';
 // import './ElectricalSupportHome.scss'
 import { handleDataHome } from '../../services/userService'
@@ -35,8 +35,8 @@ class ElectricalSupportHome extends Component {
         if (response && response.errCode === 0) {
             let data = response.data
             this.setState({
-                reqSupport: response.data.reqSupport.rows,
-                totalPages: response.data.reqSupport.totalPages,
+                reqSupport: data.reqSupport.rows,
+                totalPages: data.reqSupport.totalPages,
             })
             // await this.props.handleDataHomeRedux(data)
         }
@@ -52,7 +52,6 @@ class ElectricalSupportHome extends Component {
 
     render() {
         let { reqSupport } = this.state
-        console.log(this.state)
         let req = reqSupport.filter(reqS => reqS.statusId !== VALUE.COMPLETE);
         return (
             <div className='container mt-3'>
