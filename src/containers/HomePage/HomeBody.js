@@ -12,6 +12,7 @@ import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
 import ItSupportHome from '../../components/home/ItSupportHome';
 import ElectricalSupportHome from '../../components/home/ElectricalSupportHome';
+// import HomePage from '../HomePage/HomePage';
 import './HomeBody.scss'
 
 
@@ -144,6 +145,9 @@ class Homebody extends Component {
                             <Route path="/menu-tast/electrical-support" component={ElectricalSupport} />
                             <Route path="/menu-tast/booking-room" component={BookingRoom} />
                             <Route path="/menu-tast/booking-car" component={BookingCar} />
+
+
+                            {/* <Route path="*" component={HomePage} /> */}
                             {/* <Route path="/booking-room" component={ } />
                                                     /* <Route path="/booking-car" component={ } />
                                                     <Route path="/report-hr" component={ } />

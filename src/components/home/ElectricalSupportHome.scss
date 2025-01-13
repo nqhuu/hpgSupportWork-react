@@ -3,7 +3,9 @@
     height: 300px;
 
 
-    .table {}
+    .table {
+        tbody {}
+    }
 
     .view {
         position: absolute;
@@ -23,6 +25,5 @@
         padding: 4px 20px;
         box-shadow: none;
         /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
-
     }
 }

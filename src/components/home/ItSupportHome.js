@@ -4,9 +4,11 @@ import { connect } from 'react-redux';
 // import * as actions from "../../redux/actions";
 import ReactPaginate from 'react-paginate';
 import './ItSupportHome.scss'
+import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
 // import { current } from '@reduxjs/toolkit';
 import { handleDataHome } from '../../services/userService'
 import { VALUE } from '../../ultil/constant';
+import { withRouter } from 'react-router-dom';
 
 
 
@@ -22,7 +24,8 @@ class ItSupportHome extends Component {
         currentPage: 0,
         limit: VALUE.LIMIT,
         totalPages: 0,
-        isDeparment: VALUE.IT_HOME
+        isDeparment: VALUE.IT_HOME,
+        // isOpenModal: true
         // personnelReport: [],
     }
 
@@ -54,6 +57,10 @@ class ItSupportHome extends Component {
         }, () => this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit))
     };
 
+    GoToItHandle = async () => {
+        this.props.history.push('/support/it-handle');
+    }
+
     render() {
         let { reqSupport, currentPage, limit } = this.state
         let stt = currentPage * limit + 1
@@ -81,7 +88,7 @@ class ItSupportHome extends Component {
                             reqSupport.map((item, index) => {
                                 return (
                                     <>
-                                        <tr key={item.id || index} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                        <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
                                             <td>{index + stt}</td>
                                             <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                             <td>{item.repairerData?.id ? `${item.repairerData.firstName} ${item.repairerData.lastName}` : ''}</td>
@@ -103,8 +110,13 @@ class ItSupportHome extends Component {
                             </tr>
                         }
                     </tbody>
+
                 </table>
-                <button className='view btn btn-warning'>View</button>
+                <button className='view btn btn-warning'
+                    onClick={this.GoToItHandle}
+                >
+                    View
+                </button>
                 <div className='paginate'>
                     <ReactPaginate
                         nextLabel="next >"
@@ -127,6 +139,9 @@ class ItSupportHome extends Component {
                         renderOnZeroPageCount={null}
                     />
                 </div>
+                {/* <ModalHandleRequest
+                    isOpenModal={this.state.isOpenModal}
+                /> */}
             </div>
         )
     }
@@ -144,4 +159,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ItSupportHome);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ItSupportHome));

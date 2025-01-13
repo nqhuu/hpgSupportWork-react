@@ -1,0 +1,59 @@
+.handle-support-container {
+    position: relative;
+    height: 90vh;
+    padding: 0 100px;
+    box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+    border-radius: 0 8px 8px 0;
+    background-color: #fff;
+    border-radius: 0 8px 8px 0;
+
+
+
+    .table {
+        .icon-handle-container {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+
+            .icon-handle {
+                color: rgb(99, 92, 87);
+                font-size: 18px;
+
+                &:hover {
+                    cursor: pointer;
+                    opacity: 70%;
+
+                }
+            }
+
+            .icon-complete {
+                color: rgb(36, 177, 36);
+
+                &:hover {
+                    cursor: pointer;
+                    opacity: 70%;
+                }
+            }
+        }
+    }
+
+    .view {
+        position: absolute;
+        right: 20px;
+        bottom: 20px;
+        padding: 4px 20px;
+        box-shadow: none;
+        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+    }
+
+    .paginate {
+        display: inline;
+        position: absolute;
+        left: 80px;
+        bottom: 0;
+        padding: 4px 20px;
+        box-shadow: none;
+        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+
+    }
+}

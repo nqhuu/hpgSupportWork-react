@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-// import { push } from "connected-react-router";
-// import * as actions from "../../redux/actions";
 import ReactPaginate from 'react-paginate';
-// import './ElectricalSupportHome.scss'
+import './ElectricalSupportHome.scss'
 import { handleDataHome } from '../../services/userService'
 import { VALUE } from '../../ultil/constant';
 
@@ -11,7 +9,10 @@ import { VALUE } from '../../ultil/constant';
 
 
 
+
+
 class ElectricalSupportHome extends Component {
+
     state = {
         showHide: false,
         reqSupport: [],
@@ -23,15 +24,15 @@ class ElectricalSupportHome extends Component {
     }
 
     componentDidMount = async () => {
-        await this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit)
+        await this.getRequestSupport()
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
 
     }
 
-    getRequestSupport = async (isDeparment, page, limit) => {
-        let response = await handleDataHome(isDeparment, page, limit)
+    getRequestSupport = async () => {
+        let response = await handleDataHome(this.state.isDeparment, this.state.currentPage, this.state.limit)
         if (response && response.errCode === 0) {
             let data = response.data
             this.setState({
@@ -47,12 +48,12 @@ class ElectricalSupportHome extends Component {
         const newOffset = (event.selected);
         this.setState({
             currentPage: newOffset
-        }, () => this.getRequestSupport(this.state.isCompleted, this.state.currentPage, this.state.limit))
+        }, () => this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit))
     };
 
     render() {
-        let { reqSupport } = this.state
-        let req = reqSupport.filter(reqS => reqS.statusId !== VALUE.COMPLETE);
+        let { reqSupport, currentPage, limit } = this.state
+        let stt = currentPage * limit + 1
         return (
             <div className='container mt-3'>
                 <table className="table">
@@ -72,13 +73,13 @@ class ElectricalSupportHome extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        {req && req.length > 0
+                        {reqSupport && reqSupport.length > 0
                             ?
-                            req.map((item, index) => {
+                            reqSupport.map((item, index) => {
                                 return (
                                     <>
-                                        <tr key={index} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                            <td>{index + 1}</td>
+                                        <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                            <td>{index + stt}</td>
                                             <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                             <td>{item.repairerData?.id ? `${item.repairerData.firstName} ${item.repairerData.lastName}` : ''}</td>
                                             <td>{item.errorData?.typeError?.value || ''}</td>
@@ -99,6 +100,7 @@ class ElectricalSupportHome extends Component {
                             </tr>
                         }
                     </tbody>
+
                 </table>
                 <button className='view btn btn-warning'>View</button>
                 <div className='paginate'>
@@ -136,6 +138,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        // handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data))
     };
 };
 
