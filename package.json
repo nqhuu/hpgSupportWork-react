@@ -17,6 +17,7 @@
     "react-router-dom": "5.3.4",
     "react-scripts": "5.0.1",
     "react-scrollbars-custom": "^4.1.1",
+    "react-select": "^5.9.0",
     "react-toastify": "^8.2.0",
     "reactstrap": "^9.2.3",
     "redux-persist": "5.10.0",

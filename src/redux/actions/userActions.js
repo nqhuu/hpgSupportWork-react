@@ -19,7 +19,7 @@ export const processLogout = () => ({
 
 export const handleDataHomeRedux = (data) => (
     {
-        type: actionTypes.GET_DATA_HOME_SUCCESS,
-        reqSupport: data
+        type: actionTypes.GET_DATA_IT_REQ_SUCCESS,
+        reqItSupport: data
     }
 )

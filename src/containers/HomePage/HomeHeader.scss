@@ -29,7 +29,11 @@
 
             .logout {
                 font-weight: 500;
+                // color: red;
+                border: 1px solid red;
+                padding: 0 5px;
                 background-color: red;
+                border-radius: 2px;
 
                 &:hover {
                     cursor: pointer;

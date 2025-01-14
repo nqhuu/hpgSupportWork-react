@@ -2,9 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
 import './ItHandleSupport.scss'
-import { handleDataHome } from '../../services/userService'
+import * as actions from "../../redux/actions";
 import { VALUE } from '../../ultil/constant';
+import { handleDataHome, getAllUser } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
+import Select from 'react-select/base';
+import _ from 'lodash'
+import { all } from 'axios';
+
+
 
 
 
@@ -13,31 +19,66 @@ class ItHandleSupport extends Component {
         showHide: false,
         reqSupport: [],
         currentPage: 0,
-        limit: VALUE.LIMIT,
+        limit: VALUE.LIMIT_HANDLE,
         totalPages: 0,
         isDeparment: VALUE.IT_HOME,
-        isHandle: true,
-        isSuccess: true,
+        idHandleSelect: {
+            itemClick: ''
+        },
+        selectedOption: {},
+        options: [],
+        listUser: [],
 
     }
 
     componentDidMount = async () => {
-        await this.getRequestSupport()
+
+        await this.getRequestSupport();
+        await this.getAllUser();
+
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
+        if (prevProps.reqSupport !== this.props.reqSupport) {
+            let data = this.props.reqSupport
+            console.log('data', data)
+            this.setState({
+                reqSupport: data.rows,
+                totalPages: data.totalPages,
+            })
+        }
+    }
 
+    getAllUser = async () => {
+        if (this.state.reqSupport && this.state.reqSupport.length > 0) {
+            let listUser = await getAllUser('', this.state.reqSupport[0].mngDepartmentId)
+            if (listUser && listUser.errCode === 0) {
+                let options = listUser.data.map((item, index) => {
+                    let select = {};
+                    select.value = item.id;
+                    select.label = `${item.firstName} ${item.lastName}`
+                    return select
+                })
+                let selectedOption = {}
+                selectedOption.value = listUser.data[0].id
+                selectedOption.label = `${listUser.data[0].firstName} ${listUser.data[0].lastName}`
+
+                let stateCopy = { ...this.state };
+                stateCopy.listUser = listUser.data;
+                stateCopy.options = options;
+                stateCopy.selectedOption = selectedOption
+                this.setState({
+                    ...stateCopy
+                })
+            }
+        }
     }
 
     getRequestSupport = async () => {
         let response = await handleDataHome(this.state.isDeparment, this.state.currentPage, this.state.limit)
         if (response && response.errCode === 0) {
             let data = response.data
-            this.setState({
-                reqSupport: data.reqSupport.rows,
-                totalPages: data.reqSupport.totalPages,
-            })
-            // await this.props.handleDataHomeRedux(data)
+            await this.props.handleDataHomeRedux(data)
         }
     }
 
@@ -49,14 +90,48 @@ class ItHandleSupport extends Component {
         }, () => this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit))
     };
 
-    GoToItHandle = async () => {
-        console.log('go to it support')
-        this.props.history.push('/support/it-handle');
+    handleProcessing = async (event, id) => {
+        let idHandleSelectCopy = { ...this.state.idHandleSelect };
+
+        if (idHandleSelectCopy.itemClick === id) {
+            idHandleSelectCopy = {};
+            console.log('idHandleSelectCopy 1', idHandleSelectCopy)
+            this.setState({
+                idHandleSelect: idHandleSelectCopy
+            })
+            return;
+        }
+
+        if (!idHandleSelectCopy.itemClick || idHandleSelectCopy.itemClick !== id) {
+            idHandleSelectCopy.itemClick = id
+            this.setState({
+                idHandleSelect: idHandleSelectCopy
+            })
+        }
+    }
+
+    handleChange = async (select) => {
+        console.log(select)
+        this.setState({
+            selectedOption: select
+        })
+    }
+
+
+    handleSave = async (event) => {
+        alert('save all')
+    }
+
+
+    handleComplete = async () => {
+        alert('hoàn thành')
     }
 
     render() {
-        let { reqSupport, currentPage, limit, isHandle, isSuccess } = this.state
+        let { reqSupport, currentPage, limit, idHandleSelect, isSuccess, listUser, selectedOption, options } = this.state
         let stt = currentPage * limit + 1
+
+        // console.log(this.props.reqItSupport)
         return (
             <>
                 <HomeHeader />
@@ -71,9 +146,10 @@ class ItHandleSupport extends Component {
                                 <th>Lỗi</th>
                                 <th>Vị Trí</th>
                                 <th>Ghi chú</th>
+                                <th>Phản hồi</th>
                                 <th>Mức độ</th>
                                 <th>Thời gian báo</th>
-                                <th>Thời gian bắt đầu xử lý</th>
+                                <th>Bắt đầu xử lý</th>
                                 <th>Trạng thái</th>
                                 <th>Hành động</th>
                             </tr>
@@ -87,10 +163,35 @@ class ItHandleSupport extends Component {
                                             <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
                                                 <td>{index + stt}</td>
                                                 <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
-                                                <td>{item.repairerData?.id ? `${item.repairerData.firstName} ${item.repairerData.lastName}` : ''}</td>
+                                                <td className='select-container'>
+                                                    {
+                                                        item.statusRequest?.keyMap === VALUE.WAITTING && (
+                                                            idHandleSelect?.itemClick === item.id &&
+                                                            <Select
+                                                                value={selectedOption}
+                                                                options={options}
+                                                                onChange={this.handleChange}
+                                                                className='is-select'
+                                                            />)
+                                                    }
+                                                    {
+                                                        item.statusRequest?.keyMap === VALUE.PROCESSING && (
+                                                            idHandleSelect.itemClick === item.id ?
+                                                                <Select
+                                                                    value={selectedOption}
+                                                                    options={options}
+                                                                    onChange={this.handleChange}
+                                                                    className='is-select'
+                                                                />
+                                                                :
+                                                                item?.repairerData && `${item.repairerData.firstName} ${item.repairerData.lastName}`
+                                                        )
+                                                    }
+                                                </td>
                                                 <td>{item.errorData?.typeError?.value || ''}</td>
                                                 <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
                                                 <td>{item.locationRequetData?.locationName || ''}</td>
+                                                <td>{item.description ? item.description : ''}</td>
                                                 <td>{item.description ? item.description : ''}</td>
                                                 <td>{item.priorityData?.value || ''}</td>
                                                 <td>{item.createdAt ? item.createdAt : ''}</td>
@@ -98,11 +199,49 @@ class ItHandleSupport extends Component {
                                                 <td>{item.statusRequest?.value || ''}</td>
                                                 <td>
                                                     <div className='icon-handle-container'>
-                                                        <div className='icon-handle'> {isHandle ? <i class="fas fa-chalkboard-teacher"></i> : <i className="fas fa-wrench"></i>}</div>
-                                                        <div className='icon-complete'>{isSuccess ? <i class="fas fa-check"></i> : <i className="far fa-check-square"></i>}</div>
+                                                        {
+                                                            item.statusRequest?.keyMap === VALUE.WAITTING && (
+                                                                idHandleSelect.itemClick === item.id ?
+                                                                    <>
+                                                                        <div className='icon-handle icon-close' onClick={(event) => this.handleProcessing(event, item.id)}>
+                                                                            <i className="fas fa-window-close"></i>
+                                                                        </div>
+                                                                        <div className='icon-save' onClick={(event) => this.handleSave(event)}>
+                                                                            <div><i className="fas fa-save"></i> </div>
+                                                                        </div>
+                                                                    </>
+                                                                    :
+                                                                    <div className='icon-handle' onClick={(event) => this.handleProcessing(event, item.id)}><i className="fas fa-wrench"></i></div>
+                                                            )
+                                                        }
+
+
+
+                                                        {
+                                                            item.statusRequest?.keyMap === VALUE.PROCESSING && (
+                                                                idHandleSelect.itemClick === item.id ?
+                                                                    <>
+                                                                        <div className='icon-handle icon-close' onClick={(event) => this.handleProcessing(event, item.id)}>
+                                                                            <i className="fas fa-window-close"></i>
+                                                                        </div>
+                                                                        <div className='icon-save' onClick={(event) => this.handleSave(event)}>
+                                                                            <div><i className="fas fa-save"></i> </div>
+                                                                        </div>
+                                                                    </>
+                                                                    :
+                                                                    <>
+                                                                        <div className='icon-handle' onClick={(event) => this.handleProcessing(event, item.id)}><i className="fas fa-edit"></i></div>
+                                                                        <div className='icon-complete' onClick={() => this.handleComplete()}>
+                                                                            <i className="fas fa-check"></i>
+                                                                        </div>
+                                                                    </>
+                                                            )
+                                                        }
+
+
                                                     </div>
                                                 </td>
-                                            </tr>
+                                            </tr >
                                         </>
                                     )
                                 })
@@ -139,7 +278,7 @@ class ItHandleSupport extends Component {
                     {/* <ModalHandleRequest
                     isOpenModal={this.state.isOpenModal}
                 /> */}
-                </div>
+                </div >
             </>
         )
     }
@@ -148,12 +287,13 @@ class ItHandleSupport extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn,
+        reqSupport: state.user.reqSupport
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        // handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data))
+        handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data))
     };
 };
 

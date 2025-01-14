@@ -13,9 +13,11 @@
         .icon-handle-container {
             display: flex;
             gap: 10px;
-            justify-content: center;
+            justify-content: left;
+            padding-left: 20px;
 
-            .icon-handle {
+            .icon-handle,
+            .icon-save {
                 color: rgb(99, 92, 87);
                 font-size: 18px;
 
@@ -24,6 +26,14 @@
                     opacity: 70%;
 
                 }
+
+                &.icon-close {
+                    color: red;
+                }
+            }
+
+            .icon-save {
+                color: orange;
             }
 
             .icon-complete {
@@ -35,6 +45,32 @@
                 }
             }
         }
+
+        .select-container {
+            position: relative;
+            min-width: 150px;
+
+            .is-select {
+                position: absolute;
+                min-width: 150px;
+                display: flex;
+                /* Sử dụng flexbox */
+                justify-content: center;
+                /* Căn giữa theo chiều ngang */
+                align-items: start;
+                /* Căn giữa theo chiều dọc */
+                text-align: center;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                font-size: 15px;
+                height: 100%;
+            }
+
+        }
+
+
     }
 
     .view {

@@ -27,10 +27,15 @@ const userReducer = (state = initialState, action) => {
                 isLoggedIn: false,
                 userInfo: null
             }
-        case actionTypes.GET_DATA_HOME_SUCCESS:
+        case actionTypes.GET_DATA_IT_REQ_SUCCESS:
             return {
                 ...state,
-                reqSupport: action.reqSupport
+                reqSupport: action.reqItSupport.reqSupport
+            }
+        case actionTypes.GET_DATA_IT_REQ_FAIL:
+            return {
+                ...state,
+                reqSupport: []
             }
         default:
             return state;

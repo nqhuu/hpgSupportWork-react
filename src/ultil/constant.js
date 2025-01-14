@@ -11,5 +11,8 @@ export const VALUE = {
     CD_HOME: 'CD_HOME',
     REPORT: 'REPORT',
     COMPLETE: 'ER2',
-    LIMIT: 5
+    PROCESSING: 'ER1',
+    WAITTING: 'ER0',
+    LIMIT: 5,
+    LIMIT_HANDLE: 20
 }
