@@ -45,6 +45,7 @@ class HomeHeader extends Component {
                             </div>
                             <div className='infor-user'>
                                 <div className='user-name'>{`Xin chào: ${userInfo.lastName}`}</div>
+                                <div className='notification'><i className="fas fa-bell"></i></div>
                                 {/* <div className='img-user'>image</div> */}
                                 <div className='logout' onClick={() => this.handleLogOut()}><i className="fas fa-sign-out-alt"></i></div>
                             </div>

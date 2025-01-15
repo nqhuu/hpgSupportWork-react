@@ -1,26 +1,32 @@
-.handle-support-container {
+.it-handle-support-container {
     position: relative;
-    height: 90vh;
-    padding: 0 100px;
+    min-height: 500px;
+    margin-left: 10px;
     box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-    border-radius: 0 8px 8px 0;
+    border-radius: 8px;
     background-color: #fff;
+    padding: 0 10px;
 
-    .header-it {
-        text-align: center;
-        padding: 10px 0;
-        color: red;
+    .it-header-it {
+        .it-text {
+            text-align: center;
+            padding: 10px 0;
+            color: red;
+        }
+
+        .it-creat-support {}
+
     }
 
     .table {
-        .icon-handle-container {
+        .it-icon-handle-container {
             display: flex;
             gap: 10px;
             justify-content: left;
             padding-left: 20px;
 
-            .icon-handle,
-            .icon-save {
+            .it-icon-handle,
+            .it-icon-save {
                 color: rgb(99, 92, 87);
                 font-size: 18px;
 
@@ -30,16 +36,16 @@
 
                 }
 
-                &.icon-close {
+                &.it-icon-close {
                     color: red;
                 }
             }
 
-            .icon-save {
+            .it-icon-save {
                 color: orange;
             }
 
-            .icon-complete {
+            .it-icon-complete {
                 color: rgb(36, 177, 36);
 
                 &:hover {
@@ -49,11 +55,11 @@
             }
         }
 
-        .select-container {
+        .it-select-container {
             position: relative;
             min-width: 180px;
 
-            .is-select {
+            .it-is-select {
                 position: absolute;
                 min-width: 150px;
                 text-align: start;
@@ -68,7 +74,7 @@
         }
     }
 
-    .view {
+    .it-view {
         position: absolute;
         right: 20px;
         bottom: 20px;
@@ -77,14 +83,15 @@
         /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
     }
 
-    .paginate {
+    .it-paginate {
         display: inline;
         position: absolute;
-        left: 80px;
+        left: 0;
         bottom: 0;
         padding: 4px 20px;
         box-shadow: none;
         /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
 
     }
+
 }

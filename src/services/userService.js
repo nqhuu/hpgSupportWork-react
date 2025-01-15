@@ -1,7 +1,11 @@
 import axios from "../axios";
 
-const handleDataHome = (isDeparment, currentPage, currentLitmit) => {
-    return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}`);
+const handleDataHome = (isDeparment, currentPage, currentLitmit, userId) => {
+    if (userId) {
+        return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}&userInfo=${userId}`);
+    } else {
+        return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}`);
+    }
 }
 
 const handleLoginApi = (userName, password) => {
@@ -13,6 +17,21 @@ const getAllUser = (id, departmentId) => {
     return axios.get(`/users/api/all-user?departmentId=${departmentId}`);
 }
 
+const getAllCodeService = (inputType) => {
+    return axios.get(`/users/api/allcode?type=${inputType}`)
+}
+
+const getAllLocationService = () => {
+    return axios.get(`/users/api/all-location`)
+}
+
+const getAllErrorCodeService = () => {
+    return axios.get(`/users/api/all-errorCode`)
+
+}
+
 export {
-    handleLoginApi, handleDataHome, getAllUser
+    handleLoginApi, handleDataHome, getAllUser, getAllCodeService, getAllLocationService,
+    getAllErrorCodeService
+
 }

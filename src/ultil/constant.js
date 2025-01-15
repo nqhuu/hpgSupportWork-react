@@ -16,3 +16,7 @@ export const VALUE = {
     LIMIT: 5,
     LIMIT_HANDLE: 20
 }
+
+export const CODE = {
+    HPG: 'HPG'
+}

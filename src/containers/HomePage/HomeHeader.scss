@@ -20,9 +20,16 @@
 
             .user-name,
             .logout,
-            .img-user {
+            .img-user,
+            .notification {
                 color: #fff;
 
+            }
+
+            .notification {
+                &:hover {
+                    cursor: pointer;
+                }
             }
 
             .img-user {}

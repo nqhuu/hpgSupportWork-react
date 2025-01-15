@@ -1,4 +1,12 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
 .Modal-booking-container {
+
     .modal-booking-content {
         // height: 400px;
         display: flex;
@@ -6,7 +14,7 @@
         outline: none;
 
         .modal-booking-header {
-            height: 30px;
+            height: 40px;
             border-bottom: 1px solid #ccc;
             display: flex;
             /* Bật Flexbox */
@@ -29,7 +37,7 @@
                 font-size: 15px;
                 color: #000;
                 width: 30px;
-                height: 30px;
+                height: 31px;
                 background-color: red;
 
                 &:hover {
@@ -61,49 +69,8 @@
             justify-content: end;
             /* Căn giữa nội dung */
             border-top: 1px solid #ccc;
-            gap: 5px;
+            gap: 10px;
             padding-right: 5px;
-
-
-            span {
-                color: red;
-                // text-align: center;
-                flex: 1;
-                /* Chiếm toàn bộ khoảng trống còn lại để căn giữa */
-                display: flex;
-                background-color: rgb(250, 250, 123);
-                height: 30px;
-                font-size: 18px;
-                justify-content: center;
-                align-items: center;
-            }
-
-            .btn-confirm {
-                min-width: 80px;
-                outline: none;
-                border: none;
-                border-radius: 3px;
-                background-color: orange;
-                padding: 5px 0;
-
-                &:hover {
-                    opacity: 80%;
-                }
-            }
-
-            .btn-close {
-                min-width: 80px;
-                outline: none;
-                border: none;
-                border-radius: 3px;
-                background-color: rgba(139, 139, 141, 0.877);
-                padding: 5px 0;
-
-                &:hover {
-                    opacity: 80%;
-                }
-
-            }
         }
     }
 }

@@ -6,9 +6,8 @@ import * as actions from "../../redux/actions";
 import { VALUE } from '../../ultil/constant';
 import { handleDataHome, getAllUser } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
-import Select from 'react-select/base';
+import Select from 'react-select';
 import _ from 'lodash'
-import { all } from 'axios';
 
 
 
@@ -26,8 +25,9 @@ class ItHandleSupport extends Component {
             itemClick: ''
         },
         selectedOption: {},
-        options: [],
+        ListUserRep: [],
         listUser: [],
+        isOpenSelect: false,
 
     }
 
@@ -53,7 +53,8 @@ class ItHandleSupport extends Component {
         if (this.state.reqSupport && this.state.reqSupport.length > 0) {
             let listUser = await getAllUser('', this.state.reqSupport[0].mngDepartmentId)
             if (listUser && listUser.errCode === 0) {
-                let options = listUser.data.map((item, index) => {
+                console.log(listUser)
+                let ListUserRep = listUser.data.map((item, index) => {
                     let select = {};
                     select.value = item.id;
                     select.label = `${item.firstName} ${item.lastName}`
@@ -65,7 +66,7 @@ class ItHandleSupport extends Component {
 
                 let stateCopy = { ...this.state };
                 stateCopy.listUser = listUser.data;
-                stateCopy.options = options;
+                stateCopy.ListUserRep = ListUserRep;
                 stateCopy.selectedOption = selectedOption
                 this.setState({
                     ...stateCopy
@@ -110,16 +111,17 @@ class ItHandleSupport extends Component {
         }
     }
 
-    handleChange = async (select) => {
-        console.log(select)
+    handleChange = async (selectedOption) => {
+        console.log(selectedOption)
         this.setState({
-            selectedOption: select
+            selectedOption: selectedOption
         })
     }
 
 
     handleSave = async (event) => {
         alert('save all')
+
     }
 
 
@@ -127,8 +129,14 @@ class ItHandleSupport extends Component {
         alert('hoàn thành')
     }
 
+    setIsOpen = async (bolean) => {
+        this.setState({
+            isOpenSelect: bolean
+        })
+    }
+
     render() {
-        let { reqSupport, currentPage, limit, idHandleSelect, isSuccess, listUser, selectedOption, options } = this.state
+        let { reqSupport, currentPage, limit, idHandleSelect, isSuccess, listUser, selectedOption, ListUserRep } = this.state
         let stt = currentPage * limit + 1
 
         // console.log(this.props.reqItSupport)
@@ -136,6 +144,7 @@ class ItHandleSupport extends Component {
             <>
                 <HomeHeader />
                 <div className='handle-support-container'>
+                    <div className='header-it'><h2>Xử lý yêu cầu IT</h2></div>
                     <table className="table">
                         <thead>
                             <tr>
@@ -169,7 +178,7 @@ class ItHandleSupport extends Component {
                                                             idHandleSelect?.itemClick === item.id &&
                                                             <Select
                                                                 value={selectedOption}
-                                                                options={options}
+                                                                options={ListUserRep}
                                                                 onChange={this.handleChange}
                                                                 className='is-select'
                                                             />)
@@ -179,7 +188,7 @@ class ItHandleSupport extends Component {
                                                             idHandleSelect.itemClick === item.id ?
                                                                 <Select
                                                                     value={selectedOption}
-                                                                    options={options}
+                                                                    options={ListUserRep}
                                                                     onChange={this.handleChange}
                                                                     className='is-select'
                                                                 />
@@ -187,6 +196,7 @@ class ItHandleSupport extends Component {
                                                                 item?.repairerData && `${item.repairerData.firstName} ${item.repairerData.lastName}`
                                                         )
                                                     }
+
                                                 </td>
                                                 <td>{item.errorData?.typeError?.value || ''}</td>
                                                 <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
