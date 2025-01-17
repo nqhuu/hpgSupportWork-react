@@ -18,5 +18,7 @@ export const VALUE = {
 }
 
 export const CODE = {
-    HPG: 'HPG'
+    HPG: 'HPG',
+    ERROR_PC: 'ERD',
+    ERROR_PM: 'ERM',
 }

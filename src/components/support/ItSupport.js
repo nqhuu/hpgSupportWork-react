@@ -26,7 +26,7 @@ class ItSupport extends Component {
         ListUserRep: [],
         listUser: [],
         isOpenSelect: false,
-        isOpenModal: true
+        isOpenModal: false,
     }
 
     componentDidMount = async () => {

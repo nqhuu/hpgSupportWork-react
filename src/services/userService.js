@@ -30,8 +30,17 @@ const getAllErrorCodeService = () => {
 
 }
 
+const uploadsFile = (formData) => {
+    return axios.post('/uploads', formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        },
+    }); //upload 1 file 
+}
+
 export {
     handleLoginApi, handleDataHome, getAllUser, getAllCodeService, getAllLocationService,
-    getAllErrorCodeService
+    getAllErrorCodeService, uploadsFile
 
 }
+
