@@ -6,7 +6,7 @@ import './ModalRequestSupport.scss'
 import * as actions from "../../redux/actions";
 import Select from 'react-select';
 import { values } from 'lodash';
-import { CODE, VALUE, DATA_TABLE } from '../../ultil/constant';
+import { CODE, VALUE, DATA_TABLE, DEPARTMENT } from '../../ultil/constant';
 import { uploadsFile } from '../../services/userService'
 import handleUploadFile from "../../config/HandleUploadFile"
 import { handleCreateRequest } from "../../services/userService"
@@ -199,6 +199,8 @@ class ModalHandleRequest extends Component {
             selectTypeErrorPc: this.state.selectTypeErrorPc,
             selectTypeErrorPm: this.state.selectTypeErrorPm,
             selectLevel: this.state.selectLevel,
+            userId: this.props.userInfo.id,
+            mngDepartmentId: DEPARTMENT.IT,
         }
         let response = await handleCreateRequest(data)
         console.log(response)
@@ -208,6 +210,7 @@ class ModalHandleRequest extends Component {
 
 
     render() {
+        console.log(this.props)
         let {
             selectType,
             selectSoft,
@@ -225,7 +228,6 @@ class ModalHandleRequest extends Component {
             listLevel,
         } = this.state
 
-        console.log(this.state)
 
         return (
             <Modal
@@ -346,6 +348,7 @@ class ModalHandleRequest extends Component {
 
 const mapStateToProps = state => {
     return {
+        userInfo: state.user.userInfo,
         isLoggedIn: state.user.isLoggedIn,
         allSupport: state.user.allSupport,
         allLocation: state.user.allLocation,

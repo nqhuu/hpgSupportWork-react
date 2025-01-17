@@ -28,3 +28,30 @@ export const CODE = {
 export const DATA_TABLE = {
     REQUEST: 'Request'
 }
+
+export const DEPARTMENT = {
+    BLD: 'B1',
+    IT: 'B6',
+    KD: 'B2',
+    HCNS: 'B3',
+    MH: 'B4',
+    ISO: 'B5',
+    IT: 'B6',
+    KHSX: 'B7',
+    KT: 'B8',
+    GNVC: 'B9',
+    CD: 'B10',
+    KNL: 'B11',
+    CA: 'B12',
+    MA: 'B13',
+    KK: 'B14',
+    CL: 'B15',
+    DA: 'B16',
+    HO: 'B17',
+    EI: 'B18',
+    IS: 'B19',
+    XN: 'B20',
+    BV: 'B21',
+    QC: 'B22',
+
+}
