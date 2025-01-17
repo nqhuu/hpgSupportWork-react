@@ -1,14 +1,15 @@
 import { Modal } from 'reactstrap';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify';
 import './ModalRequestSupport.scss'
 import * as actions from "../../redux/actions";
 import Select from 'react-select';
 import { values } from 'lodash';
-import { CODE } from '../../ultil/constant';
+import { CODE, VALUE, DATA_TABLE } from '../../ultil/constant';
 import { uploadsFile } from '../../services/userService'
-// import HandleUploadFile from "../../config/HandleUploadFile"
+import handleUploadFile from "../../config/HandleUploadFile"
+import { handleCreateRequest } from "../../services/userService"
 
 
 
@@ -29,7 +30,7 @@ class ModalHandleRequest extends Component {
         listErrorPm: [],
         selectLevel: null,
         listLevel: [],
-        node: '',
+        note: '',
         imgSelect: '',
     }
 
@@ -144,12 +145,12 @@ class ModalHandleRequest extends Component {
     handleCloseModal = () => {
         this.props.toggle()
         this.setState({
-            selectType: {},
-            selectSoft: {},
-            selectTypeDevice: {},
-            selectLocation: {},
-            selectTypeError: {},
-            selectLevel: {},
+            selectType: null,
+            selectSoft: null,
+            selectTypeDevice: null,
+            selectLocation: null,
+            selectTypeError: null,
+            selectLevel: null,
         })
     }
 
@@ -165,7 +166,7 @@ class ModalHandleRequest extends Component {
     }
 
     handleOnchangeImg = (e) => {
-        console.log(e.target.files)
+        // console.log(e.target.files)
         this.setState({
             imgSelect: e.target.files[0]
         })
@@ -173,34 +174,36 @@ class ModalHandleRequest extends Component {
 
 
 
-    // handleUploadFile = () => {
-    //     console.log(this.state.imgSelect)
-    //     HandleUploadFile('imgerror', this.state.imgSelect)
-    // }
     handleUploadFile = async () => {
-        let { imgSelect } = this.state;
-        if (!imgSelect) {
-            toast.error("Vui lòng chọn tệp để tải lên!");
-            return;
-        }
-        const formData = new FormData();
-        formData.append("file", imgSelect);  // "file" là tên trường phải khớp với server
-        formData.append("task", 'imgerror');   // Bạn có thể thay đổi task tùy ý
-
-        try {
-            const response = await uploadsFile(formData);
-
-            if (response.ok) {
-                const data = await response.json();
-                toast.success("Tải lên thành công!");
-                console.log(data);  // In ra kết quả trả về từ server
-            } else {
-                throw new Error("Lỗi tải lên!");
+        // console.log(this.state.imgSelect)
+        let response = await handleUploadFile('imgerror', this.state.imgSelect)
+        console.log('response', response)
+        if (response) {
+            if (response.errCode === 0) {
+                toast.success(response.errMessage)
             }
-        } catch (error) {
-            toast.error(error.message);
+            if (response.errCode === 1) {
+                toast.error(response.errMessage)
+            }
         }
-    };
+
+    }
+
+
+    handleCreateRequest = async () => {
+        let data = {
+            selectType: this.state.selectType,
+            selectSoft: this.state.selectSoft,
+            selectTypeDevice: this.state.selectTypeDevice,
+            selectLocation: this.state.selectLocation,
+            selectTypeErrorPc: this.state.selectTypeErrorPc,
+            selectTypeErrorPm: this.state.selectTypeErrorPm,
+            selectLevel: this.state.selectLevel,
+        }
+        let response = await handleCreateRequest(data)
+        console.log(response)
+
+    }
 
 
 
@@ -261,9 +264,9 @@ class ModalHandleRequest extends Component {
                                 <label className="form-label">Chọn phần cứng/phần mềm</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
-                                    name={selectType?.value === 'PC' ? "selectTypeDevice" : "selectSoft"}
-                                    value={selectType?.value === 'PC' ? selectTypeDevice || null : selectSoft || null}
-                                    options={selectType?.value === 'PC' ? listTypeDevice : listSoft}
+                                    name={selectType?.value === VALUE.PHAN_CUNG ? "selectTypeDevice" : "selectSoft"}
+                                    value={selectType?.value === VALUE.PHAN_CUNG ? selectTypeDevice || null : selectSoft || null}
+                                    options={selectType?.value === VALUE.PHAN_CUNG ? listTypeDevice : listSoft}
                                     onChange={this.handleChangeSelect}
                                 />
                             </div>
@@ -281,9 +284,9 @@ class ModalHandleRequest extends Component {
                                 <label className="form-label" >Loại lỗi</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
-                                    name={selectType?.value === 'PC' ? "selectTypeErrorPc" : "selectTypeErrorPm"}
-                                    value={selectType?.value === 'PC' ? selectTypeErrorPc || null : selectTypeErrorPm || null}
-                                    options={selectType?.value === 'PC' ? listErrorPc : listErrorPm}
+                                    name={selectType?.value === VALUE.PHAN_CUNG ? "selectTypeErrorPc" : "selectTypeErrorPm"}
+                                    value={selectType?.value === VALUE.PHAN_CUNG ? selectTypeErrorPc || null : selectTypeErrorPm || null}
+                                    options={selectType?.value === VALUE.PHAN_CUNG ? listErrorPc : listErrorPm}
                                     onChange={this.handleChangeSelect}
                                 />
                             </div>
@@ -302,11 +305,10 @@ class ModalHandleRequest extends Component {
                                 <input
                                     type="text"
                                     className="form-control"
-                                    id="note"
                                     onChange={(e) => this.handleOnchangeInput(e, "note")}
                                 />
                             </div>
-                            <form className="input-group mb-3 col-3 " >
+                            <div className="input-group mb-3 col-3 " >
                                 <input
                                     type="file"
                                     className="form-control"
@@ -314,7 +316,7 @@ class ModalHandleRequest extends Component {
                                     onChange={(e) => this.handleOnchangeImg(e)}
                                 />
                                 <label className="input-group-text" htmlFor="inputGroupFile02"></label>
-                            </form>
+                            </div>
 
                         </form>
                     </div>
@@ -323,7 +325,8 @@ class ModalHandleRequest extends Component {
                 <div className='modal-booking-footer'>
                     <button
                         type="button" className="btn btn-primary"
-                        onClick={() => this.handleUploadFile()}
+                        // onClick={() => this.handleUploadFile()}
+                        onClick={() => this.handleCreateRequest()}
                     >
                         Xác nhận
                     </button>

@@ -7,6 +7,7 @@ import { Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Login from '../Auth/Login';
 import HomePage from '../HomePage/HomePage';
 import Support from '../../routes/Support';
@@ -62,7 +63,7 @@ class App extends Component {
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="dark"
+            theme="light"
           // transition:Bounce,
           />
         </Router>

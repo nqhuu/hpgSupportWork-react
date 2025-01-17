@@ -30,17 +30,21 @@ const getAllErrorCodeService = () => {
 
 }
 
-const uploadsFile = (formData) => {
-    return axios.post('/uploads', formData, {
+const uploadsFile = (task, formData) => {
+    return axios.post(`/uploads?task=${task}`, formData, {
         headers: {
             'Content-Type': 'multipart/form-data',
         },
     }); //upload 1 file 
 }
 
+const handleCreateRequest = (data, request) => {
+    return axios.post(`/users/api/create-request-support`, { data, request })
+}
+
 export {
     handleLoginApi, handleDataHome, getAllUser, getAllCodeService, getAllLocationService,
-    getAllErrorCodeService, uploadsFile
+    getAllErrorCodeService, uploadsFile, handleCreateRequest
 
 }
 

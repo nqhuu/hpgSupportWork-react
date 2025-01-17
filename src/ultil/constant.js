@@ -14,11 +14,17 @@ export const VALUE = {
     PROCESSING: 'ER1',
     WAITTING: 'ER0',
     LIMIT: 5,
-    LIMIT_HANDLE: 20
+    LIMIT_HANDLE: 20,
+    PHAN_CUNG: 'PC',
+    PHAN_MEM: 'PM'
 }
 
 export const CODE = {
     HPG: 'HPG',
     ERROR_PC: 'ERD',
     ERROR_PM: 'ERM',
+}
+
+export const DATA_TABLE = {
+    REQUEST: 'Request'
 }
