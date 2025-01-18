@@ -1,6 +1,6 @@
 import axios from "../axios";
 
-const handleDataHome = (isDeparment, currentPage, currentLitmit, userId) => {
+const handleDataRequestSupport = (isDeparment, currentPage, currentLitmit, userId) => {
     if (userId) {
         return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}&userInfo=${userId}`);
     } else {
@@ -43,7 +43,7 @@ const handleCreateRequest = (data, request) => {
 }
 
 export {
-    handleLoginApi, handleDataHome, getAllUser, getAllCodeService, getAllLocationService,
+    handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
     getAllErrorCodeService, uploadsFile, handleCreateRequest
 
 }

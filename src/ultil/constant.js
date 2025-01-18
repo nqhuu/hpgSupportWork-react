@@ -7,8 +7,8 @@ export const path = {
 };
 
 export const VALUE = {
-    IT_HOME: 'IT_HOME',
-    CD_HOME: 'CD_HOME',
+    NOT_YET_COMPLETE_IT: 'IT_HOME',
+    NOT_YET_COMPLETE_CD: 'CD_HOME',
     REPORT: 'REPORT',
     COMPLETE: 'ER2',
     PROCESSING: 'ER1',
@@ -20,6 +20,8 @@ export const VALUE = {
 }
 
 export const CODE = {
+    IT: 'IT',
+    CD: 'CD',
     HPG: 'HPG',
     ERROR_PC: 'ERD',
     ERROR_PM: 'ERM',
@@ -31,7 +33,6 @@ export const DATA_TABLE = {
 
 export const DEPARTMENT = {
     BLD: 'B1',
-    IT: 'B6',
     KD: 'B2',
     HCNS: 'B3',
     MH: 'B4',

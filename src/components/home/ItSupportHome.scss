@@ -1,28 +1,32 @@
-.container {
-    position: relative;
-    height: 300px;
+.it-support-home-container {
+    padding: 0 10px;
 
 
-    .table {}
-
-    .view {
-        position: absolute;
-        right: 20px;
-        bottom: 20px;
-        padding: 4px 20px;
-        box-shadow: none;
-        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
-
+    .it-support-home-table {
+        .table {
+            th {
+                text-align: center;
+                font-size: 14px;
+            }
+        }
     }
 
-    .paginate {
-        display: inline;
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        padding: 4px 20px;
-        box-shadow: none;
-        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+    .it-support-home-footer {
+        display: flex;
+        justify-content: space-between;
 
+
+        .view-btn {
+
+            box-shadow: none;
+            /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+
+        }
+
+        .paginate {
+
+            box-shadow: none;
+            /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
+        }
     }
 }

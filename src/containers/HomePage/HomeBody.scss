@@ -80,24 +80,34 @@
         }
 
         .table-content {
-            flex: 0 0 80%;
+            flex: 0 0 85%;
             background-color: #fff;
             margin: 0 10px 10px 10px;
+            height: 400px;
+
+            .header {
+                position: sticky;
+                top: 0;
+                height: 11%;
+                padding: 10px 0;
+                font-size: 16px;
+                font-weight: 700;
+                background-color: rgb(67, 163, 252);
+                padding-left: 10px;
+            }
+
+            .body {
+                height: 89%;
+            }
 
         }
 
         .bar-chart {
-            flex: 0 0 19%;
+            flex: 0 0 14%;
             margin: 0 10px 10px 0;
 
         }
 
-        .header {
-            padding: 10px 0;
-            font-size: 16px;
-            font-weight: 700;
-            background-color: rgb(67, 163, 252);
-            padding-left: 10px;
-        }
+
     }
 }

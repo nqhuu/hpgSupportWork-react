@@ -5,72 +5,70 @@
 }
 
 
-.Modal-booking-container {
+.modal-booking-content {
+    // height: 400px;
+    display: flex;
+    flex-direction: column;
+    outline: none;
 
-    .modal-booking-content {
-        // height: 400px;
+}
+
+.modal-booking-header {
+    height: 40px;
+    border-bottom: 1px solid #ccc;
+    display: flex;
+    /* Bật Flexbox */
+    align-items: center;
+    /* Căn giữa theo trục dọc */
+    justify-content: space-between;
+
+    /* Đẩy các phần tử hai bên */
+    .content-header {
+        padding: 5px;
+        font-weight: 600;
+    }
+
+    .btn-close {
         display: flex;
-        flex-direction: column;
-        outline: none;
+        align-items: center;
+        /* Căn giữa nội dung */
+        justify-content: center;
+        /* Căn giữa nội dung */
+        font-size: 15px;
+        color: #000;
+        width: 30px;
+        height: 31px;
+        background-color: red;
 
-        .modal-booking-header {
-            height: 40px;
-            border-bottom: 1px solid #ccc;
-            display: flex;
-            /* Bật Flexbox */
-            align-items: center;
-            /* Căn giữa theo trục dọc */
-            justify-content: space-between;
-
-            /* Đẩy các phần tử hai bên */
-            .content-header {
-                padding: 5px;
-                font-weight: 600;
-            }
-
-            .btn-close {
-                display: flex;
-                align-items: center;
-                /* Căn giữa nội dung */
-                justify-content: center;
-                /* Căn giữa nội dung */
-                font-size: 15px;
-                color: #000;
-                width: 30px;
-                height: 31px;
-                background-color: red;
-
-                &:hover {
-                    color: white;
-                    cursor: pointer;
-                    opacity: 70%;
-                }
-            }
-        }
-
-        .modal-booking-body {
-            height: 100%;
-            padding: 15px;
-
-            .profile-doctor {
-                // padding-bottom: 15px;
-            }
-
-            .row {
-                padding-top: 10px;
-            }
-        }
-
-        .modal-booking-footer {
-            height: 50px;
-            display: flex;
-            align-items: center;
-            /* Căn giữa nội dung */
-            justify-content: end;
-            /* Căn giữa nội dung */
-            border-top: 1px solid #ccc;
-            gap: 10px;
-            padding-right: 5px;
+        &:hover {
+            color: white;
+            cursor: pointer;
+            opacity: 70%;
         }
     }
+}
+
+.modal-booking-body {
+    height: 100%;
+    padding: 15px;
+
+    .profile-doctor {
+        // padding-bottom: 15px;
+    }
+
+    .row {
+        padding-top: 10px;
+    }
+}
+
+.modal-booking-footer {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    /* Căn giữa nội dung */
+    justify-content: flex-end;
+    /* Căn giữa nội dung */
+    border-top: 1px solid #ccc;
+    gap: 10px;
+    padding-right: 5px;
 }

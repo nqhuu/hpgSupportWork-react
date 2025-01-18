@@ -10,6 +10,7 @@ import { CODE, VALUE, DATA_TABLE, DEPARTMENT } from '../../ultil/constant';
 import { uploadsFile } from '../../services/userService'
 import handleUploadFile from "../../config/HandleUploadFile"
 import { handleCreateRequest } from "../../services/userService"
+import _ from 'lodash'
 
 
 
@@ -162,6 +163,23 @@ class ModalHandleRequest extends Component {
         this.setState({
             ...this.state,
             [actionMeta.name]: selectCopy
+        }, () => {
+            if (this.state.selectType && this.state.selectType.value === VALUE.PHAN_CUNG) {
+                console.log(this.state.selectType?.value)
+
+                this.setState({
+                    selectSoft: null,
+                    selectTypeErrorPm: null,
+                })
+            }
+            if (this.state.selectType && this.state.selectType.value === VALUE.PHAN_MEM) {
+                console.log(this.state.selectType?.value)
+
+                this.setState({
+                    selectTypeDevice: null,
+                    selectTypeErrorPc: null,
+                })
+            }
         })
     }
 
@@ -177,40 +195,101 @@ class ModalHandleRequest extends Component {
     handleUploadFile = async () => {
         // console.log(this.state.imgSelect)
         let response = await handleUploadFile('imgerror', this.state.imgSelect)
-        console.log('response', response)
-        if (response) {
-            if (response.errCode === 0) {
-                toast.success(response.errMessage)
-            }
-            if (response.errCode === 1) {
-                toast.error(response.errMessage)
-            }
-        }
-
+        // console.log('response', response)
+        // if (response) {
+        //     if (response.errCode === 0) {
+        //         toast.success(response.errMessage)
+        //     }
+        //     if (response.errCode === 1) {
+        //         toast.error(response.errMessage)
+        //     }
+        // }
+        if (response) return response
     }
 
 
-    handleCreateRequest = async () => {
-        let data = {
-            selectType: this.state.selectType,
-            selectSoft: this.state.selectSoft,
-            selectTypeDevice: this.state.selectTypeDevice,
-            selectLocation: this.state.selectLocation,
-            selectTypeErrorPc: this.state.selectTypeErrorPc,
-            selectTypeErrorPm: this.state.selectTypeErrorPm,
-            selectLevel: this.state.selectLevel,
-            userId: this.props.userInfo.id,
-            mngDepartmentId: DEPARTMENT.IT,
-        }
-        let response = await handleCreateRequest(data)
-        console.log(response)
+    handleCreateRequestUi = async () => {
+        let {
+            selectType, selectSoft, selectTypeDevice, selectLocation,
+            selectTypeErrorPc, selectTypeErrorPm, selectLevel
+        } = this.state
+        let arrayCheck = [
+            selectType, selectSoft, selectTypeDevice, selectLocation,
+            selectTypeErrorPc, selectTypeErrorPm, selectLevel]
 
+        let isEmpty = false;
+        console.log(arrayCheck)
+        if (selectType && selectType.value === VALUE.PHAN_CUNG) {
+            let newArray = [...arrayCheck]
+
+            const index = newArray.indexOf(selectSoft);
+            if (index !== -1) newArray.splice(index, 1);
+
+            const index2 = newArray.indexOf(selectTypeErrorPm);
+            if (index2 !== -1) newArray.splice(index2, 1);
+
+            isEmpty = newArray.some(item => _.isEmpty(item))
+        } else if (selectType && selectType.value === VALUE.PHAN_MEM) {
+            let newArray = [...arrayCheck]
+
+            const index = newArray.indexOf(selectTypeErrorPc);
+            if (index !== -1) newArray.splice(index, 1);
+
+            const index2 = newArray.indexOf(selectTypeDevice);
+            if (index2 !== -1) newArray.splice(index2, 1);
+
+            isEmpty = newArray.some(item => _.isEmpty(item))
+        } else {
+            isEmpty = true
+            console.log('isEmpty3', isEmpty)
+        }
+
+
+
+        if (isEmpty) {
+            toast.warning("Bạn cần nhâp đủ các trường có dấu *")
+            return;
+        }
+
+        let data = {};
+        if (this.state.imgSelect) {
+            let imgUpload = await this.handleUploadFile()
+            if (imgUpload && imgUpload.errCode === 0) {
+                console.log(imgUpload.file.path)
+                data.img = imgUpload.file.path
+            } else {
+                data.img = null
+            }
+        }
+        data.selectType = selectType;
+        data.selectSoft = selectSoft;
+        data.selectTypeDevice = selectTypeDevice;
+        data.selectLocation = selectLocation;
+        data.selectTypeErrorPc = selectTypeErrorPc;
+        data.selectTypeErrorPm = selectTypeErrorPm;
+        data.selectLevel = selectLevel;
+        data.userId = this.props.userInfo.id;
+        data.mngDepartmentId = this.props.departmentId;
+        data.note = this.state.note;
+
+        let response = await handleCreateRequest(data)
+
+        if (response && response.errCode === 0) {
+            toast.success(response.errMessage);
+            this.props.getRequestSupport();
+            this.handleCloseModal()
+        }
+        if (response && response.errCode === 1) {
+            toast.warning(response.errMessage);
+        }
+        if (response && response.errCode === 2) {
+            toast.error(response.errMessage);
+        }
     }
 
 
 
     render() {
-        console.log(this.props)
         let {
             selectType,
             selectSoft,
@@ -227,7 +306,6 @@ class ModalHandleRequest extends Component {
             listErrorPm,
             listLevel,
         } = this.state
-
 
         return (
             <Modal
@@ -253,7 +331,7 @@ class ModalHandleRequest extends Component {
                     <div className='modal-booking-body '>
                         <form className="row">
                             <div className="mb-3 form-group col-3">
-                                <label className="form-label">Phân loại</label>
+                                <label className="form-label">Phân loại (*)</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
                                     name="selectType"
@@ -263,7 +341,7 @@ class ModalHandleRequest extends Component {
                                 />
                             </div>
                             <div className="mb-3 form-group col-3">
-                                <label className="form-label">Chọn phần cứng/phần mềm</label>
+                                <label className="form-label">Chọn phần cứng/phần mềm (*)</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
                                     name={selectType?.value === VALUE.PHAN_CUNG ? "selectTypeDevice" : "selectSoft"}
@@ -273,7 +351,7 @@ class ModalHandleRequest extends Component {
                                 />
                             </div>
                             <div className="mb-3 form-group col-3">
-                                <label className="form-label" >Vị trí</label>
+                                <label className="form-label" >Vị trí (*)</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
                                     name="selectLocation"
@@ -283,7 +361,7 @@ class ModalHandleRequest extends Component {
                                 />
                             </div>
                             <div className="mb-3 form-group col-3">
-                                <label className="form-label" >Loại lỗi</label>
+                                <label className="form-label" >Loại lỗi (*)</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
                                     name={selectType?.value === VALUE.PHAN_CUNG ? "selectTypeErrorPc" : "selectTypeErrorPm"}
@@ -293,7 +371,7 @@ class ModalHandleRequest extends Component {
                                 />
                             </div>
                             <div className="mb-3 form-group col-3">
-                                <label className="form-label" >Mức độ</label>
+                                <label className="form-label" >Mức độ (*)</label>
                                 {/* <input type="text" className="form-control" id="" /> */}
                                 <Select
                                     name='selectLevel'
@@ -328,7 +406,7 @@ class ModalHandleRequest extends Component {
                     <button
                         type="button" className="btn btn-primary"
                         // onClick={() => this.handleUploadFile()}
-                        onClick={() => this.handleCreateRequest()}
+                        onClick={() => this.handleCreateRequestUi()}
                     >
                         Xác nhận
                     </button>

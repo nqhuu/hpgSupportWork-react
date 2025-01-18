@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
 import './ItSupport.scss'
 import * as actions from "../../redux/actions";
-import { VALUE, CODE } from '../../ultil/constant';
-import { handleDataHome, getAllUser } from '../../services/userService'
+import { VALUE, CODE, DEPARTMENT } from '../../ultil/constant';
+import { handleDataRequestSupport, getAllUser } from '../../services/userService'
 import Select from 'react-select';
 import _ from 'lodash'
 import HomeFooter from '../../containers/HomePage/HomeFooter'
@@ -13,10 +13,11 @@ import ModalRequestSupport from '../modal/ModalRequestSupport'
 class ItSupport extends Component {
 
     state = {
+        showHandle: false,
+
         showHide: false,
         reqSupport: [],
         currentPage: 0,
-        limit: VALUE.LIMIT_HANDLE,
         totalPages: 0,
         isDeparment: VALUE.IT_HOME,
         idHandleSelect: {
@@ -25,7 +26,7 @@ class ItSupport extends Component {
         selectedOption: {},
         ListUserRep: [],
         listUser: [],
-        isOpenSelect: false,
+        // isOpenSelect: false,
         isOpenModal: false,
     }
 
@@ -72,7 +73,7 @@ class ItSupport extends Component {
     }
 
     getRequestSupport = async () => {
-        let response = await handleDataHome(this.state.isDeparment, this.state.currentPage, this.state.limit, this.props.userInfo.id)
+        let response = await handleDataRequestSupport(this.state.isDeparment, this.state.currentPage, VALUE.LIMIT_HANDLE, this.props.userInfo.id)
         if (response && response.errCode === 0) {
             let data = response.data
             await this.props.handleDataHomeRedux(data)
@@ -131,89 +132,91 @@ class ItSupport extends Component {
     }
 
     render() {
-        let { reqSupport, currentPage, limit, idHandleSelect, isSuccess, listUser, selectedOption, ListUserRep } = this.state
-        let stt = currentPage * limit + 1
+        let { reqSupport, currentPage, idHandleSelect, isSuccess, listUser, selectedOption, ListUserRep } = this.state
+        let stt = currentPage * VALUE.LIMIT_HANDLE + 1
+
         return (
             <>
-                <div className='it-handle-support-container'>
-                    <div className='it-header-it'>
-                        <h2 className='it-text'>IT Support</h2>
-                        <button type="button" className="btn btn-primary it-creat-support" onClick={() => this.handleOpenModal()}>Tạo mới</button>
+                <div className='it-create-support-container'>
+                    <div className='it-support-header'>
+                        <h2 className='it-support-text'>IT Support</h2>
+                        <button type="button" className="btn btn-primary it-support-creat" onClick={() => this.handleOpenModal()}>Tạo mới</button>
                     </div>
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                <th>STT</th>
-                                <th>Mã</th>
-                                <th>Người yêu cầu</th>
-                                <th>Người xử lý</th>
-                                <th>Loại thiết bị</th>
-                                <th>Lỗi</th>
-                                <th>Vị Trí</th>
-                                <th>Ghi chú</th>
-                                <th>Phản hồi</th>
-                                <th>Mức độ</th>
-                                <th>Thời gian báo</th>
-                                <th>Bắt đầu xử lý</th>
-                                <th>Trạng thái</th>
-                                <th>Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {reqSupport && reqSupport.length > 0
-                                &&
-                                reqSupport.map((item, index) => {
-                                    return (
-                                        <>
-                                            <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                                <td>{index + stt}</td>
-                                                <td>{`${CODE.HPG}-${index < 10 ? `000${index + 1}` : index > 10 && index < 100 ? `00${index + 1}` : index + 1}`}</td>
-                                                <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
-                                                <td>{item?.repairerData && `${item.repairerData.firstName} ${item.repairerData.lastName}`}</td>
-                                                <td>{item.errorData?.typeError?.value || ''}</td>
-                                                <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
-                                                <td>{item.locationRequetData?.locationName || ''}</td>
-                                                <td>{item.description ? item.description : ''}</td>
-                                                <td>{item.description ? item.description : ''}</td>
-                                                <td>{item.priorityData?.value || ''}</td>
-                                                <td>{item.createdAt ? item.createdAt : ''}</td>
-                                                <td>{item.repairStartTime ? item.repairStartTime : ''}</td>
-                                                <td>{item.statusRequest?.value || ''}</td>
-                                                <td>
-                                                    <div className='it-icon-handle-container'>
-                                                        {
-                                                            item.statusRequest?.keyMap === VALUE.WAITTING && (
-                                                                idHandleSelect.itemClick === item.id ?
-                                                                    <>
-                                                                        <div className='it-icon-handle it-icon-close' onClick={(event) => this.handleProcessing(event, item.id)}>
-                                                                            <i className="fas fa-window-close"></i>
-                                                                        </div>
+                    <div className='it-support-body'>
+                        <table className="it-support-table table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã</th>
+                                    <th>Người yêu cầu</th>
+                                    <th>Người xử lý</th>
+                                    <th>Loại thiết bị</th>
+                                    <th>Lỗi</th>
+                                    <th>Vị Trí</th>
+                                    <th>Ghi chú</th>
+                                    <th>Phản hồi</th>
+                                    <th>Mức độ</th>
+                                    <th>Thời gian báo</th>
+                                    <th>Bắt đầu xử lý</th>
+                                    <th>Trạng thái</th>
+                                    <th>Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {reqSupport && reqSupport.length > 0
+                                    &&
+                                    reqSupport.map((item, index) => {
+                                        return (
+                                            <>
+                                                <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                                    <td>{index + stt}</td>
+                                                    <td>{`${CODE.IT}-${item.requestCode}`}</td>
+                                                    <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
+                                                    <td>{item?.repairerData && `${item.repairerData.firstName} ${item.repairerData.lastName}`}</td>
+                                                    <td>{item.errorData?.typeError?.value || ''}</td>
+                                                    <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
+                                                    <td>{item.locationRequetData?.locationName || ''}</td>
+                                                    <td>{item.note ? item.note : ''}</td>
+                                                    <td>{item.description ? item.description : ''}</td>
+                                                    <td>{item.priorityData?.value || ''}</td>
+                                                    <td>{item.createdAt ? item.createdAt : ''}</td>
+                                                    <td>{item.repairStartTime ? item.repairStartTime : ''}</td>
+                                                    <td>{item.statusRequest?.value || ''}</td>
+                                                    <td>
+                                                        <div className='it-support-icon-handle-container'>
+                                                            {
+                                                                item.statusRequest?.keyMap === VALUE.WAITTING && (
+                                                                    idHandleSelect.itemClick === item.id ?
+                                                                        <>
+                                                                            <div className=' it-icon-close' onClick={(event) => this.handleProcessing(event, item.id)}>
+                                                                                <i className="fas fa-window-close"></i>
+                                                                            </div>
 
-                                                                        <div className='it-icon-save' onClick={(event) => this.handleSave(event)}>
-                                                                            <div><i className="fas fa-save"></i> </div>
-                                                                        </div>
-                                                                    </>
-                                                                    :
-                                                                    <>
-                                                                        <div className='it-icon-handle' onClick={(event) => this.handleProcessing(event, item.id)}><i className="fas fa-edit"></i></div>
-                                                                        <div className='it-icon-handle it-icon-close' onClick={(event) => this.handleCancelRequest(event, item.id)}>
-                                                                            <i className="fas fa-minus-square"></i>
-                                                                        </div>
-                                                                    </>
+                                                                            <div className='it-support-icon-save' onClick={(event) => this.handleSave(event)}>
+                                                                                <div><i className="fas fa-save"></i> </div>
+                                                                            </div>
+                                                                        </>
+                                                                        :
+                                                                        <>
+                                                                            <div className='it-support-icon-edit' onClick={(event) => this.handleProcessing(event, item.id)}><i className="fas fa-edit"></i></div>
+                                                                            <div className=' it-icon-close' onClick={(event) => this.handleCancelRequest(event, item.id)}>
+                                                                                <i className="fas fa-minus-square"></i>
+                                                                            </div>
+                                                                        </>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </td>
+                                                </tr >
+                                            </>
+                                        )
+                                    })
 
-                                                            )
-                                                        }
-                                                    </div>
-                                                </td>
-                                            </tr >
-                                        </>
-                                    )
-                                })
-
-                            }
-                        </tbody>
-                    </table>
-                    <div className='it-paginate'>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className='it-support-paginate'>
                         <ReactPaginate
                             nextLabel="next >"
                             onPageChange={this.handlePageClick}
@@ -238,6 +241,8 @@ class ItSupport extends Component {
                     <ModalRequestSupport
                         isOpenModal={this.state.isOpenModal}
                         toggle={this.handleOpenModal}
+                        departmentId={DEPARTMENT.IT}
+                        getRequestSupport={this.getRequestSupport}
                     />
                 </div >
             </>

@@ -4,13 +4,14 @@ import { connect } from 'react-redux';
 // import { history } from '../../history';
 import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
-import { path } from '../../ultil/constant';
+import { path, CODE, VALUE } from '../../ultil/constant';
 import ElectricalSupport from '../../components/support/ElectricalSupport';
 import ItSupport from '../../components/support/ItSupport';
 import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
 import ItSupportHome from '../../components/home/ItSupportHome';
+import ItHandleSupport from '../../components/support/ItHandleSupport'
 import ElectricalSupportHome from '../../components/home/ElectricalSupportHome';
 // import HomePage from '../HomePage/HomePage';
 import './HomeBody.scss'
@@ -73,10 +74,10 @@ class Homebody extends Component {
                                     </ul>
                                 </div>
                                 <div className='report-hr'>
-                                    <button type="button" className="btn ">  Báo cáo nhân sự</button>
+                                    <button type="button" className="btn ">Báo cáo nhân sự</button>
                                 </div>
                                 <div className='report-all'>
-                                    <button type="button" className="btn "> Tổng hợp báo cáo</button>
+                                    <button type="button" className="btn ">Tổng hợp báo cáo</button>
                                 </div>
 
 
@@ -112,8 +113,14 @@ class Homebody extends Component {
                             <>
                                 <div className='d-flex  it-support-container'>
                                     <div className='table-content it-suport' >
-                                        <div className='header'>IT Support</div>
-                                        <ItSupportHome />
+                                        <div className='header'>IT Support - Home</div>
+                                        <div className='body'>
+                                            {/* <ItSupportHome /> */}
+                                            <ItHandleSupport
+                                                // showHandle={false}
+                                                department={VALUE.NOT_YET_COMPLETE_IT}
+                                            />
+                                        </div>
                                     </div>
                                     <div className='bar-chart'>
                                         biểu đồ cột kết quả hoàn thành
@@ -121,8 +128,12 @@ class Homebody extends Component {
                                 </div>
                                 <div className='d-flex  cd-support-container'>
                                     <div className='table-content cd-suport ' >
-                                        <div className='header'>Cơ Điện</div>
-                                        <ElectricalSupportHome />
+                                        <div className='header'>Cơ Điện - Home</div>
+                                        <div className='body'>
+                                            <ItHandleSupport
+                                                department={VALUE.NOT_YET_COMPLETE_CD}
+                                            />
+                                        </div>
                                     </div>
                                     <div className='bar-chart'>
                                         biểu đồ cột kết quả hoàn thành
@@ -130,7 +141,7 @@ class Homebody extends Component {
                                 </div>
                                 <div className='d-flex  personnel-Reports-container'>
                                     <div className='table-content personnel-Reports ' >
-                                        <div className='header'>Báo cáo nhân sự</div>
+                                        <div className='header'>Báo cáo nhân sự - Home</div>
                                         <ElectricalSupportHome />
                                     </div>
                                     <div className='bar-chart'>

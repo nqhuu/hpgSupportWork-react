@@ -1,97 +1,43 @@
-.it-handle-support-container {
-    position: relative;
-    min-height: 500px;
-    margin-left: 10px;
-    box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    background-color: #fff;
-    padding: 0 10px;
+.it-create-support-container {
+    display: flex;
+    flex-direction: column;
+    margin: 0 10px;
 
-    .it-header-it {
-        .it-text {
-            text-align: center;
-            padding: 10px 0;
-            color: red;
+    .it-support-header {
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+
+        .it-support-text {
+            // padding-left: 10px;
+            font-weight: 700;
         }
 
-        .it-creat-support {}
-
+        .it-support-creat {
+            // padding-right: 10px;
+            padding: 0 20px !important;
+        }
     }
 
-    .table {
-        .it-icon-handle-container {
-            display: flex;
-            gap: 10px;
-            justify-content: left;
-            padding-left: 20px;
+    .it-support-body {
+        .it-support-table {
+            .it-support-icon-handle-container {
+                display: flex;
+                gap: 10px;
+                font-size: 20px;
+                cursor: pointer;
 
-            .it-icon-handle,
-            .it-icon-save {
-                color: rgb(99, 92, 87);
-                font-size: 18px;
 
-                &:hover {
-                    cursor: pointer;
-                    opacity: 70%;
-
+                .it-support-icon-save {
+                    color: rgb(107, 105, 105);
                 }
 
-                &.it-icon-close {
+                .it-icon-close {
                     color: red;
                 }
             }
-
-            .it-icon-save {
-                color: orange;
-            }
-
-            .it-icon-complete {
-                color: rgb(36, 177, 36);
-
-                &:hover {
-                    cursor: pointer;
-                    opacity: 70%;
-                }
-            }
-        }
-
-        .it-select-container {
-            position: relative;
-            min-width: 180px;
-
-            .it-is-select {
-                position: absolute;
-                min-width: 150px;
-                text-align: start;
-                top: 2px;
-                left: 0;
-                bottom: 0;
-                right: 0;
-                height: 100%;
-                max-width: 180px;
-                min-width: 150px;
-            }
         }
     }
 
-    .it-view {
-        position: absolute;
-        right: 20px;
-        bottom: 20px;
-        padding: 4px 20px;
-        box-shadow: none;
-        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
-    }
-
-    .it-paginate {
-        display: inline;
-        position: absolute;
-        left: 0;
-        bottom: 0;
-        padding: 4px 20px;
-        box-shadow: none;
-        /* Loại bỏ hiệu ứng bóng mặc định của Bootstrap */
-
-    }
-
+    .it-support-paginate {}
 }
