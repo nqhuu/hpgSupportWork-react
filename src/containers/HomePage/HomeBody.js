@@ -113,11 +113,11 @@ class Homebody extends Component {
                             <>
                                 <div className='d-flex  it-support-container'>
                                     <div className='table-content it-suport' >
-                                        <div className='header'>IT Support - Home</div>
+                                        <div className='header'>{`IT Support - ${new Date().getDate()}/${String(new Date().getMonth() + 1).padStart(2, '0')}`}</div>
                                         <div className='body'>
                                             {/* <ItSupportHome /> */}
                                             <ItHandleSupport
-                                                // showHandle={false}
+                                                showHandle={false}
                                                 department={VALUE.NOT_YET_COMPLETE_IT}
                                             />
                                         </div>
@@ -130,9 +130,10 @@ class Homebody extends Component {
                                     <div className='table-content cd-suport ' >
                                         <div className='header'>Cơ Điện - Home</div>
                                         <div className='body'>
-                                            <ItHandleSupport
+                                            {/* <ItHandleSupport
+                                                showHandle={false}
                                                 department={VALUE.NOT_YET_COMPLETE_CD}
-                                            />
+                                            /> */}
                                         </div>
                                     </div>
                                     <div className='bar-chart'>

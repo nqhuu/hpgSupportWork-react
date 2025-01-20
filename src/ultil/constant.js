@@ -3,8 +3,10 @@ export const path = {
     HOMEPAGE: '/home',
     LOGIN: '/login',
     LOG_OUT: '/logout',
-
+    LINK_SAVE_IMG: '192.168.1.68',
 };
+
+
 
 export const VALUE = {
     NOT_YET_COMPLETE_IT: 'IT_HOME',

@@ -83,10 +83,11 @@
             flex: 0 0 85%;
             background-color: #fff;
             margin: 0 10px 10px 10px;
-            height: 400px;
+            min-height: 470px;
 
             .header {
                 position: sticky;
+                z-index: 10;
                 top: 0;
                 height: 11%;
                 padding: 10px 0;
@@ -97,7 +98,7 @@
             }
 
             .body {
-                height: 89%;
+                height: 100%;
             }
 
         }

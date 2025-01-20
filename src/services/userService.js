@@ -42,9 +42,13 @@ const handleCreateRequest = (data, request) => {
     return axios.post(`/users/api/create-request-support`, { data, request })
 }
 
+const updateRequestSupport = (data) => {
+    return axios.post(`/users/api/update-request-support`, data)
+}
+
 export {
     handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
-    getAllErrorCodeService, uploadsFile, handleCreateRequest
+    getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport
 
 }
 
