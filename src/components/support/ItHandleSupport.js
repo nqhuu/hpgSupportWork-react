@@ -10,6 +10,8 @@ import Select from 'react-select';
 import _ from 'lodash'
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import moment from 'moment'
+
 
 
 
@@ -329,8 +331,8 @@ class ItHandleSupport extends Component {
                                                 </td>
                                                 {/* <td>{item.description ? item.description : ''}</td> */}
                                                 <td>{item.priorityData?.value || ''}</td>
-                                                <td>{item.createdAt ? item.createdAt : ''}</td>
-                                                <td>{item.repairStartTime ? item.repairStartTime : ''}</td>
+                                                <td>{item.createdAt ? moment.utc(item.createdAt).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
+                                                <td>{item.repairStartTime ? moment.utc(item.repairStartTime).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
                                                 <td>{item.statusRequest?.value || ''}</td>
                                                 {showHandle &&
                                                     <td>

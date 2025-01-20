@@ -9,6 +9,7 @@ import Select from 'react-select';
 import _ from 'lodash'
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import ModalRequestSupport from '../modal/ModalRequestSupport'
+import moment from 'moment'
 
 class ItSupport extends Component {
 
@@ -134,6 +135,7 @@ class ItSupport extends Component {
     render() {
         let { reqSupport, currentPage, idHandleSelect, isSuccess, listUser, selectedOption, ListUserRep } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
+        console.log(this.state)
 
         return (
             <>
@@ -179,8 +181,8 @@ class ItSupport extends Component {
                                                     <td>{item.note ? item.note : ''}</td>
                                                     <td>{item.description ? item.description : ''}</td>
                                                     <td>{item.priorityData?.value || ''}</td>
-                                                    <td>{item.createdAt ? item.createdAt : ''}</td>
-                                                    <td>{item.repairStartTime ? item.repairStartTime : ''}</td>
+                                                    <td>{item.createdAt ? moment.utc(item.createdAt).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
+                                                    <td>{item.repairStartTime ? moment.utc(item.repairStartTime).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
                                                     <td>{item.statusRequest?.value || ''}</td>
                                                     <td>
                                                         <div className='it-support-icon-handle-container'>
