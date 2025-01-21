@@ -40,6 +40,7 @@ class Homebody extends Component {
                             <div className='menu-list'>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-tty" style={{ paddingRight: '20px' }}></i>
                                         Yêu cầu hỗ trợ
                                     </button>
 
@@ -58,6 +59,7 @@ class Homebody extends Component {
                                 </div>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="far fa-address-book" style={{ paddingRight: '20px' }}></i>
                                         Booking
                                     </button>
                                     <ul className="dropdown-menu">
@@ -74,16 +76,23 @@ class Homebody extends Component {
                                     </ul>
                                 </div>
                                 <div className='report-hr'>
-                                    <button type="button" className="btn ">Báo cáo nhân sự</button>
+                                    <button type="button" className="btn ">
+                                        <i class="fas fa-user-check" style={{ paddingRight: '14px' }}></i>
+                                        Báo cáo nhân sự
+                                    </button>
                                 </div>
                                 <div className='report-all'>
-                                    <button type="button" className="btn ">Tổng hợp báo cáo</button>
+                                    <button type="button" className="btn ">
+                                        <i class="fas fa-swatchbook" style={{ paddingRight: '17px' }}></i>
+                                        Tổng hợp báo cáo
+                                    </button>
                                 </div>
 
 
 
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <i class="fas fa-cogs" style={{ paddingRight: '15px' }}></i>
                                         Manager
                                     </button>
                                     <ul className="dropdown-menu">

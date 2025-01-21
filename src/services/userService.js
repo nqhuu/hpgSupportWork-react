@@ -1,9 +1,10 @@
 import axios from "../axios";
 
 const handleDataRequestSupport = (isDeparment, currentPage, currentLitmit, userId) => {
-    if (userId) {
+    if (userId && isDeparment) {
         return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}&userInfo=${userId}`);
-    } else {
+    } else if (!userId && isDeparment) {
+        console.log(isDeparment)
         return axios.get(`/api/all-request?isDeparment=${isDeparment}&currentPage=${currentPage}&currentLitmit=${currentLitmit}`);
     }
 }

@@ -34,7 +34,6 @@ class ItHandleSupport extends Component {
     }
 
     componentDidMount = async () => {
-        console.log('props.props', this.props)
 
         let showHandle = this.props?.showHandle ?? true;
         let limit = this.props?.showHandle === false ? VALUE.LIMIT : VALUE.LIMIT_HANDLE
@@ -231,8 +230,6 @@ class ItHandleSupport extends Component {
         let { reqSupport, showHandle, currentPage, limit, selectRequestId, listUser, description, selectedOption, ListUserRep } = this.state
         let stt = currentPage * limit + 1
 
-        console.log(this.state)
-
         return (
             <>
                 {showHandle &&
@@ -258,9 +255,7 @@ class ItHandleSupport extends Component {
                                 <th>Mức độ</th>
                                 <th>Thời gian báo</th>
                                 <th>Bắt đầu xử lý</th>
-                                {showHandle &&
-                                    <th>Trạng thái</th>
-                                }
+                                {showHandle && <th>Trạng thái</th>}
                                 <th>Hành động</th>
                             </tr>
                         </thead>
@@ -270,7 +265,7 @@ class ItHandleSupport extends Component {
                                 reqSupport.map((item, index) => {
                                     return (
                                         <>
-                                            <tr key={item.id} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
+                                            <tr key={item.id || `${item.requestCode}-${index}`} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
                                                 <td>{index + stt}</td>
                                                 <td>{`${CODE.IT}-${item.requestCode}`}</td>
                                                 <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
@@ -300,13 +295,11 @@ class ItHandleSupport extends Component {
                                                                 item?.repairerData && `${item.repairerData.firstName} ${item.repairerData.lastName}`
                                                         )
                                                     }
-
                                                 </td>
                                                 <td>{item.errorData?.typeError?.value || ''}</td>
                                                 <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
                                                 <td>{item.locationRequetData?.locationName || ''}</td>
                                                 <td>{item?.img ? <button className='btn' onClick={() => this.handleViewImg(item?.img)}>xem ảnh</button> : ''}</td>
-
                                                 <td>{item.note ? item.note : ''}</td>
                                                 <td>
                                                     {
@@ -330,11 +323,9 @@ class ItHandleSupport extends Component {
                                                                     className='input-description'
                                                                 />
                                                                 :
-                                                                item?.description || ''
-                                                        )
+                                                                item?.description || '')
                                                     }
                                                 </td>
-                                                {/* <td>{item.description ? item.description : ''}</td> */}
                                                 <td>{item.priorityData?.value || ''}</td>
                                                 <td>{item.createdAt ? moment.utc(item.createdAt).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
                                                 <td>{item.repairStartTime ? moment.utc(item.repairStartTime).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
@@ -357,7 +348,6 @@ class ItHandleSupport extends Component {
                                                                         <div className='icon-handle' onClick={() => this.handleProcessing(item, item.id)}><i className="fas fa-wrench"></i></div>
                                                                 )
                                                             }
-
                                                             {
                                                                 item.statusRequest?.keyMap === VALUE.PROCESSING && (
                                                                     selectRequestId === item.id ?
@@ -376,10 +366,7 @@ class ItHandleSupport extends Component {
                                                                                 <i className="fas fa-check"></i>
                                                                             </div>
                                                                         </>
-                                                                )
-                                                            }
-
-
+                                                                )}
                                                         </div>
                                                     </td>
                                                 }
@@ -388,12 +375,9 @@ class ItHandleSupport extends Component {
                                     )
                                 })
                                 :
-                                <tr>
-                                    <td>Tuyệt vời, bộ phận bạn đang xử lý công việc rất tốt</td>
-                                </tr>
+                                <tr><td>Tuyệt vời, bộ phận bạn đang xử lý công việc rất tốt</td></tr>
                             }
                         </tbody>
-
                     </table>
                     <div className='active-footer'>
                         <div className='paginate'>
@@ -418,7 +402,6 @@ class ItHandleSupport extends Component {
                                 renderOnZeroPageCount={null}
                             />
                         </div>
-
                         {!showHandle && reqSupport && reqSupport.length > 0 &&
                             <div className='view-btn'>
                                 <button className=' btn btn-warning'
@@ -426,8 +409,7 @@ class ItHandleSupport extends Component {
                                 >
                                     View
                                 </button>
-                            </div>
-                        }
+                            </div>}
                     </div>
                 </div >
             </>
