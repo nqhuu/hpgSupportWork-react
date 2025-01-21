@@ -22,6 +22,7 @@ class ItHandleSupport extends Component {
         limit: '',
         totalPages: 0,
         isDeparment: VALUE.NOT_YET_COMPLETE_IT,
+        // isDeparment: '',
         selectRequestId: '',
         selectedOption: {},
         ListUserRep: [],
@@ -33,7 +34,8 @@ class ItHandleSupport extends Component {
     }
 
     componentDidMount = async () => {
-        // console.log('props.showHandle', this.props.showHandle)
+        console.log('props.props', this.props)
+
         let showHandle = this.props?.showHandle ?? true;
         let limit = this.props?.showHandle === false ? VALUE.LIMIT : VALUE.LIMIT_HANDLE
         if (!this.props?.showHandle) {
@@ -47,6 +49,8 @@ class ItHandleSupport extends Component {
             })
         }
 
+
+
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
@@ -57,6 +61,7 @@ class ItHandleSupport extends Component {
                 totalPages: data.totalPages,
             })
         }
+
     }
 
     getAllUser = async () => {
@@ -109,7 +114,6 @@ class ItHandleSupport extends Component {
     };
 
     handleProcessing = async (item, id) => {
-        console.log(item)
 
         if (!item) {
             console.error('Item is undefined or null:', item);
@@ -146,7 +150,6 @@ class ItHandleSupport extends Component {
     }
 
     closeHandleProcessing = async (item, id) => {
-        console.log(item)
         this.setState({
             selectRequestId: '',
         })
@@ -164,7 +167,8 @@ class ItHandleSupport extends Component {
         let data = {
             requestId: item.id,
             repairer: selectedOption,
-            description: description
+            description: description,
+            handleEditRequest: VALUE.HANDLE_REQUEST
         }
 
         if (data) {
@@ -226,7 +230,8 @@ class ItHandleSupport extends Component {
     render() {
         let { reqSupport, showHandle, currentPage, limit, selectRequestId, listUser, description, selectedOption, ListUserRep } = this.state
         let stt = currentPage * limit + 1
-        console.log('state', this.state)
+
+        console.log(this.state)
 
         return (
             <>

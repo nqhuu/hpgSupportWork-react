@@ -15,10 +15,13 @@ export const VALUE = {
     COMPLETE: 'ER2',
     PROCESSING: 'ER1',
     WAITTING: 'ER0',
+    CANCEL: 'ER3',
     LIMIT: 5,
     LIMIT_HANDLE: 20,
     PHAN_CUNG: 'PC',
-    PHAN_MEM: 'PM'
+    PHAN_MEM: 'PM',
+    SEND_REQUEST: 'SEND_REQUEST',
+    HANDLE_REQUEST: 'HANDLE_REQUEST'
 }
 
 export const CODE = {
@@ -27,6 +30,7 @@ export const CODE = {
     HPG: 'HPG',
     ERROR_PC: 'ERD',
     ERROR_PM: 'ERM',
+
 }
 
 export const DATA_TABLE = {

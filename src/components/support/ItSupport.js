@@ -4,12 +4,13 @@ import ReactPaginate from 'react-paginate';
 import './ItSupport.scss'
 import * as actions from "../../redux/actions";
 import { VALUE, CODE, DEPARTMENT } from '../../ultil/constant';
-import { handleDataRequestSupport, getAllUser } from '../../services/userService'
+import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../../services/userService'
 import Select from 'react-select';
 import _ from 'lodash'
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import ModalRequestSupport from '../modal/ModalRequestSupport'
 import moment from 'moment'
+import { toast } from 'react-toastify';
 
 class ItSupport extends Component {
 
@@ -20,21 +21,24 @@ class ItSupport extends Component {
         reqSupport: [],
         currentPage: 0,
         totalPages: 0,
-        isDeparment: VALUE.IT_HOME,
-        idHandleSelect: {
-            itemClick: ''
-        },
+        isDeparment: VALUE.NOT_YET_COMPLETE_IT,
+        selectRequestId: '',
         selectedOption: {},
         ListUserRep: [],
         listUser: [],
         // isOpenSelect: false,
         isOpenModal: false,
+        note: '',
+        dataEdit: {},
     }
 
     componentDidMount = async () => {
 
         await this.getRequestSupport();
         await this.getAllUser();
+        await this.props.getAllSupport()
+        await this.props.getAllLocation()
+        await this.props.getAllErrorCode()
 
     }
 
@@ -89,23 +93,36 @@ class ItSupport extends Component {
         }, () => this.getRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit))
     };
 
-    handleProcessing = async (event, id) => {
-        let idHandleSelectCopy = { ...this.state.idHandleSelect };
-
-        if (idHandleSelectCopy.itemClick === id) {
-            idHandleSelectCopy = {};
-            this.setState({
-                idHandleSelect: idHandleSelectCopy
-            })
+    handleEditProcessing = async (item, id) => {
+        if (!item) {
+            console.error('Item is undefined or null:', item);
             return;
         }
 
-        if (!idHandleSelectCopy.itemClick || idHandleSelectCopy.itemClick !== id) {
-            idHandleSelectCopy.itemClick = id
-            this.setState({
-                idHandleSelect: idHandleSelectCopy
-            })
-        }
+        this.setState({
+            isOpenModal: true,
+            dataEdit: {
+                id: item.id,
+                userId: item.id,
+                errorData: item.errorData,
+                locationRequetData: item.locationRequetData,
+                mngDepartmentId: item.mngDepartmentId,
+                note: item.note,
+                priorityData: item.priorityData,
+                softDiviceData: item.softDiviceData,
+                statusId: item.statusId,
+                typeId: item.typeId,
+                userRequestData: item.userRequestData,
+                requestId: id
+            },
+        })
+
+    }
+
+    closeHandleProcessing = async (item, id) => {
+        this.setState({
+            selectRequestId: '',
+        })
     }
 
     handleChange = async (selectedOption) => {
@@ -115,27 +132,39 @@ class ItSupport extends Component {
         })
     }
 
+    handleCancelRequest = async (item) => {
+        if (window.confirm("bạn có thực sự muốn xóa yêu cầu này")) {
+            let response = await updateRequestSupport({
+                requestId: item.id,
+                status: VALUE.CANCEL
+            })
 
-    handleSave = async (event) => {
-        alert('save all')
+            if (response && response.errCode === 0) {
+                if (response && response.errCode === 0) {
+                    toast.success(response.errMessage);
+                    this.getRequestSupport();
+                }
+            }
+        }
 
-    }
-
-
-    handleCancelRequest = async () => {
-        alert('Hủy yêu cầu')
     }
 
     handleOpenModal = async () => {
         this.setState({
-            isOpenModal: !this.state.isOpenModal
+            isOpenModal: true
+        })
+    }
+
+    handleCloseModal = () => {
+        this.setState({
+            isOpenModal: false,
+            dataEdit: {}
         })
     }
 
     render() {
-        let { reqSupport, currentPage, idHandleSelect, isSuccess, listUser, selectedOption, ListUserRep } = this.state
+        let { reqSupport, currentPage, selectRequestId, note, isSuccess, listUser, selectedOption, ListUserRep } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
-        console.log(this.state)
 
         return (
             <>
@@ -178,7 +207,20 @@ class ItSupport extends Component {
                                                     <td>{item.errorData?.typeError?.value || ''}</td>
                                                     <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
                                                     <td>{item.locationRequetData?.locationName || ''}</td>
-                                                    <td>{item.note ? item.note : ''}</td>
+                                                    <td>{item?.note || ''}
+                                                        {/* {
+                                                            selectRequestId === item.id ?
+                                                                <input
+                                                                    type='text'
+                                                                    value={note}
+                                                                    onChange={(event) => this.handleChangeInput(event, 'note')}
+                                                                    className='input-edit'
+                                                                />
+                                                                :
+                                                                item.note || ''
+
+                                                        } */}
+                                                    </td>
                                                     <td>{item.description ? item.description : ''}</td>
                                                     <td>{item.priorityData?.value || ''}</td>
                                                     <td>{item.createdAt ? moment.utc(item.createdAt).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
@@ -187,25 +229,15 @@ class ItSupport extends Component {
                                                     <td>
                                                         <div className='it-support-icon-handle-container'>
                                                             {
-                                                                item.statusRequest?.keyMap === VALUE.WAITTING && (
-                                                                    idHandleSelect.itemClick === item.id ?
-                                                                        <>
-                                                                            <div className=' it-icon-close' onClick={(event) => this.handleProcessing(event, item.id)}>
-                                                                                <i className="fas fa-window-close"></i>
-                                                                            </div>
-
-                                                                            <div className='it-support-icon-save' onClick={(event) => this.handleSave(event)}>
-                                                                                <div><i className="fas fa-save"></i> </div>
-                                                                            </div>
-                                                                        </>
-                                                                        :
-                                                                        <>
-                                                                            <div className='it-support-icon-edit' onClick={(event) => this.handleProcessing(event, item.id)}><i className="fas fa-edit"></i></div>
-                                                                            <div className=' it-icon-close' onClick={(event) => this.handleCancelRequest(event, item.id)}>
-                                                                                <i className="fas fa-minus-square"></i>
-                                                                            </div>
-                                                                        </>
-                                                                )
+                                                                item.statusRequest?.keyMap === VALUE.WAITTING &&
+                                                                <>
+                                                                    <div className='it-support-icon-edit' onClick={() => this.handleEditProcessing(item, item.id)}>
+                                                                        <i className="fas fa-edit"></i>
+                                                                    </div>
+                                                                    <div className=' it-icon-close' onClick={() => this.handleCancelRequest(item, item.id)}>
+                                                                        <i className="fas fa-minus-square"></i>
+                                                                    </div>
+                                                                </>
                                                             }
                                                         </div>
                                                     </td>
@@ -244,7 +276,9 @@ class ItSupport extends Component {
                         isOpenModal={this.state.isOpenModal}
                         toggle={this.handleOpenModal}
                         departmentId={DEPARTMENT.IT}
+                        data={this.state.dataEdit}
                         getRequestSupport={this.getRequestSupport}
+                        handleCloseModal={this.handleCloseModal}
                     />
                 </div >
             </>
@@ -256,13 +290,19 @@ const mapStateToProps = state => {
     return {
         userInfo: state.user.userInfo,
         isLoggedIn: state.user.isLoggedIn,
-        reqSupport: state.user.reqSupport
+        reqSupport: state.user.reqSupport,
+        allSupport: state.user.allSupport,
+        allLocation: state.user.allLocation,
+        allErrorCode: state.user.allErrorCode
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data))
+        handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data)),
+        getAllSupport: (data) => dispatch(actions.getAllSupport(data)),
+        getAllLocation: () => dispatch(actions.getAllLocation()),
+        getAllErrorCode: () => dispatch(actions.getAllErrorCode()),
     };
 };
 

@@ -9,8 +9,9 @@ import { values } from 'lodash';
 import { CODE, VALUE, DATA_TABLE, DEPARTMENT } from '../../ultil/constant';
 import { uploadsFile } from '../../services/userService'
 import handleUploadFile from "../../config/HandleUploadFile"
-import { handleCreateRequest } from "../../services/userService"
+import { handleCreateRequest, updateRequestSupport } from "../../services/userService"
 import _ from 'lodash'
+
 
 
 
@@ -33,16 +34,69 @@ class ModalHandleRequest extends Component {
         listLevel: [],
         note: '',
         imgSelect: '',
+        requestId: '',
     }
 
     async componentDidMount() {
-        this.props.getAllSupport()
-        this.props.getAllLocation()
-        this.props.getAllErrorCode()
+        // this.props.getAllSupport()
+        // this.props.getAllLocation()
+        // this.props.getAllErrorCode()
     }
 
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
+
+        if (prevProps.data !== this.props.data) {
+            let selectErr = {}
+            if (this.props.data && this.props.data.typeId === VALUE.PHAN_CUNG) {
+
+                selectErr.selectTypeDevice = {
+                    value: this.props.data?.softDiviceData?.keyMap || '',
+                    label: this.props.data?.softDiviceData?.value || ''
+                };
+                selectErr.selectTypeErrorPc = {
+                    value: this.props.data?.errorData?.errorId || '',
+                    label: this.props.data?.errorData?.errorName || ''
+                }
+            }
+
+            if (this.props.data && this.props.data.typeId === VALUE.PHAN_MEM) {
+                selectErr.selectSoft = {
+                    value: this.props.data?.softDiviceData?.keyMap || '',
+                    label: this.props.data?.softDiviceData?.value || ''
+                };
+
+                selectErr.selectTypeErrorPm = {
+                    value: this.props.data?.errorData?.errorId || '',
+                    label: this.props.data?.errorData?.errorName || ''
+                }
+            }
+
+
+            this.setState({
+                selectType: {
+                    value: this.props.data?.errorData?.typeError?.keyMap || '',
+                    label: this.props.data?.errorData?.typeError?.value || ''
+                },
+
+                selectLocation: {
+                    value: this.props.data?.locationRequetData?.locationId || '',
+                    label: this.props.data?.locationRequetData?.locationName || ''
+                },
+
+                selectLevel: {
+                    value: this.props.data?.priorityData?.keyMap || '',
+                    label: this.props.data?.priorityData?.value || ''
+                },
+                note: this.props.data?.note || '',
+
+                requestId: this.props.data?.requestId,
+                ...selectErr
+
+            })
+
+        }
+
 
         if (prevProps.allSupport !== this.props.allSupport) {
             let listType = this.props.allSupport?.listType.map((item, index) => {
@@ -144,7 +198,7 @@ class ModalHandleRequest extends Component {
 
 
     handleCloseModal = () => {
-        this.props.toggle()
+        this.props.handleCloseModal()
         this.setState({
             selectType: null,
             selectSoft: null,
@@ -152,6 +206,9 @@ class ModalHandleRequest extends Component {
             selectLocation: null,
             selectTypeError: null,
             selectLevel: null,
+            selectTypeErrorPc: null,
+            selectTypeErrorPm: null,
+
         })
     }
 
@@ -173,8 +230,6 @@ class ModalHandleRequest extends Component {
                 })
             }
             if (this.state.selectType && this.state.selectType.value === VALUE.PHAN_MEM) {
-                console.log(this.state.selectType?.value)
-
                 this.setState({
                     selectTypeDevice: null,
                     selectTypeErrorPc: null,
@@ -207,8 +262,7 @@ class ModalHandleRequest extends Component {
         if (response) return response
     }
 
-
-    handleCreateRequestUi = async () => {
+    handleValidate = () => {
         let {
             selectType, selectSoft, selectTypeDevice, selectLocation,
             selectTypeErrorPc, selectTypeErrorPm, selectLevel
@@ -218,7 +272,6 @@ class ModalHandleRequest extends Component {
             selectTypeErrorPc, selectTypeErrorPm, selectLevel]
 
         let isEmpty = false;
-        console.log(arrayCheck)
         if (selectType && selectType.value === VALUE.PHAN_CUNG) {
             let newArray = [...arrayCheck]
 
@@ -244,7 +297,17 @@ class ModalHandleRequest extends Component {
             console.log('isEmpty3', isEmpty)
         }
 
+        return (isEmpty)
+    }
 
+    handleCreateRequestUi = async () => {
+        let {
+            selectType, selectSoft, selectTypeDevice, selectLocation,
+            selectTypeErrorPc, selectTypeErrorPm, selectLevel,
+        } = this.state
+
+
+        let isEmpty = this.handleValidate()
 
         if (isEmpty) {
             toast.warning("Bạn cần nhâp đủ các trường có dấu *")
@@ -282,12 +345,69 @@ class ModalHandleRequest extends Component {
         if (response && response.errCode === 1) {
             toast.warning(response.errMessage);
         }
-        if (response && response.errCode === 2) {
+        if (response && response.errCode === 2 || response.errCode === -1) {
             toast.error(response.errMessage);
         }
     }
 
 
+
+    handleEditRequest = async () => {
+        let {
+            selectType, selectSoft, selectTypeDevice, selectLocation,
+            selectTypeErrorPc, selectTypeErrorPm, selectLevel, requestId, imgSelect
+        } = this.state
+
+        let isEmpty = this.handleValidate()
+
+        if (isEmpty) {
+            toast.warning("Bạn cần nhâp đủ các trường có dấu *")
+            return;
+        }
+
+        let data = {};
+        if (this.state.imgSelect) {
+            let imgUpload = await this.handleUploadFile()
+            if (imgUpload && imgUpload.errCode === 0) {
+                console.log(imgUpload.file.path)
+                data.img = imgUpload.file.path
+            } else {
+                data.img = null
+            }
+        }
+        data.selectType = selectType;
+
+        if (selectSoft) data.softOrDiviceId = selectSoft;
+
+        if (selectTypeDevice) data.softOrDiviceId = selectTypeDevice;
+
+        if (selectTypeErrorPc) data.errorId = selectTypeErrorPc;
+
+        if (selectTypeErrorPm) data.errorId = selectTypeErrorPm;
+
+        data.selectLocation = selectLocation;
+        data.selectLevel = selectLevel;
+        data.userId = this.props.userInfo.id;
+        data.note = this.state.note;
+        data.requestId = requestId;
+        data.img = imgSelect;
+        data.handleEditRequest = VALUE.SEND_REQUEST
+
+        let response = await updateRequestSupport(data)
+
+        if (response && response.errCode === 0) {
+            toast.success(response.errMessage);
+            this.props.getRequestSupport();
+            this.handleCloseModal()
+        }
+        if (response && response.errCode === 1) {
+            toast.warning(response.errMessage);
+        }
+
+        if (response && response.errCode === -1) {
+            toast.error(response.errMessage);
+        }
+    }
 
     render() {
         let {
@@ -385,6 +505,7 @@ class ModalHandleRequest extends Component {
                                 <input
                                     type="text"
                                     className="form-control"
+                                    value={this.state.note}
                                     onChange={(e) => this.handleOnchangeInput(e, "note")}
                                 />
                             </div>
@@ -403,14 +524,21 @@ class ModalHandleRequest extends Component {
                 </div>
 
                 <div className='modal-booking-footer'>
-                    <button
-                        type="button" className="btn btn-primary"
-                        // onClick={() => this.handleUploadFile()}
-                        onClick={() => this.handleCreateRequestUi()}
-                    >
-                        Xác nhận
-                    </button>
-
+                    {this.props && !_.isEmpty(this.props.data) ?
+                        <button
+                            type="button" className="btn btn-primary"
+                            onClick={() => this.handleEditRequest()}
+                        >
+                            Sửa
+                        </button>
+                        :
+                        <button
+                            type="button" className="btn btn-primary"
+                            onClick={() => this.handleCreateRequestUi()}
+                        >
+                            Xác nhận
+                        </button>
+                    }
                     <button
                         type="button" className="btn btn-danger"
                         onClick={() => this.handleCloseModal()}
@@ -436,9 +564,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        getAllSupport: (data) => dispatch(actions.getAllSupport(data)),
-        getAllLocation: () => dispatch(actions.getAllLocation()),
-        getAllErrorCode: () => dispatch(actions.getAllErrorCode()),
+
     };
 };
 

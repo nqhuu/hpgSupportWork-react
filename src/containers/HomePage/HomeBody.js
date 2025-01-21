@@ -130,10 +130,10 @@ class Homebody extends Component {
                                     <div className='table-content cd-suport ' >
                                         <div className='header'>Cơ Điện - Home</div>
                                         <div className='body'>
-                                            {/* <ItHandleSupport
+                                            <ItHandleSupport
                                                 showHandle={false}
                                                 department={VALUE.NOT_YET_COMPLETE_CD}
-                                            /> */}
+                                            />
                                         </div>
                                     </div>
                                     <div className='bar-chart'>

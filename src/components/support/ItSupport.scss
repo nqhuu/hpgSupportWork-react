@@ -28,12 +28,21 @@
                 cursor: pointer;
 
 
-                .it-support-icon-save {
+
+                .it-support-icon-edit {
                     color: rgb(107, 105, 105);
+
+                    &:hover {
+                        color: #0e0d0d;
+                    }
                 }
 
                 .it-icon-close {
-                    color: red;
+                    color: rgb(252, 67, 67);
+
+                    &:hover {
+                        color: red;
+                    }
                 }
             }
         }
