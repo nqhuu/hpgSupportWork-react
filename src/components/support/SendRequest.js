@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
-import './ItSupport.scss'
+import './SendRequest.scss'
 import * as actions from "../../redux/actions";
 import { VALUE, CODE, DEPARTMENT } from '../../ultil/constant';
 import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../../services/userService'
@@ -12,7 +12,7 @@ import ModalRequestSupport from '../modal/ModalRequestSupport'
 import moment from 'moment'
 import { toast } from 'react-toastify';
 
-class ItSupport extends Component {
+class SendRequest extends Component {
 
     state = {
         showHandle: false,
@@ -21,20 +21,24 @@ class ItSupport extends Component {
         reqSupport: [],
         currentPage: 0,
         totalPages: 0,
-        isDeparment: VALUE.NOT_YET_COMPLETE_IT,
+        // isDeparment: VALUE.NOT_YET_COMPLETE_IT,
+        isDeparment: '',
         selectRequestId: '',
         selectedOption: {},
         ListUserRep: [],
         listUser: [],
-        // isOpenSelect: false,
         isOpenModal: false,
         note: '',
         dataEdit: {},
     }
 
     componentDidMount = async () => {
+        if (this.props?.department) {
+            this.setState({
+                isDeparment: this.props.department
+            }, async () => await this.getRequestSupport())
+        }
 
-        await this.getRequestSupport();
         await this.getAllUser();
         await this.props.getAllSupport()
         await this.props.getAllLocation()
@@ -42,9 +46,30 @@ class ItSupport extends Component {
 
     }
 
+
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
-        if (prevProps.reqSupport !== this.props.reqSupport) {
-            let data = this.props.reqSupport
+        //check khi có thay đổi department trong prop thì thực hiện gọi lại requestSupport
+        if (prevProps.department !== this.props.department) {
+            await this.setState({
+                isDeparment: this.props.department,
+                currentPage: 0, // Reset lại trang nếu cần
+            });
+            await this.getRequestSupport();
+        }
+
+        if (this.state.isDeparment === VALUE.NOT_YET_COMPLETE_IT) {
+            if (prevProps.reqSupportIt !== this.props.reqSupportIt) {
+                let data = this.props.reqSupportIt
+                console.log('IT', data)
+                this.setState({
+                    reqSupport: data.rows,
+                    totalPages: data.totalPages,
+                })
+            }
+        } else if (prevProps.reqSupportCd !== this.props.reqSupportCd) {
+            let data = this.props.reqSupportCd
+            console.log('CD', data)
+
             this.setState({
                 reqSupport: data.rows,
                 totalPages: data.totalPages,
@@ -81,6 +106,7 @@ class ItSupport extends Component {
         let response = await handleDataRequestSupport(this.state.isDeparment, this.state.currentPage, VALUE.LIMIT_HANDLE, this.props.userInfo.id)
         if (response && response.errCode === 0) {
             let data = response.data
+            data.isDeparment = this.state.isDeparment
             await this.props.handleDataHomeRedux(data)
         }
     }
@@ -163,14 +189,14 @@ class ItSupport extends Component {
     }
 
     render() {
-        let { reqSupport, currentPage, selectRequestId, note, isSuccess, listUser, selectedOption, ListUserRep } = this.state
+        let { reqSupport, currentPage } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
 
         return (
             <>
                 <div className='it-create-support-container'>
                     <div className='it-support-header'>
-                        <h2 className='it-support-text'>IT Support</h2>
+                        <h2 className='it-support-text'>{this.state?.isDeparment === VALUE.NOT_YET_COMPLETE_IT ? 'IT Support' : 'Cơ Điện'}</h2>
                         <button type="button" className="btn btn-primary it-support-creat" onClick={() => this.handleOpenModal()}>Tạo mới</button>
                     </div>
                     <div className='it-support-body'>
@@ -207,20 +233,7 @@ class ItSupport extends Component {
                                                     <td>{item.errorData?.typeError?.value || ''}</td>
                                                     <td>{item.errorData.errorName ? item.errorData.errorName : ''}</td>
                                                     <td>{item.locationRequetData?.locationName || ''}</td>
-                                                    <td>{item?.note || ''}
-                                                        {/* {
-                                                            selectRequestId === item.id ?
-                                                                <input
-                                                                    type='text'
-                                                                    value={note}
-                                                                    onChange={(event) => this.handleChangeInput(event, 'note')}
-                                                                    className='input-edit'
-                                                                />
-                                                                :
-                                                                item.note || ''
-
-                                                        } */}
-                                                    </td>
+                                                    <td>{item?.note || ''}</td>
                                                     <td>{item.description ? item.description : ''}</td>
                                                     <td>{item.priorityData?.value || ''}</td>
                                                     <td>{item.createdAt ? moment.utc(item.createdAt).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
@@ -290,7 +303,8 @@ const mapStateToProps = state => {
     return {
         userInfo: state.user.userInfo,
         isLoggedIn: state.user.isLoggedIn,
-        reqSupport: state.user.reqSupport,
+        reqSupportIt: state.user.reqSupportIt,
+        reqSupportCd: state.user.reqSupportCd,
         allSupport: state.user.allSupport,
         allLocation: state.user.allLocation,
         allErrorCode: state.user.allErrorCode
@@ -307,4 +321,4 @@ const mapDispatchToProps = dispatch => {
 };
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(ItSupport);
+export default connect(mapStateToProps, mapDispatchToProps)(SendRequest);

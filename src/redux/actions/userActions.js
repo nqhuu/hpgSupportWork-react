@@ -22,7 +22,7 @@ export const processLogout = () => ({
 export const handleDataHomeRedux = (data) => (
     {
         type: actionTypes.GET_DATA_IT_REQ_SUCCESS,
-        reqItSupport: data
+        reqSupport: data
     }
 )
 

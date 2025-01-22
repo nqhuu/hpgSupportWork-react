@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
-import './ItHandleSupport.scss'
+import './HandleRequest.scss'
 import * as actions from "../../redux/actions";
 import { VALUE, CODE, path } from '../../ultil/constant';
 import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../../services/userService'
@@ -15,14 +15,14 @@ import moment from 'moment'
 
 
 
-class ItHandleSupport extends Component {
+class HandleRequest extends Component {
     state = {
         reqSupport: [],
         currentPage: 0,
         limit: '',
         totalPages: 0,
-        isDeparment: VALUE.NOT_YET_COMPLETE_IT,
-        // isDeparment: '',
+        // isDeparment: VALUE.NOT_YET_COMPLETE_IT,
+        isDeparment: '',
         selectRequestId: '',
         selectedOption: {},
         ListUserRep: [],
@@ -41,7 +41,7 @@ class ItHandleSupport extends Component {
             this.setState({
                 limit: limit,
                 showHandle: showHandle,
-                // isDeparment: this.props.department
+                isDeparment: this.props.department
             }, async () => {
                 await this.getRequestSupport();
                 await this.getAllUser();
@@ -53,8 +53,17 @@ class ItHandleSupport extends Component {
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
-        if (prevProps.reqSupport !== this.props.reqSupport) {
-            let data = this.props.reqSupport
+
+        if (this.state.isDeparment === VALUE.NOT_YET_COMPLETE_IT) {
+            if (prevProps.reqSupportIt !== this.props.reqSupportIt) {
+                let data = this.props.reqSupportIt
+                this.setState({
+                    reqSupport: data.rows,
+                    totalPages: data.totalPages,
+                })
+            }
+        } else if (prevProps.reqSupportCd !== this.props.reqSupportCd) {
+            let data = this.props.reqSupportCd
             this.setState({
                 reqSupport: data.rows,
                 totalPages: data.totalPages,
@@ -92,6 +101,8 @@ class ItHandleSupport extends Component {
         let response = await handleDataRequestSupport(this.state.isDeparment, this.state.currentPage, this.state.limit)
         if (response && response.errCode === 0) {
             let data = response.data
+            data.isDeparment = this.state.isDeparment
+            // console.log('duLieu', data)
             await this.props.handleDataHomeRedux(data)
         }
     }
@@ -229,7 +240,6 @@ class ItHandleSupport extends Component {
     render() {
         let { reqSupport, showHandle, currentPage, limit, selectRequestId, listUser, description, selectedOption, ListUserRep } = this.state
         let stt = currentPage * limit + 1
-
         return (
             <>
                 {showHandle &&
@@ -418,9 +428,11 @@ class ItHandleSupport extends Component {
 }
 
 const mapStateToProps = state => {
+
     return {
         isLoggedIn: state.user.isLoggedIn,
-        reqSupport: state.user.reqSupport
+        reqSupportIt: state.user.reqSupportIt,
+        reqSupportCd: state.user.reqSupportCd
     };
 };
 
@@ -430,4 +442,4 @@ const mapDispatchToProps = dispatch => {
     };
 };
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ItHandleSupport));
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(HandleRequest));

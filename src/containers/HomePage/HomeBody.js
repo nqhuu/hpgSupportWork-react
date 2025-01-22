@@ -6,12 +6,12 @@ import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { path, CODE, VALUE } from '../../ultil/constant';
 import ElectricalSupport from '../../components/support/ElectricalSupport';
-import ItSupport from '../../components/support/ItSupport';
+import SendRequest from '../../components/support/SendRequest';
 import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
 import ItSupportHome from '../../components/home/ItSupportHome';
-import ItHandleSupport from '../../components/support/ItHandleSupport'
+import HandleRequest from '../../components/support/HandleRequest'
 import ElectricalSupportHome from '../../components/home/ElectricalSupportHome';
 // import HomePage from '../HomePage/HomePage';
 import './HomeBody.scss'
@@ -40,7 +40,7 @@ class Homebody extends Component {
                             <div className='menu-list'>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-tty" style={{ paddingRight: '20px' }}></i>
+                                        <i className="fas fa-tty" style={{ paddingRight: '20px' }}></i>
                                         Yêu cầu hỗ trợ
                                     </button>
 
@@ -59,7 +59,7 @@ class Homebody extends Component {
                                 </div>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="far fa-address-book" style={{ paddingRight: '20px' }}></i>
+                                        <i className="far fa-address-book" style={{ paddingRight: '20px' }}></i>
                                         Booking
                                     </button>
                                     <ul className="dropdown-menu">
@@ -77,13 +77,13 @@ class Homebody extends Component {
                                 </div>
                                 <div className='report-hr'>
                                     <button type="button" className="btn ">
-                                        <i class="fas fa-user-check" style={{ paddingRight: '14px' }}></i>
+                                        <i className="fas fa-user-check" style={{ paddingRight: '14px' }}></i>
                                         Báo cáo nhân sự
                                     </button>
                                 </div>
                                 <div className='report-all'>
                                     <button type="button" className="btn ">
-                                        <i class="fas fa-swatchbook" style={{ paddingRight: '17px' }}></i>
+                                        <i className="fas fa-swatchbook" style={{ paddingRight: '17px' }}></i>
                                         Tổng hợp báo cáo
                                     </button>
                                 </div>
@@ -92,7 +92,7 @@ class Homebody extends Component {
 
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i class="fas fa-cogs" style={{ paddingRight: '15px' }}></i>
+                                        <i className="fas fa-cogs" style={{ paddingRight: '15px' }}></i>
                                         Manager
                                     </button>
                                     <ul className="dropdown-menu">
@@ -125,7 +125,7 @@ class Homebody extends Component {
                                         <div className='header'>{`IT Support - ${new Date().getDate()}/${String(new Date().getMonth() + 1).padStart(2, '0')}`}</div>
                                         <div className='body'>
                                             {/* <ItSupportHome /> */}
-                                            <ItHandleSupport
+                                            <HandleRequest
                                                 showHandle={false}
                                                 department={VALUE.NOT_YET_COMPLETE_IT}
                                             />
@@ -139,7 +139,7 @@ class Homebody extends Component {
                                     <div className='table-content cd-suport ' >
                                         <div className='header'>Cơ Điện - Home</div>
                                         <div className='body'>
-                                            <ItHandleSupport
+                                            <HandleRequest
                                                 showHandle={false}
                                                 department={VALUE.NOT_YET_COMPLETE_CD}
                                             />
@@ -162,8 +162,15 @@ class Homebody extends Component {
                         }
 
                         <Switch>
-                            <Route path="/menu-tast/it-support" component={ItSupport} />
-                            <Route path="/menu-tast/electrical-support" component={ElectricalSupport} />
+                            <Route
+                                path="/menu-tast/it-support"
+                                render={(props) => <SendRequest {...props} department={VALUE.NOT_YET_COMPLETE_IT} />}
+                            // component={SendRequest} 
+                            />
+                            <Route
+                                path="/menu-tast/electrical-support"
+                                render={(props) => <SendRequest {...props} department={VALUE.NOT_YET_COMPLETE_CD} />} />
+
                             <Route path="/menu-tast/booking-room" component={BookingRoom} />
                             <Route path="/menu-tast/booking-car" component={BookingCar} />
 

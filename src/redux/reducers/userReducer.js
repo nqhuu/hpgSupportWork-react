@@ -1,10 +1,13 @@
 
 import actionTypes from '../actions/actionTypes';
+import { VALUE } from '../../ultil/constant';
 
 const initialState = {
     isLoggedIn: false,
     userInfo: null,
-    reqSupport: [],
+    // reqSupport: [],
+    reqSupportIt: [],
+    reqSupportCd: [],
     allSupport: [],
     allLocation: [],
     allErrorCode: [],
@@ -32,9 +35,15 @@ const userReducer = (state = initialState, action) => {
                 userInfo: null
             }
         case actionTypes.GET_DATA_IT_REQ_SUCCESS:
+            if (action.reqSupport.isDeparment === VALUE.NOT_YET_COMPLETE_CD) {
+                return {
+                    ...state,
+                    reqSupportCd: action.reqSupport.reqSupport
+                }
+            }
             return {
                 ...state,
-                reqSupport: action.reqItSupport.reqSupport
+                reqSupportIt: action.reqSupport.reqSupport
             }
         case actionTypes.GET_DATA_IT_REQ_FAIL:
             return {
