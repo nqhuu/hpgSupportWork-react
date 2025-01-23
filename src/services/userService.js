@@ -46,8 +46,8 @@ const updateRequestSupport = (data) => {
 }
 
 const getAllPersonnel = (dataDay, shiftsId, departmentId) => {
-    if (dataDay.day && !shiftsId && !departmentId) return axios.get(`/users/api/all-personnel?day=${dataDay.day}`);
-    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}`);
+    if (dataDay.day) return axios.get(`/users/api/all-personnel?day=${dataDay.day}&shiftsId=${shiftsId}?departmentId=${departmentId}`);
+    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
 }
 
 export {

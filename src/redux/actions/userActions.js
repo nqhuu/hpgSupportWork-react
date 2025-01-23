@@ -139,6 +139,8 @@ export const getAllErrorCodeFailed = () => ({
 
 
 export const getAllPersonnelRedux = (dataDay, shiftsId, departmentId) => {
+    if (!shiftsId) shiftsId = null;
+    if (!departmentId) departmentId = null;
     return async (dispatch, getState) => {
         try {
             dispatch({ type: actionTypes.FETCH_ALL_PERSONNEL_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu

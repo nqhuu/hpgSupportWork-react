@@ -25,8 +25,8 @@ class Personnel extends Component {
     }
 
     componentDidMount = async () => {
-        // await this.props.getAllPersonnelRedux({ day: 'toDay' })
-        await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' })
+        // await this.props.getAllPersonnelRedux({ day: 'toDay' },this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+        await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
             this.getAllUser()
         }
@@ -149,7 +149,7 @@ class Personnel extends Component {
     }
 
     render() {
-        // console.log(this.props.userInfo)
+        console.log(this.props.userInfo)
         // console.log(this.state)
         let { listUser } = this.state
 
