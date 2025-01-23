@@ -1,16 +1,17 @@
 
 import actionTypes from '../actions/actionTypes';
 import { VALUE } from '../../ultil/constant';
+import { getAllPersonnel } from '../../services/userService';
 
 const initialState = {
     isLoggedIn: false,
     userInfo: null,
-    // reqSupport: [],
     reqSupportIt: [],
     reqSupportCd: [],
     allSupport: [],
     allLocation: [],
     allErrorCode: [],
+    allPersonnel: [],
 
 }
 
@@ -79,6 +80,16 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allErrorCode: []
+            }
+        case actionTypes.FETCH_ALL_PERSONNEL_SUCCESS:
+            return {
+                ...state,
+                allPersonnel: action.allPersonnel
+            }
+        case actionTypes.FETCH_ALL_PERSONNEL_FAIL:
+            return {
+                ...state,
+                allPersonnel: []
             }
         default:
             return state;

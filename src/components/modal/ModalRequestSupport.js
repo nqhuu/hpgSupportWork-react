@@ -526,21 +526,21 @@ class ModalHandleRequest extends Component {
                 <div className='modal-booking-footer'>
                     {this.props && !_.isEmpty(this.props.data) ?
                         <button
-                            type="button" className="btn btn-primary"
+                            type="button" className="btn btn-primary btn-modal"
                             onClick={() => this.handleEditRequest()}
                         >
-                            Sửa
+                            Lưu lại
                         </button>
                         :
                         <button
-                            type="button" className="btn btn-primary"
+                            type="button" className="btn btn-primary btn-modal"
                             onClick={() => this.handleCreateRequestUi()}
                         >
                             Xác nhận
                         </button>
                     }
                     <button
-                        type="button" className="btn btn-danger"
+                        type="button" className="btn btn-danger btn-modal"
                         onClick={() => this.handleCloseModal()}
                     >
                         Đóng

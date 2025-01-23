@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes'
-import { getAllCodeService, getAllLocationService, getAllErrorCodeService } from '../../services/userService'
+import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel } from '../../services/userService'
 
 
 export const addUserSuccess = () => ({
@@ -35,8 +35,6 @@ export const getAllSupport = () => {
             let listSotfware = await getAllCodeService('SOFTWARE')
             let listTypeDevice = await getAllCodeService('GRDEVICE')
             let listPriority = await getAllCodeService('PRIORITY')
-
-
 
             let response = {
                 listType: listType.data,
@@ -128,6 +126,8 @@ export const getAllErrorCode = () => {
     }
 }
 
+
+
 export const getAllErrorCodeSuccess = (data) => ({
     type: actionTypes.FETCH_ALL_ERROR_CODE_SUCCESS,
     allErrorCode: data
@@ -135,6 +135,38 @@ export const getAllErrorCodeSuccess = (data) => ({
 
 export const getAllErrorCodeFailed = () => ({
     type: actionTypes.FETCH_ALL_ERROR_CODE_FAIL
+})
+
+
+export const getAllPersonnelRedux = (dataDay, shiftsId, departmentId) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_PERSONNEL_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let listPersonnel = await getAllPersonnel(dataDay, shiftsId, departmentId)
+            let response = {
+                listPersonnel: listPersonnel.data
+            }
+            if (response) {
+                dispatch(getAllPersonnelReduxSuccess(response))
+            }
+            else {
+                dispatch(getAllPersonnelReduxFailed())
+            }
+        } catch (e) {
+            dispatch(getAllPersonnelReduxFailed())
+            console.log('getAllPersonnelReduxFailed error', e)
+        }
+    }
+}
+
+export const getAllPersonnelReduxSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_PERSONNEL_SUCCESS,
+    allPersonnel: data.listPersonnel
+})
+
+
+export const getAllPersonnelReduxFailed = () => ({
+    type: actionTypes.FETCH_ALL_PERSONNEL_FAIL,
 })
 
 

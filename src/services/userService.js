@@ -17,15 +17,15 @@ const getAllUser = (id, departmentId) => {
 }
 
 const getAllCodeService = (inputType) => {
-    return axios.get(`/users/api/allcode?type=${inputType}`)
+    return axios.get(`/users/api/allcode?type=${inputType}`);
 }
 
 const getAllLocationService = () => {
-    return axios.get(`/users/api/all-location`)
+    return axios.get(`/users/api/all-location`);
 }
 
 const getAllErrorCodeService = () => {
-    return axios.get(`/users/api/all-errorCode`)
+    return axios.get(`/users/api/all-errorCode`);
 
 }
 
@@ -38,16 +38,22 @@ const uploadsFile = (task, formData) => {
 }
 
 const handleCreateRequest = (data, request) => {
-    return axios.post(`/users/api/create-request-support`, { data, request })
+    return axios.post(`/users/api/create-request-support`, { data, request });
 }
 
 const updateRequestSupport = (data) => {
-    return axios.post(`/users/api/update-request-support`, data)
+    return axios.post(`/users/api/update-request-support`, data);
+}
+
+const getAllPersonnel = (dataDay, shiftsId, departmentId) => {
+    if (dataDay.day && !shiftsId && !departmentId) return axios.get(`/users/api/all-personnel?day=${dataDay.day}`);
+    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}`);
 }
 
 export {
     handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
-    getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport
+    getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport, getAllPersonnel,
+
 
 }
 

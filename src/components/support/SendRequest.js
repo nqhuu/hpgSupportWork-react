@@ -8,6 +8,7 @@ import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../.
 import Select from 'react-select';
 import _ from 'lodash'
 import HomeFooter from '../../containers/HomePage/HomeFooter'
+import HomeHeader from '../../containers/HomePage/HomeHeader';
 import ModalRequestSupport from '../modal/ModalRequestSupport'
 import moment from 'moment'
 import { toast } from 'react-toastify';
@@ -193,14 +194,17 @@ class SendRequest extends Component {
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
 
         return (
-            <>
-                <div className='it-create-support-container'>
-                    <div className='it-support-header'>
-                        <h2 className='it-support-text'>{this.state?.isDeparment === VALUE.NOT_YET_COMPLETE_IT ? 'IT Support' : 'Cơ Điện'}</h2>
-                        <button type="button" className="btn btn-primary it-support-creat" onClick={() => this.handleOpenModal()}>Tạo mới</button>
+            <div className='send-request-container'>
+                <div className='header-home'>
+                    <HomeHeader />
+                </div>
+                <div className='send-create-support-container'>
+                    <div className='send-support-header'>
+                        <h2 className='send-support-text'>{this.state?.isDeparment === VALUE.NOT_YET_COMPLETE_IT ? 'IT Support' : 'Cơ Điện'}</h2>
+                        <button type="button" className="btn btn-primary send-support-creat" onClick={() => this.handleOpenModal()}>Tạo mới</button>
                     </div>
-                    <div className='it-support-body'>
-                        <table className="it-support-table table">
+                    <div className='send-support-body'>
+                        <table className="send-support-table table">
                             <thead>
                                 <tr>
                                     <th>STT</th>
@@ -240,14 +244,14 @@ class SendRequest extends Component {
                                                     <td>{item.repairStartTime ? moment.utc(item.repairStartTime).local().format('DD-MM-YYYY HH:mm:ss') : ''}</td>
                                                     <td>{item.statusRequest?.value || ''}</td>
                                                     <td>
-                                                        <div className='it-support-icon-handle-container'>
+                                                        <div className='send-support-icon-handle-container'>
                                                             {
                                                                 item.statusRequest?.keyMap === VALUE.WAITTING &&
                                                                 <>
-                                                                    <div className='it-support-icon-edit' onClick={() => this.handleEditProcessing(item, item.id)}>
+                                                                    <div className='send-support-icon-edit' onClick={() => this.handleEditProcessing(item, item.id)}>
                                                                         <i className="fas fa-edit"></i>
                                                                     </div>
-                                                                    <div className=' it-icon-close' onClick={() => this.handleCancelRequest(item, item.id)}>
+                                                                    <div className=' send-icon-close' onClick={() => this.handleCancelRequest(item, item.id)}>
                                                                         <i className="fas fa-minus-square"></i>
                                                                     </div>
                                                                 </>
@@ -258,12 +262,11 @@ class SendRequest extends Component {
                                             </>
                                         )
                                     })
-
                                 }
                             </tbody>
                         </table>
                     </div>
-                    <div className='it-support-paginate'>
+                    <div className='send-support-paginate'>
                         <ReactPaginate
                             nextLabel="next >"
                             onPageChange={this.handlePageClick}
@@ -294,7 +297,10 @@ class SendRequest extends Component {
                         handleCloseModal={this.handleCloseModal}
                     />
                 </div >
-            </>
+                <div className='footer-home'>
+                    <HomeFooter />
+                </div>
+            </div>
         )
     }
 }

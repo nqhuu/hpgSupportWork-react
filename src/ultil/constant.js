@@ -21,7 +21,16 @@ export const VALUE = {
     PHAN_CUNG: 'PC',
     PHAN_MEM: 'PM',
     SEND_REQUEST: 'SEND_REQUEST',
-    HANDLE_REQUEST: 'HANDLE_REQUEST'
+    HANDLE_REQUEST: 'HANDLE_REQUEST',
+    MAIN_MEAL: 'RPM',
+    SIDE_MEAL: 'RPE',
+    OVER_TIME: 'STR2'
+}
+
+export const STATUS_REPORT_HR = {
+    DI_LAM: 'STUR1',
+    DI_MUON: 'STUR2',
+    NGHI: 'STUR3'
 }
 
 export const CODE = {

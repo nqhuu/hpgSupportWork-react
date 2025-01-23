@@ -1,52 +1,68 @@
-.it-create-support-container {
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.send-request-container {
     display: flex;
     flex-direction: column;
-    margin: 0 10px;
 
-    .it-support-header {
-        padding: 10px 0;
+    .header-home {}
+
+    .send-create-support-container {
         display: flex;
-        justify-content: space-between;
+        flex-direction: column;
+        margin: 10px 100px;
+        height: 85vh;
+        // box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        // border-radius: 8px;
 
-        .it-support-text {
-            // padding-left: 10px;
-            font-weight: 700;
+        .send-support-header {
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-between;
+
+            .send-support-text {
+                // padding-left: 10px;
+                font-weight: 700;
+            }
+
+            .send-support-creat {
+                // padding-right: 10px;
+                padding: 0 20px !important;
+            }
         }
 
-        .it-support-creat {
-            // padding-right: 10px;
-            padding: 0 20px !important;
-        }
-    }
+        .send-support-body {
+            .send-support-table {
+                .send-support-icon-handle-container {
+                    display: flex;
+                    gap: 10px;
+                    font-size: 20px;
+                    cursor: pointer;
 
-    .it-support-body {
-        .it-support-table {
-            .it-support-icon-handle-container {
-                display: flex;
-                gap: 10px;
-                font-size: 20px;
-                cursor: pointer;
+                    .send-support-icon-edit {
+                        color: rgb(107, 105, 105);
 
-
-
-                .it-support-icon-edit {
-                    color: rgb(107, 105, 105);
-
-                    &:hover {
-                        color: #0e0d0d;
+                        &:hover {
+                            color: #0e0d0d;
+                        }
                     }
-                }
 
-                .it-icon-close {
-                    color: rgb(252, 67, 67);
+                    .send-icon-close {
+                        color: rgb(252, 67, 67);
 
-                    &:hover {
-                        color: red;
+                        &:hover {
+                            color: red;
+                        }
                     }
                 }
             }
         }
+
+        .send-support-paginate {}
     }
 
-    .it-support-paginate {}
+    .footer-home {}
 }

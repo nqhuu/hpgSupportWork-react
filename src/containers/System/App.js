@@ -13,6 +13,7 @@ import HomePage from '../HomePage/HomePage';
 import Support from '../../routes/Support';
 import HomeBody from '../HomePage/HomeBody';
 import ProtectedRoute from './ProtectedRoute'
+import HumanResources from '../../routes/HumanResources'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -47,11 +48,18 @@ class App extends Component {
               </ProtectedRoute>)
             } />
 
+            <Route path="/hr/" render={() => (
+              <ProtectedRoute>
+                <HumanResources />
+              </ProtectedRoute>)
+            } />
+
             <Route path="/" render={() => (
               <ProtectedRoute>
                 <HomePage />
               </ProtectedRoute>)
             } />
+
           </Switch>
           <ToastContainer
             position="bottom-right"

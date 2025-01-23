@@ -5,15 +5,10 @@ import { connect } from 'react-redux';
 import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
 import { withRouter } from "react-router";
 import { path, CODE, VALUE } from '../../ultil/constant';
-import ElectricalSupport from '../../components/support/ElectricalSupport';
-import SendRequest from '../../components/support/SendRequest';
 import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
-import ItSupportHome from '../../components/home/ItSupportHome';
 import HandleRequest from '../../components/support/HandleRequest'
-import ElectricalSupportHome from '../../components/home/ElectricalSupportHome';
-// import HomePage from '../HomePage/HomePage';
 import './HomeBody.scss'
 
 
@@ -25,6 +20,9 @@ class Homebody extends Component {
 
     }
 
+    moveToReport = () => {
+        this.props.history.push('/hr/personel-report');
+    }
 
 
     render() {
@@ -46,12 +44,13 @@ class Homebody extends Component {
 
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/menu-tast/it-support">
+                                            {/* <NavLink className="dropdown-item" exact to="/menu-tast/it-support"> */}
+                                            <NavLink className="dropdown-item" exact to="/support/send-request-support-it">
                                                 IT support
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/menu-tast/electrical-support">
+                                            <NavLink className="dropdown-item" exact to="/support/send-request-support-elect">
                                                 Cơ điện
                                             </NavLink>
                                         </li>
@@ -76,7 +75,7 @@ class Homebody extends Component {
                                     </ul>
                                 </div>
                                 <div className='report-hr'>
-                                    <button type="button" className="btn ">
+                                    <button type="button" className="btn " onClick={() => this.moveToReport()}>
                                         <i className="fas fa-user-check" style={{ paddingRight: '14px' }}></i>
                                         Báo cáo nhân sự
                                     </button>
@@ -152,7 +151,7 @@ class Homebody extends Component {
                                 <div className='d-flex  personnel-Reports-container'>
                                     <div className='table-content personnel-Reports ' >
                                         <div className='header'>Báo cáo nhân sự - Home</div>
-                                        <ElectricalSupportHome />
+
                                     </div>
                                     <div className='bar-chart'>
                                         bảng phụ gì đó
@@ -162,17 +161,18 @@ class Homebody extends Component {
                         }
 
                         <Switch>
-                            <Route
+                            {/* <Route
                                 path="/menu-tast/it-support"
                                 render={(props) => <SendRequest {...props} department={VALUE.NOT_YET_COMPLETE_IT} />}
                             // component={SendRequest} 
                             />
                             <Route
                                 path="/menu-tast/electrical-support"
-                                render={(props) => <SendRequest {...props} department={VALUE.NOT_YET_COMPLETE_CD} />} />
+                                render={(props) => <SendRequest {...props} department={VALUE.NOT_YET_COMPLETE_CD} />} /> */}
 
                             <Route path="/menu-tast/booking-room" component={BookingRoom} />
                             <Route path="/menu-tast/booking-car" component={BookingCar} />
+
 
 
                             {/* <Route path="*" component={HomePage} /> */}
