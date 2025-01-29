@@ -66,6 +66,44 @@ export const getAllSupportFailed = () => ({
     type: actionTypes.FETCH_ALL_REQUEST_FAIL
 })
 
+export const getAllSelectPersonnelRedux = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let listTime = await getAllCodeService('TIME')
+            let listStatusUserReport = await getAllCodeService('STUSERREPORT')
+
+            let response = {};
+            if (listTime && listTime.errCode === 0) {
+                response.listTime = listTime.data
+            }
+            if (listStatusUserReport && listStatusUserReport.errCode === 0) {
+                response.listStatusUserReport = listStatusUserReport.data
+            }
+
+
+            if (response) {
+                // console.log(response)
+                dispatch(getAllSelectPersonneSuccess(response))
+            }
+            else {
+                dispatch(getAllSelectPersonneFailed())
+            }
+        } catch (e) {
+            dispatch(getAllSelectPersonneFailed())
+            console.log('getAllSelectPersonnelRedux error', e)
+        }
+    }
+}
+
+export const getAllSelectPersonneSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_SUCCESS,
+    allSelectPersonnel: data
+})
+
+export const getAllSelectPersonneFailed = () => ({
+    type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_FAIL
+})
 
 export const getAllLocation = () => {
     return async (dispatch, getState) => {
@@ -139,8 +177,9 @@ export const getAllErrorCodeFailed = () => ({
 
 
 export const getAllPersonnelRedux = (dataDay, shiftsId, departmentId) => {
-    if (!shiftsId) shiftsId = null;
-    if (!departmentId) departmentId = null;
+    if (!shiftsId) shiftsId = '';
+    if (!departmentId) departmentId = '';
+    console.log()
     return async (dispatch, getState) => {
         try {
             dispatch({ type: actionTypes.FETCH_ALL_PERSONNEL_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu

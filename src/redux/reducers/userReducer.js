@@ -12,6 +12,7 @@ const initialState = {
     allLocation: [],
     allErrorCode: [],
     allPersonnel: [],
+    allSelectPersonnel: []
 
 }
 
@@ -90,6 +91,18 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allPersonnel: []
+            }
+
+
+        case actionTypes.FETCH_ALL_SELECT_PERSONNEL_SUCCESS:
+            return {
+                ...state,
+                allSelectPersonnel: action.allSelectPersonnel
+            }
+        case actionTypes.FETCH_ALL_SELECT_PERSONNEL_FAIL:
+            return {
+                ...state,
+                allSelectPersonnel: []
             }
         default:
             return state;

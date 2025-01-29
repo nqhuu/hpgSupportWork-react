@@ -78,27 +78,7 @@ class ModalPersonel extends Component {
                     </div>
 
                     <div className='modal-hr-body '>
-                        <form className="row">
-                            <div className="mb-3 form-group col-3">
-                                <label className="form-label" >Loại lỗi (*)</label>
-                                {/* <input type="text" className="form-control" id="" /> */}
-                                <Select
-                                    name="selectTypeErrorPm"
-                                    value=""
-                                    options={"list"}
-                                    onChange={this.handleChangeSelect}
-                                />
-                            </div>
-                            <div className="input-group mb-3 col-3 " >
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    id="text"
-                                    onChange={(e) => this.handleOnchangeImg(e)}
-                                />
-                                <label className="input-group-text" htmlFor="inputGroupFile02"></label>
-                            </div>
-                        </form>
+
                     </div>
                 </div>
 
