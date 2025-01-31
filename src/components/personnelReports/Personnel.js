@@ -23,34 +23,21 @@ class Personnel extends Component {
     state = {
         listUser: [],
         listTime: [],
-        listTimeSelect: {},
         listStatusUserReport: [],
-        listStatusUserReportSelect: {},
         isOpenModal: false
     }
 
     componentDidMount = async () => {
-        await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
-        // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+        await this.props.getAllSelectPersonnelRedux();
+        // await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+        await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
             this.getAllUser()
         };
 
-        await this.props.getAllSelectPersonnelRedux();
     }
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
-        if (prevProps.allPersonnel !== this.props.allPersonnel) {
-            let allPersonnelRedux = this.props.allPersonnel
-            console.log(allPersonnelRedux)
-            let allPersonnel = allPersonnelRedux.map((item, index) => {
-                item.fullName = `${item.personnelReportData[0].firstName}${item.personnelReportData[0].lastName}`
-                return item
-            })
-            this.setState({
-                listUser: allPersonnel
-            })
-        }
 
         if (prevProps.allSelectPersonnel !== this.props.allSelectPersonnel) {
             if (this.props.allSelectPersonnel && this.props.allSelectPersonnel.listStatusUserReport) {
@@ -63,7 +50,6 @@ class Personnel extends Component {
                 })
                 this.setState({
                     listStatusUserReport: listStatusUserReportHandle,
-                    listStatusUserReportSelect: listStatusUserReportHandle[0]
                 })
             }
             if (this.props.allSelectPersonnel && this.props.allSelectPersonnel.listTime) {
@@ -79,6 +65,25 @@ class Personnel extends Component {
                 })
             }
         }
+
+        if (prevProps.allPersonnel !== this.props.allPersonnel) {
+            console.log(this.state.listStatusUserReport)
+            console.log(this.state.listTime)
+            let listStatusUserReport = this.state?.listStatusUserReport;
+            let listTime = this.state?.listTime;
+            let allPersonnelRedux = this.props.allPersonnel
+            let allPersonnel = allPersonnelRedux.map((item, index) => {
+                item.fullName = `${item.personnelReportData.firstName} ${item.personnelReportData.lastName}`
+                item.employeeCode = item.personnelReportData.employeeCode
+                item.statusUserId = listStatusUserReport.filter(status => item.statusUserId === status.value)[0]
+                if (item.delayId) item.delayId = listTime.filter(time => item.delayId === +time.label)[0]
+                return item
+            })
+            this.setState({
+                listUser: allPersonnel
+            })
+        }
+
 
     }
 
@@ -104,7 +109,7 @@ class Personnel extends Component {
                 select.statusUserId = { value: `${STATUS_REPORT_HR.DI_LAM}`, label: 'Đi làm đúng giờ' };; // tình trạng đi làm
                 select.licensed = '';
                 select.note = '';
-                select.delayId = {};
+                select.delayId = '';
                 select.repastMId = 1; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
                 select.employeeCode = item.employeeCode; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
                 return select
@@ -140,21 +145,43 @@ class Personnel extends Component {
         selectCopy.value = selectOptions.value;
         selectCopy.label = selectOptions.label;
 
-        if (selectCopy.value === STATUS_REPORT_HR.DI_LAM || selectCopy.value === STATUS_REPORT_HR.NGHI) {
+        if (selectCopy.value === STATUS_REPORT_HR.DI_LAM) {
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: {} } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: {}, licensed: "" } : row
+                ),
+            }));
+            return;
+        }
+
+        if (selectCopy.value === STATUS_REPORT_HR.NGHI) {
+            this.setState((prevState) => ({
+                listUser: prevState.listUser.map((row) =>
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: {}, licensed: 0, repastMId: 0 } : row
                 ),
             }));
             return;
         }
 
 
+        if (selectCopy.value === STATUS_REPORT_HR.DI_MUON) {
+            console.log("3", selectCopy, actionMeta.name)
+
+            this.setState((prevState) => ({
+                listUser: prevState.listUser.map((row) =>
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, licensed: 0 } : row
+                ),
+            }));
+            return;
+        }
+
         this.setState((prevState) => ({
             listUser: prevState.listUser.map((row) =>
-                row.userId === id ? { ...row, [actionMeta.name]: selectCopy, } : row //delayId: selectCopy.value !== STATUS_REPORT_HR.DI_MUON && {}
+                row.userId === id ? { ...row, [actionMeta.name]: selectCopy } : row
             ),
         }));
+
+
     }
 
 
@@ -186,10 +213,9 @@ class Personnel extends Component {
             ...item,
             [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-
         this.setState((prevState) => ({
             listUser: prevState.listUser.map((user) =>
-                user.id === updatedItem.id ? updatedItem : user
+                user.userId === updatedItem.userId ? updatedItem : user
             ),
         }));
     }
@@ -213,14 +239,14 @@ class Personnel extends Component {
                         <p>{`Bộ phận: ${this.props?.userInfo?.departmentUserData?.departmentName || ''}`}</p>
                         <p>{`Ca/Kip: ${this.props?.userInfo?.shiftId || ''}`}</p>
                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
-                            <button type="button" class="btn btn-primary" onClick={() => this.handleOpenModal()}>Báo tăng ca</button>
+                            <button type="button" className="btn btn-primary" onClick={() => this.handleOpenModal()}>Báo tăng ca</button>
                         }
                         <div className="mt-3">
                             <table className="table table-striped">
                                 <thead>
                                     <tr>
                                         <th>STT</th>
-                                        <th>Mã</th>
+                                        <th>Mã NV</th>
                                         <th>Họ Tên</th>
                                         <th>Tình trạng</th>
                                         <th>Phép</th>
@@ -247,17 +273,21 @@ class Personnel extends Component {
                                                             />
                                                         </td>
                                                         <td>
-                                                            <div className="form-check" onClick={(event) => this.handleCheckBox(event, item)}>
+                                                            {/* <div className="form-check" > */}
+                                                            <>
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
                                                                     id={item.userId}
                                                                     name="licensed"
-                                                                    value={0}
+                                                                    checked={item.licensed === 1}
+                                                                    // value={0}
                                                                     disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                    onChange={(event) => this.handleCheckBox(event, item)}
                                                                 />
                                                                 <label className="form-check-label" htmlFor={item.userId}></label>
-                                                            </div>
+                                                                {/* </div> */}
+                                                            </>
                                                         </td>
                                                         <td>
                                                             <Select
@@ -279,17 +309,21 @@ class Personnel extends Component {
                                                             {/* </div> */}
                                                         </td>
                                                         <td>
-                                                            <div className="form-check" onClick={(event) => this.handleCheckBox(event, item)}>
+                                                            {/* <div className="form-check" > */}
+                                                            <>
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
                                                                     id={item.userId}
                                                                     name="repastMId"
+                                                                    disabled={item.statusUserId.value === STATUS_REPORT_HR.NGHI}
                                                                     // value={1}
-                                                                    defaultChecked
+                                                                    checked={item.repastMId === 1}
+                                                                    onChange={(event) => this.handleCheckBox(event, item)}
                                                                 />
                                                                 <label className="form-check-label" htmlFor={item.userId}></label>
-                                                            </div>
+                                                                {/* </div> */}
+                                                            </>
                                                         </td>
                                                     </tr>
                                                 </>
@@ -300,7 +334,7 @@ class Personnel extends Component {
                             </table>
                         </div>
                         {!this.props.allPersonnel || this.props.allPersonnel.length === 0 &&
-                            <button type="button" class="btn btn-primary" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
+                            <button type="button" className="btn btn-primary" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
                         }
                     </div>
                     <div className='personel-footer'>
