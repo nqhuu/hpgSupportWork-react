@@ -50,9 +50,14 @@ const getAllPersonnel = (dataDay, shiftsId, departmentId) => {
     if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
 }
 
+const handleCreateUpdatePerSonnelReport = (data) => {
+    return axios.post('/users/api/create-update-personnel-report', data)
+}
+
 export {
     handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
     getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport, getAllPersonnel,
+    handleCreateUpdatePerSonnelReport
 
 
 }

@@ -4,7 +4,7 @@ import ReactPaginate from 'react-paginate';
 import './Personnel.scss'
 import * as actions from "../../redux/actions";
 import { VALUE, STATUS_REPORT_HR } from '../../ultil/constant';
-import { getAllUser, updateRequestSupport } from '../../services/userService'
+import { getAllUser, handleCreateUpdatePerSonnelReport } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
@@ -29,8 +29,8 @@ class Personnel extends Component {
 
     componentDidMount = async () => {
         await this.props.getAllSelectPersonnelRedux();
-        // await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
-        await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+        await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+        // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
             this.getAllUser()
         };
@@ -67,8 +67,8 @@ class Personnel extends Component {
         }
 
         if (prevProps.allPersonnel !== this.props.allPersonnel) {
-            console.log(this.state.listStatusUserReport)
-            console.log(this.state.listTime)
+            // console.log(this.state.listStatusUserReport)
+            // console.log(this.state.listTime)
             let listStatusUserReport = this.state?.listStatusUserReport;
             let listTime = this.state?.listTime;
             let allPersonnelRedux = this.props.allPersonnel
@@ -148,7 +148,7 @@ class Personnel extends Component {
         if (selectCopy.value === STATUS_REPORT_HR.DI_LAM) {
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: {}, licensed: "" } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: "" } : row
                 ),
             }));
             return;
@@ -157,7 +157,7 @@ class Personnel extends Component {
         if (selectCopy.value === STATUS_REPORT_HR.NGHI) {
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: {}, licensed: 0, repastMId: 0 } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: 0, repastMId: 0 } : row
                 ),
             }));
             return;
@@ -220,11 +220,27 @@ class Personnel extends Component {
         }));
     }
 
+    handleSendReport = async () => {
+        let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
+        let response = await handleCreateUpdatePerSonnelReport({
+            listUser: this.state.listUser,
+            date: formattedDate,
+            departmentId: this.props.userInfo.departmentId,
+            shiftId: this.props.userInfo.shiftId
+        })
+
+        if (response && response.errCode === 0) {
+            toast.success(response.errMessage)
+            await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+
+        }
+
+    }
+
     render() {
-        // console.log(this.props.allPersonnel)
+        // console.log(this.props.userInfo)
         console.log(this.state)
-        let { listUser, listTime, listTimeSelect,
-            listStatusUserReport } = this.state
+        let { listUser, listTime, listStatusUserReport } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
             <>
@@ -273,7 +289,6 @@ class Personnel extends Component {
                                                             />
                                                         </td>
                                                         <td>
-                                                            {/* <div className="form-check" > */}
                                                             <>
                                                                 <input
                                                                     className="form-check-input"
@@ -286,7 +301,6 @@ class Personnel extends Component {
                                                                     onChange={(event) => this.handleCheckBox(event, item)}
                                                                 />
                                                                 <label className="form-check-label" htmlFor={item.userId}></label>
-                                                                {/* </div> */}
                                                             </>
                                                         </td>
                                                         <td>
@@ -299,17 +313,14 @@ class Personnel extends Component {
                                                             />
                                                         </td>
                                                         <td>
-                                                            {/* <div class="form-group" onChange={(event) => this.handleChangeInput(event, item)} > */}
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
                                                                 onChange={(event) => this.handleChangeInput(event, item)}
                                                                 disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
                                                             />
-                                                            {/* </div> */}
                                                         </td>
                                                         <td>
-                                                            {/* <div className="form-check" > */}
                                                             <>
                                                                 <input
                                                                     className="form-check-input"
@@ -322,7 +333,6 @@ class Personnel extends Component {
                                                                     onChange={(event) => this.handleCheckBox(event, item)}
                                                                 />
                                                                 <label className="form-check-label" htmlFor={item.userId}></label>
-                                                                {/* </div> */}
                                                             </>
                                                         </td>
                                                     </tr>
@@ -358,7 +368,6 @@ const mapStateToProps = state => {
         userInfo: state.user.userInfo,
         allPersonnel: state.user.allPersonnel,
         allSelectPersonnel: state.user.allSelectPersonnel,
-        // listTime: state.user.allSelectPersonnel.listTime
     };
 };
 
