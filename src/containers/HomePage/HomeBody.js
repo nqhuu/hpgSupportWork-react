@@ -20,9 +20,9 @@ class Homebody extends Component {
 
     }
 
-    moveToReport = () => {
-        this.props.history.push('/hr/personel-report');
-    }
+    // moveToReport = () => {
+    //     this.props.history.push('/hr/personel-report');
+    // }
 
 
     render() {
@@ -38,6 +38,8 @@ class Homebody extends Component {
                             <div className='menu-list'>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                                        {/* <i className="fas fa-phone-square-alt" style={{ paddingRight: '20px' }}></i> */}
                                         <i className="fas fa-tty" style={{ paddingRight: '20px' }}></i>
                                         Yêu cầu hỗ trợ
                                     </button>
@@ -58,7 +60,7 @@ class Homebody extends Component {
                                 </div>
                                 <div className="dropdown dropend">
                                     <button className="btn  dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <i className="far fa-address-book" style={{ paddingRight: '20px' }}></i>
+                                        <i className="fas fa-address-book" style={{ paddingRight: '20px' }}></i>
                                         Booking
                                     </button>
                                     <ul className="dropdown-menu">
@@ -74,11 +76,24 @@ class Homebody extends Component {
                                         </li>
                                     </ul>
                                 </div>
-                                <div className='report-hr'>
-                                    <button type="button" className="btn " onClick={() => this.moveToReport()}>
+                                <div className="report-hr dropdown dropend">
+                                    {/* onClick={() => this.moveToReport()} */}
+                                    <button type="button" className="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i className="fas fa-user-check" style={{ paddingRight: '14px' }}></i>
-                                        Báo cáo nhân sự
+                                        Nhân sự
                                     </button>
+                                    <ul className="dropdown-menu">
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/hr/personel-report">
+                                                Báo cáo nhân sự
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/hr/personel-report">
+                                                Xin nghỉ phép
+                                            </NavLink>
+                                        </li>
+                                    </ul>
                                 </div>
                                 <div className='report-all'>
                                     <button type="button" className="btn ">

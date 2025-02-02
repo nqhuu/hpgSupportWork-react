@@ -245,11 +245,11 @@ class HandleRequest extends Component {
                 {showHandle &&
                     <HomeHeader />
                 }
-                <div className={`${showHandle ? "handle-support-container-active" : "handle-support-container"}`}>
+                <div className={`${showHandle ? "handle-support-container-active table-responsive" : "handle-support-container table-responsive"}`}>
                     {showHandle &&
                         <div className='header-it'><h2>Xử lý yêu cầu IT</h2></div>
                     }
-                    <table className="table">
+                    <table className="table table-responsive">
                         <thead>
                             <tr>
                                 <th>STT</th>

@@ -1,9 +1,42 @@
+// .personel-container {
+//     display: flex;
+//     flex-direction: column;
+
+
+//     .personel-header {}
+
+//     .personel-body {
+//         padding: 20px 50px;
+//     }
+
+//     .personel-footer {
+//         height: 50px;
+
+//     }
+// }
+
 .personel-container {
-    .personel-header {}
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Chiều cao tối thiểu bằng toàn màn hình */
+}
 
-    .personel-body {
-        padding: 20px 50px;
+.personel-body {
+    flex: 1;
+    /* Đẩy footer xuống */
+    padding: 20px 50px;
+
+    .table-responsive {
+        overflow: visible !important;
+        /* Cho phép phần tử con hiển thị vượt ra ngoài */
+        position: relative;
+        /* Đảm bảo vị trí phù hợp */
     }
+}
 
-    .personel-footer {}
+.personel-footer {
+    height: 50px;
+    // background-color: #f1f1f1;
+    /* Màu nền cho dễ nhìn */
 }
