@@ -272,9 +272,10 @@ class ModalHandleRequest extends Component {
             selectTypeErrorPc, selectTypeErrorPm, selectLevel]
 
         let isEmpty = false;
-        if (selectType && selectType.value === VALUE.PHAN_CUNG) {
+        if (selectType && selectType.value === VALUE.PHAN_CUNG) { // xác định các thuộc tính cần check, nếu là phần cứng thì xóa các thuộc tính của phần mềm trong mảng check sao đó check
             let newArray = [...arrayCheck]
 
+            // tìm index trong mảng của thuộc tính cần xóa và sử dụng splice để xóa
             const index = newArray.indexOf(selectSoft);
             if (index !== -1) newArray.splice(index, 1);
 
@@ -294,7 +295,6 @@ class ModalHandleRequest extends Component {
             isEmpty = newArray.some(item => _.isEmpty(item))
         } else {
             isEmpty = true
-            console.log('isEmpty3', isEmpty)
         }
 
         return (isEmpty)

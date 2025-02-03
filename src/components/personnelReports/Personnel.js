@@ -8,7 +8,7 @@ import { getAllUser, handleCreateUpdatePerSonnelReport } from '../../services/us
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
-import _ from 'lodash'
+import _, { indexOf } from 'lodash'
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // import moment from 'moment'
@@ -26,8 +26,10 @@ class Personnel extends Component {
         listStatusUserReport: [],
         isOpenModal: false,
         listExtra: [],
-        showHide: false
-    }
+        showHide: false,
+        idDisable: '',
+        listUserBeforEdit: [],
+    };
 
     componentDidMount = async () => {
         await this.props.getAllSelectPersonnelRedux();
@@ -37,7 +39,7 @@ class Personnel extends Component {
             this.getAllUser()
         };
 
-    }
+    };
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
 
@@ -53,7 +55,7 @@ class Personnel extends Component {
                 this.setState({
                     listStatusUserReport: listStatusUserReportHandle,
                 })
-            }
+            };
             if (this.props.allSelectPersonnel && this.props.allSelectPersonnel.listTime) {
                 let array = this.props.allSelectPersonnel.listTime;
                 let listTimeHandle = array.map(item => {
@@ -65,8 +67,8 @@ class Personnel extends Component {
                 this.setState({
                     listTime: listTimeHandle,
                 })
-            }
-        }
+            };
+        };
 
         if (prevProps.allPersonnel !== this.props.allPersonnel) {
             // console.log(this.state.listStatusUserReport)
@@ -84,17 +86,15 @@ class Personnel extends Component {
             this.setState({
                 listUser: allPersonnel
             })
-        }
-
-
-    }
+        };
+    };
 
     getAllUser = async () => {
         let listUser = await getAllUser('', this.props?.userInfo?.departmentId)
         if (listUser && listUser.errCode === 0) {
             this.setStateListUser(listUser.data)
         }
-    }
+    };
 
     setStateListUser = async (listUser) => {
         let listUserWorkShifts
@@ -126,21 +126,21 @@ class Personnel extends Component {
                 listUser: listUserWorkShifts
             })
         }
-    }
+    };
 
 
     handleOpenModal = async () => {
         this.setState({
             isOpenModal: true
         })
-    }
+    };
 
 
     handleCloseModal = () => {
         this.setState({
             isOpenModal: false,
         })
-    }
+    };
 
     handleChange = async (selectOptions, actionMeta, id,) => {
         let selectCopy = { ...this.state[actionMeta.name] }
@@ -150,7 +150,7 @@ class Personnel extends Component {
         if (selectCopy.value === STATUS_REPORT_HR.DI_LAM) {
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: "" } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: "", repastMId: 1 } : row
                 ),
             }));
             return;
@@ -167,11 +167,9 @@ class Personnel extends Component {
 
 
         if (selectCopy.value === STATUS_REPORT_HR.DI_MUON) {
-            console.log("3", selectCopy, actionMeta.name)
-
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, licensed: 0 } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, licensed: 0, repastMId: 1 } : row
                 ),
             }));
             return;
@@ -184,16 +182,11 @@ class Personnel extends Component {
         }));
 
 
-    }
-
+    };
 
     handleSave = async (item) => {
 
-    }
-
-    handleComplete = async (item) => {
-
-    }
+    };
 
     handleChangeInput = async (event, item) => {
 
@@ -208,7 +201,7 @@ class Personnel extends Component {
                 user.userId === updatedItem.userId ? updatedItem : user
             ),
         }));
-    }
+    };
 
     handleCheckBox = async (event, item) => {
         const updatedItem = {
@@ -220,7 +213,7 @@ class Personnel extends Component {
                 user.userId === updatedItem.userId ? updatedItem : user
             ),
         }));
-    }
+    };
 
     handleSendReport = async () => {
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
@@ -237,30 +230,151 @@ class Personnel extends Component {
 
         }
 
-    }
+    };
 
     handleShowHide = async () => {
         this.setState({
-            showHide: !this.state.showHide
+            showHide: true,
+            listExtra: [
+                {
+                    reporterId: this.props.userInfo.id,
+                    quantity: '',
+                    departmentId: this.props.userInfo.departmentId,
+                    shiftId: this.props.userInfo.shiftId,
+                    userType: {},
+                    overtimeId: {},
+                    repastMId: 1,
+                    repastEId: '',
+                    note: '',
+                    statusId: ''
+                }
+            ],
         })
-    }
+    };
 
     handleCancelExtra = async () => {
         if (window.confirm("Bạn có hủy bỏ?")) {
             this.handleShowHide()
             this.setState({
-                listExtra: []
+                listExtra: [],
+                showHide: false
             })
+        }
+    };
+
+    handleCheckBoxExtra = async (event, item, index) => {
+        const updatedItem = {
+            ...item,
+            [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
+        };
+        this.setState((prevState) => ({
+            listExtra: prevState.listExtra.map((user, indexList) =>
+                indexList === index ? updatedItem : user
+            ),
+        }));
+    };
+
+    handleSelectExtra = async (event, item, index) => {
+        const updatedItem = {
+            ...item,
+            userType: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
+        };
+
+        //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
+        this.setState((prevState) => ({
+            listExtra: prevState.listExtra.map((user, indexList) =>
+                indexList === index ? updatedItem : user
+            ),
+        }));
+    }
+
+    handleChangeInputExtra = async (event, item, index, id) => {
+        const updatedItem = {
+            ...item,
+            [id]: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
+        };
+
+        //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
+        this.setState((prevState) => ({
+            listExtra: prevState.listExtra.map((user, indexList) =>
+                indexList === index ? updatedItem : user
+            ),
+        }));
+    };
+
+    HandleDeleteExtra = async (event, item, index) => {
+        let listExtraCopy = [...this.state.listExtra]
+        if (listExtraCopy.length > 1) {
+            if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
+                listExtraCopy.splice(index, 1)
+                this.setState({
+                    listExtra: listExtraCopy
+                })
+                toast.success('Xóa thành công')
+            }
+        } else {
+            toast.error('Không thể xóa bản ghi đầu tiên, Click X đỏ để hủy bỏ ')
         }
     }
 
-    handleAddExtra = async () => {
-        alert("add thêm ")
+
+    validateExtra = async () => {
+        let listExtra = [...this.state.listExtra]
+        let listExtraCopy = [listExtra[listExtra.length - 1].userType, listExtra[listExtra.length - 1].quantity];
+        let validate = false;
+        validate = await listExtraCopy.some(item => _.isEmpty(item))
+        return validate
     }
+
+    handleAddExtra = async () => {
+        let check = await this.validateExtra()
+        let listExtraCopy = [...this.state.listExtra];
+        if (!check) {
+            let addExtra = {
+                reporterId: this.props.userInfo.id,
+                quantity: '',
+                departmentId: this.props.userInfo.departmentId,
+                shiftId: this.props.userInfo.shiftId,
+                userType: {},
+                overtimeId: {},
+                repastMId: 1,
+                repastEId: '',
+                note: '',
+                statusId: ''
+            }
+            listExtraCopy.push(addExtra);
+        } else {
+            toast.warning('Bạn cần nhập đủ các trường có dấu (*)')
+        }
+        this.setState({
+            listExtra: listExtraCopy
+        })
+    };
+
+    handleEdit = async (item, id) => {
+        this.setState((prevState) => {
+            if (id === 'edit') { // Lần click vào "edit"
+                return {
+                    idDisable: item.userId,
+                    listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
+                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                };
+            }
+
+            if (id === "cancelEdit") { // Click vào "cancelEdit"
+                return {
+                    idDisable: '',
+                    listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
+                    listUserBeforEdit: [] // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                };
+            }
+            return null;
+        });
+    };
+
     render() {
-        // console.log(this.props.userInfo)
         console.log(this.state)
-        let { listUser, listTime, listStatusUserReport } = this.state
+        let { listUser, listTime, listStatusUserReport, idDisable, listExtra } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
             <>
@@ -268,7 +382,6 @@ class Personnel extends Component {
                     <div className='personel-header'>
                         <HomeHeader />
                     </div>
-
                     <div className='personel-body'>
                         <h2>Báo cáo nhận sự</h2>
                         <p>{`Ngày: ${formattedDate}`}</p>
@@ -276,6 +389,9 @@ class Personnel extends Component {
                         <p>{`Ca/Kip: ${this.props?.userInfo?.shiftId || ''}`}</p>
                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
                             <button style={{ width: "120px" }} type="button" className="btn btn-primary" onClick={() => this.handleOpenModal()}>Báo tăng ca</button>
+                        }
+                        {!this.props.allPersonnel || this.props.allPersonnel.length === 0 &&
+                            <button style={{ width: "120px" }} type="button" className="btn btn-warning" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
                         }
                         <div className="mt-3 table-responsive">
                             <table className="table ">
@@ -300,14 +416,15 @@ class Personnel extends Component {
                                             return (
                                                 <>
                                                     <tr key={item.userId}>
-                                                        <td style={{ width: "3%", verticalAlign: "middle" }}>{index + 1}</td>
-                                                        <td style={{ width: "9%", verticalAlign: "middle" }}>{item.employeeCode}</td>
-                                                        <td style={{ width: "10%", verticalAlign: "middle" }}>{item.fullName}</td>
+                                                        <td style={{ width: "3%", }}>{index + 1}</td>
+                                                        <td style={{ width: "9%", }}>{item.employeeCode}</td>
+                                                        <td style={{ width: "10%", }}>{item.fullName}</td>
                                                         <td style={{ width: "11%" }}>
                                                             <Select
                                                                 value={item.statusUserId}
                                                                 options={listStatusUserReport}
                                                                 name='statusUserId'
+                                                                isDisabled={this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId}
                                                                 onChange={(selectOptions, actionMeta) => this.handleChange(selectOptions, actionMeta, item.userId)}
                                                             />
                                                         </td>
@@ -320,7 +437,10 @@ class Personnel extends Component {
                                                                     name="licensed"
                                                                     checked={item.licensed === 1}
                                                                     // value={0}
-                                                                    disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                    disabled={
+                                                                        item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                    }
                                                                     onChange={(event) => this.handleCheckBox(event, item)}
                                                                 />
                                                                 <label className="form-check-label" htmlFor={item.userId}></label>
@@ -332,15 +452,23 @@ class Personnel extends Component {
                                                                 options={listTime}
                                                                 name='delayId'
                                                                 onChange={(selectOptions, actionMeta) => this.handleChange(selectOptions, actionMeta, item.userId)}
-                                                                isDisabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM || item.statusUserId.value === STATUS_REPORT_HR.NGHI}
+                                                                isDisabled={
+                                                                    item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                    item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
+                                                                    (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                }
                                                             />
                                                         </td>
                                                         <td>
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
+                                                                value={item.note}
                                                                 onChange={(event) => this.handleChangeInput(event, item)}
-                                                                disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                disabled={
+                                                                    item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                    (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                }
                                                             />
                                                         </td>
                                                         <td style={{ width: "6%" }}>
@@ -350,7 +478,10 @@ class Personnel extends Component {
                                                                     type="checkbox"
                                                                     id={item.userId}
                                                                     name="repastMId"
-                                                                    disabled={item.statusUserId.value === STATUS_REPORT_HR.NGHI}
+                                                                    disabled={
+                                                                        item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                    }
                                                                     // value={1}
                                                                     checked={item.repastMId === 1}
                                                                     onChange={(event) => this.handleCheckBox(event, item)}
@@ -360,20 +491,22 @@ class Personnel extends Component {
                                                         </td>
                                                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
                                                             <td style={{ width: "6%" }}>
-                                                                <>
-                                                                    <div className='' >
-                                                                        <i className="fas fa-edit"></i>
+                                                                {idDisable !== item.userId ?
+                                                                    <div className='icon-edit' onClick={() => this.handleEdit(item, 'edit')}>
+                                                                        <i className="fas fa-edit" ></i>
                                                                     </div>
-                                                                    <div>
-                                                                        <i className="fas fa-save"></i>
-                                                                    </div>
-                                                                    <div className='' >
-                                                                        <i className="fas fa-window-close"></i>
-                                                                    </div>
-                                                                </>
+                                                                    :
+                                                                    <div className='icon-group-handle'>
+                                                                        <div className='icon-group-handle-save'>
+                                                                            <i className="fas fa-save" style={{ color: "orange" }}></i>
+                                                                        </div>
+                                                                        <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
+                                                                            <i class="fas fa-window-close" style={{ color: "red" }}></i>
+                                                                        </div>
+                                                                    </div >
+                                                                }
                                                             </td>
                                                         }
-
                                                     </tr>
                                                 </>
                                             )
@@ -398,66 +531,78 @@ class Personnel extends Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr >
-                                                <td style={{ width: "3%", verticalAlign: "middle" }}>1</td>
-                                                <td style={{ width: "9%" }} >
-                                                    <select
-                                                        class="form-select"
-                                                        aria-label="Default select example"
-                                                    >
-                                                        <option selected>Tuy chọn...</option>
-                                                        <option value="KH">Khách hàng</option>
-                                                        <option value="HV">Học việc</option>
-                                                        <option value="TV">Thời vụ</option>
-                                                    </select>
-                                                </td>
-                                                <td style={{ width: "10%" }} >
-                                                    <input
-                                                        type="number"
-                                                        className="form-control "
-                                                    // onChange={(event) => this.handleChangeInput(event, item)}
-                                                    // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
-                                                    />
-                                                </td>
-                                                <td><input
-                                                    type="text"
-                                                    className="form-control"
-                                                // onChange={(event) => this.handleChangeInput(event, item)}
-                                                // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
-                                                /></td>
-                                                <td style={{ width: "6%" }}>
-                                                    <>
-                                                        <input
-                                                            className="form-check-input"
-                                                            type="checkbox"
-                                                        // id={item.userId}
-                                                        // name="repastMId"
-                                                        // disabled={item.statusUserId.value === STATUS_REPORT_HR.NGHI}
-                                                        // value={1}
-                                                        // checked={item.repastMId === 1}
-                                                        // onChange={(event) => this.handleCheckBox(event, item)}
-                                                        />
-                                                        {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
-                                                    </>
-                                                </td>
-                                                <td style={{ width: "6%" }}>
-                                                    <>
-                                                        <div className='' >
-                                                            <i className="fas fa-edit"></i>
-                                                        </div>
-                                                        <div>
-                                                            <i className="fas fa-save"></i>
-                                                        </div>
-                                                        <div className='' >
-                                                            <i className="fas fa-window-close"></i>
-                                                        </div>
+                                            {listExtra && listExtra.length > 0 &&
 
-                                                        <div className='' >
-                                                            <i className="far fa-trash-alt"></i>
-                                                        </div>
-                                                    </>
-                                                </td>
-                                            </tr>
+                                                listExtra.map((item, index) => {
+                                                    return (
+                                                        <>
+                                                            <tr key={index}>
+                                                                <td style={{ width: "3%" }}>{index + 1}</td>
+                                                                <td style={{ width: "9%" }} >
+                                                                    <select
+                                                                        className="form-select"
+                                                                        aria-label="Default select example"
+                                                                        onChange={(event) => this.handleSelectExtra(event, item, index)}
+                                                                    >
+                                                                        <option selected>Tuy chọn...</option>
+                                                                        <option value="KH">Khách hàng</option>
+                                                                        <option value="HV">Học việc</option>
+                                                                        <option value="TV">Thời vụ</option>
+                                                                    </select>
+                                                                </td>
+                                                                <td style={{ width: "10%" }} >
+                                                                    <input
+                                                                        type="number"
+                                                                        className="form-control "
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, item, index, 'quantity')}
+                                                                    // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        type="text"
+                                                                        className="form-control"
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, item, index, 'note')}
+                                                                    // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                    /></td>
+                                                                <td style={{ width: "6%" }}>
+                                                                    <>
+                                                                        <input
+                                                                            className="form-check-input"
+                                                                            type="checkbox"
+                                                                            // id={item.userId}
+                                                                            name="repastMId"
+                                                                            // disabled={item.statusUserId.value === STATUS_REPORT_HR.NGHI}
+                                                                            // value={1}
+                                                                            checked={item.repastMId === 1}
+                                                                            onChange={(event) => this.handleCheckBoxExtra(event, item, index)}
+                                                                        />
+                                                                        {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
+                                                                    </>
+                                                                </td>
+                                                                <td style={{ width: "6%" }}>
+                                                                    <>
+                                                                        <div className='' >
+                                                                            <i className="fas fa-edit"></i>
+                                                                        </div>
+                                                                        <div>
+                                                                            <i className="fas fa-save"></i>
+                                                                        </div>
+                                                                        <div className='' >
+                                                                            <i className="fas fa-window-close"></i>
+                                                                        </div>
+
+                                                                        <div className='' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
+                                                                            <i className="far fa-trash-alt"></i>
+                                                                        </div>
+                                                                    </>
+                                                                </td>
+                                                            </tr>
+                                                        </>
+                                                    )
+                                                })
+
+                                            }
                                         </tbody>
                                     </table>
                                 </div>
@@ -468,11 +613,7 @@ class Personnel extends Component {
                                     <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
                                         <i className="fas fa-times fa-lg"></i>
                                     </button>
-                                    {!this.props.allPersonnel || this.props.allPersonnel.length === 0 ?
-                                        <button style={{ width: "120px" }} type="button" className="btn btn-warning" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
-                                        :
-                                        <button style={{ width: "120px" }} type="button" className="btn btn-warning" >Cập nhật</button>
-                                    }
+                                    {/* <button style={{ width: "120px" }} type="button" className="btn btn-warning" >Cập nhật</button> */}
                                 </div>
                             </>
                             :
@@ -483,9 +624,9 @@ class Personnel extends Component {
                             </div>
                         }
 
-                        {!this.props.allPersonnel || this.props.allPersonnel.length === 0 && !this.state.showHide &&
+                        {/* {!this.props.allPersonnel || this.props.allPersonnel.length === 0 && !this.state.showHide &&
                             <button style={{ width: "120px", marginTop: "10px" }} type="button" className="btn btn-warning" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
-                        }
+                        } */}
                     </div>
 
                     <div className='personel-footer'>

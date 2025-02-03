@@ -32,7 +32,35 @@
         /* Cho phép phần tử con hiển thị vượt ra ngoài */
         position: relative;
         /* Đảm bảo vị trí phù hợp */
+
+        td {
+            vertical-align: middle;
+
+            .icon-edit {
+                color: rgb(99, 92, 87);
+                cursor: pointer;
+                font-size: 20px;
+
+            }
+
+            .icon-group-handle {
+                display: flex;
+                gap: 10px;
+                padding-top: 2px;
+
+                .icon-group-handle-close,
+                .icon-group-handle-save {
+                    cursor: pointer;
+
+                    i {
+                        font-size: 22px;
+                    }
+                }
+            }
+        }
     }
+
+
 }
 
 .personel-footer {
