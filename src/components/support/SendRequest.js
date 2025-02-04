@@ -251,8 +251,8 @@ class SendRequest extends Component {
                                                                     <div className='send-support-icon-edit' onClick={() => this.handleEditProcessing(item, item.id)}>
                                                                         <i className="fas fa-edit"></i>
                                                                     </div>
-                                                                    <div className=' send-icon-close' onClick={() => this.handleCancelRequest(item, item.id)}>
-                                                                        <i className="fas fa-minus-square"></i>
+                                                                    <div className='send-icon-close' onClick={() => this.handleCancelRequest(item, item.id)}>
+                                                                        <i className="far fa-trash-alt"></i>
                                                                     </div>
                                                                 </>
                                                             }

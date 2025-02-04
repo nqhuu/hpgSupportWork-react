@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes'
-import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel } from '../../services/userService'
+import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel, getAllPersonnelExtra } from '../../services/userService'
 
 
 export const addUserSuccess = () => ({
@@ -138,8 +138,6 @@ export const getAllLocationFailed = () => ({
     type: actionTypes.FETCH_ALL_LOCATION_FAIL
 })
 
-
-
 export const getAllErrorCode = () => {
     return async (dispatch, getState) => {
         try {
@@ -209,6 +207,45 @@ export const getAllPersonnelReduxSuccess = (data) => ({
 export const getAllPersonnelReduxFailed = () => ({
     type: actionTypes.FETCH_ALL_PERSONNEL_FAIL,
 })
+
+
+
+
+
+export const getAllPersonnelExtraRedux = (dataDay, shiftsId, departmentId) => {
+    if (!shiftsId) shiftsId = '';
+    if (!departmentId) departmentId = '';
+    console.log()
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let listPersonnelExtra = await getAllPersonnelExtra(dataDay, shiftsId, departmentId)
+            let response = {
+                listPersonnelExtra: listPersonnelExtra.data
+            }
+            if (response) {
+                dispatch(getAllPersonnelExtraReduxSuccess(response))
+            }
+            else {
+                dispatch(getAllPersonnelExtraReduxFailed())
+            }
+        } catch (e) {
+            dispatch(getAllPersonnelExtraReduxFailed())
+            console.log('getAllPersonnelExtraReduxFailed error', e)
+        }
+    }
+}
+
+export const getAllPersonnelExtraReduxSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_SUCCESS,
+    allPersonnelExtra: data.listPersonnelExtra
+})
+
+
+export const getAllPersonnelExtraReduxFailed = () => ({
+    type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_FAIL,
+})
+
 
 
 

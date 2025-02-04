@@ -28,11 +28,13 @@ class Personnel extends Component {
         listExtra: [],
         showHide: false,
         idDisable: '',
+        idDisableExtra: '',
         listUserBeforEdit: [],
     };
 
     componentDidMount = async () => {
         await this.props.getAllSelectPersonnelRedux();
+        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
         // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
@@ -71,8 +73,6 @@ class Personnel extends Component {
         };
 
         if (prevProps.allPersonnel !== this.props.allPersonnel) {
-            // console.log(this.state.listStatusUserReport)
-            // console.log(this.state.listTime)
             let listStatusUserReport = this.state?.listStatusUserReport;
             let listTime = this.state?.listTime;
             let allPersonnelRedux = this.props.allPersonnel
@@ -87,6 +87,21 @@ class Personnel extends Component {
                 listUser: allPersonnel
             })
         };
+
+        if (prevProps.allPersonnelExtra !== this.props.allPersonnelExtra) {
+            let allPersonnelExtraRedux = [...this.props.allPersonnelExtra]
+            let allPersonnelExtra = allPersonnelExtraRedux.map((item, index) => {
+                let newItem = { ...item }
+                delete newItem.createdAt;
+                delete newItem.personnelExtraReportData;
+                delete newItem.updatedAt;
+                return newItem
+            })
+            this.setState({
+                listExtra: allPersonnelExtra,
+                showHide: true
+            })
+        }
     };
 
     getAllUser = async () => {
@@ -308,13 +323,36 @@ class Personnel extends Component {
             if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
                 listExtraCopy.splice(index, 1)
                 this.setState({
-                    listExtra: listExtraCopy
-                })
-                toast.success('Xóa thành công')
+                    listExtra: [...listExtraCopy]
+                }, () => toast.success('Xóa thành công'))
             }
         } else {
-            toast.error('Không thể xóa bản ghi đầu tiên, Click X đỏ để hủy bỏ ')
+            let check = await this.validateExtra();
+            let listExtraCopy = [...this.state.listExtra];
+            if (!check) {
+                if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
+                    this.setState({
+                        listExtra: [{
+                            id: Date.now(),
+                            reporterId: this.props.userInfo.id,
+                            quantity: '',
+                            departmentId: this.props.userInfo.departmentId,
+                            shiftId: this.props.userInfo.shiftId,
+                            userType: {},
+                            overtimeId: {},
+                            repastMId: 1,
+                            repastEId: '',
+                            note: '',
+                            statusId: ''
+                        }]
+                    }, () => toast.success('Xóa thành công'))
+                }
+            } else {
+                toast.error('Chưa có bản ghi nào, Click X đỏ để hủy bỏ ')
+            }
         }
+
+
     }
 
 
@@ -327,10 +365,11 @@ class Personnel extends Component {
     }
 
     handleAddExtra = async () => {
-        let check = await this.validateExtra()
+        let check = await this.validateExtra();
         let listExtraCopy = [...this.state.listExtra];
         if (!check) {
             let addExtra = {
+                id: Date.now(),
                 reporterId: this.props.userInfo.id,
                 quantity: '',
                 departmentId: this.props.userInfo.departmentId,
@@ -344,7 +383,7 @@ class Personnel extends Component {
             }
             listExtraCopy.push(addExtra);
         } else {
-            toast.warning('Bạn cần nhập đủ các trường có dấu (*)')
+            toast.warning('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng"')
         }
         this.setState({
             listExtra: listExtraCopy
@@ -373,8 +412,8 @@ class Personnel extends Component {
     };
 
     render() {
-        console.log(this.state)
-        let { listUser, listTime, listStatusUserReport, idDisable, listExtra } = this.state
+        console.log(this.state.listExtra)
+        let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
             <>
@@ -501,7 +540,7 @@ class Personnel extends Component {
                                                                             <i className="fas fa-save" style={{ color: "orange" }}></i>
                                                                         </div>
                                                                         <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
-                                                                            <i class="fas fa-window-close" style={{ color: "red" }}></i>
+                                                                            <i className="fas fa-window-close" style={{ color: "red" }}></i>
                                                                         </div>
                                                                     </div >
                                                                 }
@@ -517,9 +556,9 @@ class Personnel extends Component {
                         </div>
                         {this.state.showHide ?
                             <>
-                                <div class="table-responsive">
+                                <div className="table-responsive">
                                     <h4>Báo cáo nhân sự khác</h4>
-                                    <table class="table">
+                                    <table className="table">
                                         <thead>
                                             <tr>
                                                 <th>STT</th>
@@ -532,19 +571,22 @@ class Personnel extends Component {
                                         </thead>
                                         <tbody>
                                             {listExtra && listExtra.length > 0 &&
-
                                                 listExtra.map((item, index) => {
                                                     return (
                                                         <>
-                                                            <tr key={index}>
+                                                            <tr key={item.id}>
                                                                 <td style={{ width: "3%" }}>{index + 1}</td>
                                                                 <td style={{ width: "9%" }} >
                                                                     <select
                                                                         className="form-select"
                                                                         aria-label="Default select example"
+                                                                        value={item.userType}
+                                                                        disabled={
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                        }
                                                                         onChange={(event) => this.handleSelectExtra(event, item, index)}
                                                                     >
-                                                                        <option selected>Tuy chọn...</option>
+                                                                        {!item.userType && <option selected>Tuy chọn...</option>}
                                                                         <option value="KH">Khách hàng</option>
                                                                         <option value="HV">Học việc</option>
                                                                         <option value="TV">Thời vụ</option>
@@ -553,17 +595,24 @@ class Personnel extends Component {
                                                                 <td style={{ width: "10%" }} >
                                                                     <input
                                                                         type="number"
+                                                                        min={1}
+                                                                        value={item.quantity}
                                                                         className="form-control "
                                                                         onChange={(event) => this.handleChangeInputExtra(event, item, index, 'quantity')}
-                                                                    // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                        disabled={
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                        }
                                                                     />
                                                                 </td>
                                                                 <td>
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
+                                                                        value={item.note}
                                                                         onChange={(event) => this.handleChangeInputExtra(event, item, index, 'note')}
-                                                                    // disabled={item.statusUserId.value === STATUS_REPORT_HR.DI_LAM}
+                                                                        disabled={
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                        }
                                                                     /></td>
                                                                 <td style={{ width: "6%" }}>
                                                                     <>
@@ -572,7 +621,9 @@ class Personnel extends Component {
                                                                             type="checkbox"
                                                                             // id={item.userId}
                                                                             name="repastMId"
-                                                                            // disabled={item.statusUserId.value === STATUS_REPORT_HR.NGHI}
+                                                                            disabled={
+                                                                                (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                            }
                                                                             // value={1}
                                                                             checked={item.repastMId === 1}
                                                                             onChange={(event) => this.handleCheckBoxExtra(event, item, index)}
@@ -580,23 +631,30 @@ class Personnel extends Component {
                                                                         {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                                     </>
                                                                 </td>
-                                                                <td style={{ width: "6%" }}>
-                                                                    <>
-                                                                        <div className='' >
-                                                                            <i className="fas fa-edit"></i>
-                                                                        </div>
-                                                                        <div>
-                                                                            <i className="fas fa-save"></i>
-                                                                        </div>
-                                                                        <div className='' >
-                                                                            <i className="fas fa-window-close"></i>
-                                                                        </div>
+                                                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 &&
+                                                                    <td style={{ width: "6%" }}>
+                                                                        {idDisableExtra !== item.id ?
+                                                                            <div className=' icon-group-handle'>
+                                                                                <div className='icon-edit' >
+                                                                                    <i className="fas fa-edit"></i>
+                                                                                </div>
+                                                                                <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
+                                                                                    <i className="far fa-trash-alt"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            :
+                                                                            <div className='icon-group-handle'>
+                                                                                <div className='icon-group-handle-save'>
+                                                                                    <i className="fas fa-save"></i>
+                                                                                </div>
+                                                                                <div className='icon-group-handle-close' >
+                                                                                    <i className="fas fa-window-close"></i>
+                                                                                </div>
+                                                                            </div>
+                                                                        }
+                                                                    </td>
+                                                                }
 
-                                                                        <div className='' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
-                                                                            <i className="far fa-trash-alt"></i>
-                                                                        </div>
-                                                                    </>
-                                                                </td>
                                                             </tr>
                                                         </>
                                                     )
@@ -650,6 +708,7 @@ const mapStateToProps = state => {
         userInfo: state.user.userInfo,
         allPersonnel: state.user.allPersonnel,
         allSelectPersonnel: state.user.allSelectPersonnel,
+        allPersonnelExtra: state.user.allPersonnelExtra,
     };
 };
 
@@ -657,6 +716,7 @@ const mapDispatchToProps = dispatch => {
     return {
         // handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data)),
         getAllPersonnelRedux: (dataDay, shiftsId, departmentId) => dispatch(actions.getAllPersonnelRedux(dataDay, shiftsId, departmentId)),
+        getAllPersonnelExtraRedux: (dataDay, shiftsId, departmentId) => dispatch(actions.getAllPersonnelExtraRedux(dataDay, shiftsId, departmentId)),
         getAllSelectPersonnelRedux: () => dispatch(actions.getAllSelectPersonnelRedux())
     };
 };

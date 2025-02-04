@@ -43,10 +43,16 @@
 
             }
 
+            // .icon-group-handle-trash {
+            //     cursor: pointer;
+            // }
+
             .icon-group-handle {
                 display: flex;
                 gap: 10px;
                 padding-top: 2px;
+
+
 
                 .icon-group-handle-close,
                 .icon-group-handle-save {

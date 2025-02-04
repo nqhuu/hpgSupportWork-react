@@ -12,7 +12,8 @@ const initialState = {
     allLocation: [],
     allErrorCode: [],
     allPersonnel: [],
-    allSelectPersonnel: []
+    allSelectPersonnel: [],
+    allPersonnelExtra: []
 
 }
 
@@ -92,8 +93,6 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 allPersonnel: []
             }
-
-
         case actionTypes.FETCH_ALL_SELECT_PERSONNEL_SUCCESS:
             return {
                 ...state,
@@ -104,10 +103,22 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 allSelectPersonnel: []
             }
+        case actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_SUCCESS:
+            return {
+                ...state,
+                allPersonnelExtra: action.allPersonnelExtra
+            }
+        case actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_FAIL:
+            return {
+                ...state,
+                allPersonnelExtra: []
+            }
+
         default:
             return state;
     }
 }
+
 
 
 
