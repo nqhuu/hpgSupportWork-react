@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import ReactPaginate from 'react-paginate';
 import './Personnel.scss'
 import * as actions from "../../redux/actions";
-import { VALUE, STATUS_REPORT_HR } from '../../ultil/constant';
+import { STATUS_REPORT_HR } from '../../ultil/constant';
 import { getAllUser, handleCreateUpdatePerSonnelReport } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
-import _, { indexOf } from 'lodash'
+import _ from 'lodash'
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // import moment from 'moment'
@@ -30,6 +29,7 @@ class Personnel extends Component {
         idDisable: '',
         idDisableExtra: '',
         listUserBeforEdit: [],
+        listUserBeforEditExtra: [],
     };
 
     componentDidMount = async () => {
@@ -99,7 +99,7 @@ class Personnel extends Component {
             })
             this.setState({
                 listExtra: allPersonnelExtra,
-                showHide: true
+                showHide: this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && true
             })
         }
     };
@@ -113,7 +113,7 @@ class Personnel extends Component {
 
     setStateListUser = async (listUser) => {
         let listUserWorkShifts
-        let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
+        // let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
         let listUserFullDepartment = [];
         if (listUser && listUser.length > 0) {
             listUserFullDepartment = listUser.map((item, index) => {
@@ -250,30 +250,33 @@ class Personnel extends Component {
     handleShowHide = async () => {
         this.setState({
             showHide: true,
-            listExtra: [
-                {
-                    reporterId: this.props.userInfo.id,
-                    quantity: '',
-                    departmentId: this.props.userInfo.departmentId,
-                    shiftId: this.props.userInfo.shiftId,
-                    userType: {},
-                    overtimeId: {},
-                    repastMId: 1,
-                    repastEId: '',
-                    note: '',
-                    statusId: ''
-                }
-            ],
+            listExtra: this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 ? this.props.allPersonnelExtra
+                :
+                [
+                    {
+                        id: Date.now(),
+                        reporterId: this.props.userInfo.id,
+                        quantity: '',
+                        departmentId: this.props.userInfo.departmentId,
+                        shiftId: this.props.userInfo.shiftId,
+                        userType: {},
+                        overtimeId: {},
+                        repastMId: 1,
+                        repastEId: '',
+                        note: '',
+                        statusId: ''
+                    }
+                ],
         })
     };
 
     handleCancelExtra = async () => {
-        if (window.confirm("Bạn có hủy bỏ?")) {
-            this.handleShowHide()
+        if (window.confirm("Bạn có hủy bỏ tất cả bản ghi vừa tạo?")) {
             this.setState({
-                listExtra: [],
-                showHide: false
-            })
+                listExtra: this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 ? [...this.props.allPersonnelExtra] : [],
+                showHide: this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 ? true : false
+            });
+            toast.success('Hủy bỏ thành công')
         }
     };
 
@@ -328,7 +331,7 @@ class Personnel extends Component {
             }
         } else {
             let check = await this.validateExtra();
-            let listExtraCopy = [...this.state.listExtra];
+            // let listExtraCopy = [...this.state.listExtra];
             if (!check) {
                 if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
                     this.setState({
@@ -355,12 +358,20 @@ class Personnel extends Component {
 
     }
 
+    UpdateNewExtra = () => {
+        alert('UpdateNewExtra')
+    }
 
     validateExtra = async () => {
         let listExtra = [...this.state.listExtra]
         let listExtraCopy = [listExtra[listExtra.length - 1].userType, listExtra[listExtra.length - 1].quantity];
         let validate = false;
-        validate = await listExtraCopy.some(item => _.isEmpty(item))
+        validate = await listExtraCopy.some(item => item === null ||
+            item === undefined ||
+            item === '' ||
+            (Array.isArray(item) && item.length === 0) ||
+            (typeof item === 'object' && Object.keys(item).length === 0) ||
+            (typeof item === 'number' && !item))
         return validate
     }
 
@@ -407,12 +418,30 @@ class Personnel extends Component {
                     listUserBeforEdit: [] // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
                 };
             }
+
+            if (id === 'editExtra') { // Lần click vào "edit"
+                return {
+                    idDisableExtra: item.id,
+                    listUserBeforEditExtra: _.isEmpty(prevState.listUserBeforEditExtra) ? [...prevState.listExtra] : prevState.listUserBeforEditExtra,
+                    listExtra: prevState.listUserBeforEditExtra.length > 0 ? [...prevState.listUserBeforEditExtra] : prevState.listExtra // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                };
+            }
+
+            if (id === "cancelEditExtra") { // Click vào "cancelEdit"
+                return {
+                    idDisableExtra: '',
+                    listExtra: [...prevState.listUserBeforEditExtra], // Trả về giá trị trước khi edit
+                    listUserBeforEditExtra: [] // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                };
+            }
+
+
             return null;
         });
     };
 
     render() {
-        console.log(this.state.listExtra)
+        console.log(this.state)
         let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
@@ -531,16 +560,18 @@ class Personnel extends Component {
                                                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
                                                             <td style={{ width: "6%" }}>
                                                                 {idDisable !== item.userId ?
-                                                                    <div className='icon-edit' onClick={() => this.handleEdit(item, 'edit')}>
-                                                                        <i className="fas fa-edit" ></i>
+                                                                    <div className='icon-group-handle'>
+                                                                        <div className='icon-edit' onClick={() => this.handleEdit(item, 'edit')}>
+                                                                            <i className="fas fa-edit" ></i>
+                                                                        </div>
                                                                     </div>
                                                                     :
                                                                     <div className='icon-group-handle'>
                                                                         <div className='icon-group-handle-save'>
-                                                                            <i className="fas fa-save" style={{ color: "orange" }}></i>
+                                                                            <i className="fas fa-save" ></i>
                                                                         </div>
                                                                         <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
-                                                                            <i className="fas fa-window-close" style={{ color: "red" }}></i>
+                                                                            <i className="fas fa-window-close" ></i>
                                                                         </div>
                                                                     </div >
                                                                 }
@@ -582,11 +613,11 @@ class Personnel extends Component {
                                                                         aria-label="Default select example"
                                                                         value={item.userType}
                                                                         disabled={
-                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
                                                                         onChange={(event) => this.handleSelectExtra(event, item, index)}
                                                                     >
-                                                                        {!item.userType && <option selected>Tuy chọn...</option>}
+                                                                        <option>Tuy chọn...</option>
                                                                         <option value="KH">Khách hàng</option>
                                                                         <option value="HV">Học việc</option>
                                                                         <option value="TV">Thời vụ</option>
@@ -600,7 +631,7 @@ class Personnel extends Component {
                                                                         className="form-control "
                                                                         onChange={(event) => this.handleChangeInputExtra(event, item, index, 'quantity')}
                                                                         disabled={
-                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
                                                                     />
                                                                 </td>
@@ -611,7 +642,7 @@ class Personnel extends Component {
                                                                         value={item.note}
                                                                         onChange={(event) => this.handleChangeInputExtra(event, item, index, 'note')}
                                                                         disabled={
-                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                            (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
                                                                     /></td>
                                                                 <td style={{ width: "6%" }}>
@@ -622,7 +653,7 @@ class Personnel extends Component {
                                                                             // id={item.userId}
                                                                             name="repastMId"
                                                                             disabled={
-                                                                                (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id)
+                                                                                (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                             }
                                                                             // value={1}
                                                                             checked={item.repastMId === 1}
@@ -631,11 +662,20 @@ class Personnel extends Component {
                                                                         {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                                     </>
                                                                 </td>
-                                                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 &&
-                                                                    <td style={{ width: "6%" }}>
+                                                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length === 0 &&
+                                                                    < td style={{ width: "6%" }}>
+                                                                        <div className=' icon-group-handle'>
+                                                                            <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
+                                                                                <i className="far fa-trash-alt"></i>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                }
+                                                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && (this.props.allPersonnelExtra.length - index > 0) &&
+                                                                    < td style={{ width: "6%" }}>
                                                                         {idDisableExtra !== item.id ?
                                                                             <div className=' icon-group-handle'>
-                                                                                <div className='icon-edit' >
+                                                                                <div className='icon-edit' onClick={() => this.handleEdit(item, 'editExtra')}>
                                                                                     <i className="fas fa-edit"></i>
                                                                                 </div>
                                                                                 <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
@@ -647,32 +687,47 @@ class Personnel extends Component {
                                                                                 <div className='icon-group-handle-save'>
                                                                                     <i className="fas fa-save"></i>
                                                                                 </div>
-                                                                                <div className='icon-group-handle-close' >
+                                                                                <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEditExtra')}>
                                                                                     <i className="fas fa-window-close"></i>
                                                                                 </div>
                                                                             </div>
                                                                         }
                                                                     </td>
                                                                 }
-
-                                                            </tr>
+                                                            </tr >
                                                         </>
                                                     )
                                                 })
-
                                             }
                                         </tbody>
                                     </table>
                                 </div>
-                                <div >
-                                    <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
-                                        <i className="fas fa-plus"></i>
-                                    </button>
-                                    <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
-                                        <i className="fas fa-times fa-lg"></i>
-                                    </button>
-                                    {/* <button style={{ width: "120px" }} type="button" className="btn btn-warning" >Cập nhật</button> */}
-                                </div>
+                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 &&
+                                    <div >
+                                        <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
+                                            <i className="fas fa-plus"></i>
+                                        </button>
+
+                                        {this.props.allPersonnelExtra.length - listExtra.length < 0 &&
+                                            <>
+                                                <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
+                                                    <i className="fas fa-times fa-lg"></i>
+                                                </button>
+                                                <button type="button" className="btn btn-warning" onClick={() => this.UpdateNewExtra()}>Update</button>
+                                            </>
+                                        }
+                                    </div>
+                                }
+                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length === 0 &&
+                                    <>
+                                        <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
+                                            <i className="fas fa-plus"></i>
+                                        </button>
+                                        <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
+                                            <i className="fas fa-times fa-lg"></i>
+                                        </button>
+                                    </>
+                                }
                             </>
                             :
                             <div>
@@ -681,10 +736,6 @@ class Personnel extends Component {
                                 </button>
                             </div>
                         }
-
-                        {/* {!this.props.allPersonnel || this.props.allPersonnel.length === 0 && !this.state.showHide &&
-                            <button style={{ width: "120px", marginTop: "10px" }} type="button" className="btn btn-warning" onClick={() => this.handleSendReport()}>Gửi báo cáo</button>
-                        } */}
                     </div>
 
                     <div className='personel-footer'>
@@ -694,7 +745,7 @@ class Personnel extends Component {
                         isOpenModal={this.state.isOpenModal}
                         handleCloseModal={this.handleCloseModal}
                     />
-                </div>
+                </div >
 
             </>
         )

@@ -1,20 +1,3 @@
-// .personel-container {
-//     display: flex;
-//     flex-direction: column;
-
-
-//     .personel-header {}
-
-//     .personel-body {
-//         padding: 20px 50px;
-//     }
-
-//     .personel-footer {
-//         height: 50px;
-
-//     }
-// }
-
 .personel-container {
     display: flex;
     flex-direction: column;
@@ -34,33 +17,48 @@
         /* Đảm bảo vị trí phù hợp */
 
         td {
-            vertical-align: middle;
-
-            .icon-edit {
-                color: rgb(99, 92, 87);
-                cursor: pointer;
-                font-size: 20px;
-
-            }
-
-            // .icon-group-handle-trash {
-            //     cursor: pointer;
-            // }
+            vertical-align: middle; // căn giữa chiều cao của thẻ td
 
             .icon-group-handle {
                 display: flex;
                 gap: 10px;
-                padding-top: 2px;
 
+                .icon-edit {
+                    color: rgb(99, 92, 87);
+                    cursor: pointer;
+                    font-size: 20px;
 
+                    &:hover {
+                        opacity: 60%;
+                    }
+
+                }
 
                 .icon-group-handle-close,
-                .icon-group-handle-save {
+                .icon-group-handle-save,
+                .icon-group-handle-trash {
                     cursor: pointer;
+                    margin-top: 5px;
+
+                    &:hover {
+                        opacity: 60%;
+                    }
 
                     i {
-                        font-size: 22px;
+                        font-size: 20px;
                     }
+                }
+
+                .icon-group-handle-close {
+                    color: red;
+                }
+
+                .icon-group-handle-save {
+                    color: orange;
+                }
+
+                .icon-group-handle-trash {
+                    color: red;
                 }
             }
         }
