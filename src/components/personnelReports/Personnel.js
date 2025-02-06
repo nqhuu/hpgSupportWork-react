@@ -30,6 +30,8 @@ class Personnel extends Component {
         idDisableExtra: '',
         listUserBeforEdit: [],
         listUserBeforEditExtra: [],
+        userUpdate: {},
+        extraUpdate: {},
     };
 
     componentDidMount = async () => {
@@ -124,9 +126,10 @@ class Personnel extends Component {
                 select.departmentId = item.departmentId;
                 select.reporterId = this.props?.userInfo?.id;
                 select.statusUserId = { value: `${STATUS_REPORT_HR.DI_LAM}`, label: 'Đi làm đúng giờ' };; // tình trạng đi làm
-                select.licensed = '';
-                select.note = '';
-                select.delayId = '';
+                select.licensed = null;
+                select.note = null;
+                select.delayId = null;
+                select.overtimeId = null;
                 select.repastMId = 1; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
                 select.employeeCode = item.employeeCode; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
                 return select
@@ -143,13 +146,11 @@ class Personnel extends Component {
         }
     };
 
-
     handleOpenModal = async () => {
         this.setState({
             isOpenModal: true
         })
     };
-
 
     handleCloseModal = () => {
         this.setState({
@@ -157,24 +158,38 @@ class Personnel extends Component {
         })
     };
 
-    handleChange = async (selectOptions, actionMeta, id,) => {
+    handleChangeSelect = async (selectOptions, actionMeta, id,) => {
+
         let selectCopy = { ...this.state[actionMeta.name] }
         selectCopy.value = selectOptions.value;
         selectCopy.label = selectOptions.label;
 
         if (selectCopy.value === STATUS_REPORT_HR.DI_LAM) {
+            if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+                this.setState((prevState) => ({
+                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, note: null, delayId: null, licensed: null, repastMId: 1 }
+                }));
+                return;
+            }
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: "", repastMId: 1 } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, note: null, delayId: null, licensed: null, repastMId: 1 } : row
                 ),
             }));
             return;
         }
 
         if (selectCopy.value === STATUS_REPORT_HR.NGHI) {
+            if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+                this.setState((prevState) => ({
+                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, delayId: null, licensed: 0, repastMId: 0 }
+                }));
+                return;
+            }
+
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
-                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: "", licensed: 0, repastMId: 0 } : row
+                    row.userId === id ? { ...row, [actionMeta.name]: selectCopy, delayId: null, licensed: 0, repastMId: 0 } : row
                 ),
             }));
             return;
@@ -182,10 +197,23 @@ class Personnel extends Component {
 
 
         if (selectCopy.value === STATUS_REPORT_HR.DI_MUON) {
+            if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+                this.setState((prevState) => ({
+                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, licensed: 0, repastMId: 1 }
+                }));
+                return;
+            }
             this.setState((prevState) => ({
                 listUser: prevState.listUser.map((row) =>
                     row.userId === id ? { ...row, [actionMeta.name]: selectCopy, licensed: 0, repastMId: 1 } : row
                 ),
+            }));
+            return;
+        }
+
+        if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+            this.setState((prevState) => ({
+                userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy }
             }));
             return;
         }
@@ -199,8 +227,13 @@ class Personnel extends Component {
 
     };
 
-    handleSave = async (item) => {
+    handleSave = async (item, id) => {
+        if (id === 'saveEditPesonel') {
 
+        }
+        if (id === 'saveEditExtra') {
+
+        }
     };
 
     handleChangeInput = async (event, item) => {
@@ -211,11 +244,19 @@ class Personnel extends Component {
         };
 
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
-        this.setState((prevState) => ({
-            listUser: prevState.listUser.map((user) =>
-                user.userId === updatedItem.userId ? updatedItem : user
-            ),
-        }));
+        if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+            this.setState((prevState) => ({
+                userUpdate: updatedItem
+            }));
+        } else {
+            this.setState((prevState) => ({
+                listUser: prevState.listUser.map((user) =>
+                    user.userId === updatedItem.userId ? updatedItem : user
+                ),
+            }));
+        }
+
+
     };
 
     handleCheckBox = async (event, item) => {
@@ -223,17 +264,34 @@ class Personnel extends Component {
             ...item,
             [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-        this.setState((prevState) => ({
-            listUser: prevState.listUser.map((user) =>
-                user.userId === updatedItem.userId ? updatedItem : user
-            ),
-        }));
+
+        if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
+            this.setState((prevState) => ({
+                userUpdate: updatedItem
+            }));
+        } else {
+            this.setState((prevState) => ({
+                listUser: prevState.listUser.map((user) =>
+                    user.userId === updatedItem.userId ? updatedItem : user
+                ),
+            }));
+        }
+
     };
 
     handleSendReport = async () => {
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
+        if (!_.isEmpty(this.state.listExtra)) {
+            let check = await this.validateExtra();
+            if (check) {
+                toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng"')
+                return;
+            }
+        }
+
         let response = await handleCreateUpdatePerSonnelReport({
             listUser: this.state.listUser,
+            listExtra: this.state.listExtra,
             date: formattedDate,
             departmentId: this.props.userInfo.departmentId,
             shiftId: this.props.userInfo.shiftId
@@ -242,7 +300,12 @@ class Personnel extends Component {
         if (response && response.errCode === 0) {
             toast.success(response.errMessage)
             await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
-
+            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+        }
+        console.log(response)
+        if (response && response.errCode === 1) {
+            toast.success(response.errMessage)
+            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         }
 
     };
@@ -259,12 +322,12 @@ class Personnel extends Component {
                         quantity: '',
                         departmentId: this.props.userInfo.departmentId,
                         shiftId: this.props.userInfo.shiftId,
-                        userType: {},
-                        overtimeId: {},
+                        userType: '',
+                        overtimeId: null,
                         repastMId: 1,
-                        repastEId: '',
-                        note: '',
-                        statusId: ''
+                        repastEId: null,
+                        note: null,
+                        statusId: null
                     }
                 ],
         })
@@ -280,44 +343,68 @@ class Personnel extends Component {
         }
     };
 
-    handleCheckBoxExtra = async (event, item, index) => {
+    handleCheckBoxExtra = async (event, item) => {
         const updatedItem = {
             ...item,
             [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
         };
         this.setState((prevState) => ({
             listExtra: prevState.listExtra.map((user, indexList) =>
-                indexList === index ? updatedItem : user
+                user.id === item.id ? updatedItem : user
             ),
         }));
     };
 
-    handleSelectExtra = async (event, item, index) => {
+    handleSelectExtra = async (event, item) => {
         const updatedItem = {
             ...item,
             userType: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
-        this.setState((prevState) => ({
-            listExtra: prevState.listExtra.map((user, indexList) =>
-                indexList === index ? updatedItem : user
-            ),
-        }));
+
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0) {
+            console.log('updatextra', updatedItem)
+
+            this.setState({
+                extraUpdate: updatedItem
+            });
+        } else {
+            this.setState((prevState) => ({
+                listExtra: prevState.listExtra.map((user, indexList) =>
+                    user.id === item.id ? updatedItem : user
+                ),
+            }));
+        }
     }
 
-    handleChangeInputExtra = async (event, item, index, id) => {
+    handleChangeInputExtra = async (event, item, id) => {
+
+        if (id === 'quantity') {
+            let quantity = +event.target.value;
+            if (quantity < 1 || !Number.isInteger(quantity)) {
+                alert("Vui lòng nhập số hợp lệ!");
+                return;
+            }
+        }
+
         const updatedItem = {
             ...item,
             [id]: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
         };
 
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
-        this.setState((prevState) => ({
-            listExtra: prevState.listExtra.map((user, indexList) =>
-                indexList === index ? updatedItem : user
-            ),
-        }));
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0) {
+            console.log(this.state.extraUpdate)
+            this.setState((prevState) => ({
+                extraUpdate: updatedItem
+            }));
+        } else {
+            this.setState((prevState) => ({
+                listExtra: prevState.listExtra.map((user, indexList) =>
+                    user.id === item.id ? updatedItem : user
+                ),
+            }));
+        };
     };
 
     HandleDeleteExtra = async (event, item, index) => {
@@ -341,12 +428,12 @@ class Personnel extends Component {
                             quantity: '',
                             departmentId: this.props.userInfo.departmentId,
                             shiftId: this.props.userInfo.shiftId,
-                            userType: {},
-                            overtimeId: {},
+                            userType: '',
+                            overtimeId: null,
                             repastMId: 1,
-                            repastEId: '',
-                            note: '',
-                            statusId: ''
+                            repastEId: null,
+                            note: null,
+                            statusId: null,
                         }]
                     }, () => toast.success('Xóa thành công'))
                 }
@@ -358,8 +445,12 @@ class Personnel extends Component {
 
     }
 
-    UpdateNewExtra = () => {
-        alert('UpdateNewExtra')
+    UpdateAddNewExtra = () => {
+        // alert('add new extra')
+        console.log(this.state.listExtra.length > this.props.allPersonnelExtra.length)
+        if (this.state.listExtra.length > this.props.allPersonnelExtra.length) {
+            this.handleSendReport()
+        }
     }
 
     validateExtra = async () => {
@@ -385,12 +476,12 @@ class Personnel extends Component {
                 quantity: '',
                 departmentId: this.props.userInfo.departmentId,
                 shiftId: this.props.userInfo.shiftId,
-                userType: {},
-                overtimeId: {},
+                userType: '',
+                overtimeId: null,
                 repastMId: 1,
-                repastEId: '',
-                note: '',
-                statusId: ''
+                repastEId: null,
+                note: null,
+                statusId: null,
             }
             listExtraCopy.push(addExtra);
         } else {
@@ -407,7 +498,8 @@ class Personnel extends Component {
                 return {
                     idDisable: item.userId,
                     listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
-                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    userUpdate: { ...item }
                 };
             }
 
@@ -415,7 +507,8 @@ class Personnel extends Component {
                 return {
                     idDisable: '',
                     listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
-                    listUserBeforEdit: [] // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    userUpdate: {}
                 };
             }
 
@@ -423,7 +516,8 @@ class Personnel extends Component {
                 return {
                     idDisableExtra: item.id,
                     listUserBeforEditExtra: _.isEmpty(prevState.listUserBeforEditExtra) ? [...prevState.listExtra] : prevState.listUserBeforEditExtra,
-                    listExtra: prevState.listUserBeforEditExtra.length > 0 ? [...prevState.listUserBeforEditExtra] : prevState.listExtra // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    listExtra: prevState.listUserBeforEditExtra.length > 0 ? [...prevState.listUserBeforEditExtra] : prevState.listExtra, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    extraUpdate: { ...item }
                 };
             }
 
@@ -431,18 +525,17 @@ class Personnel extends Component {
                 return {
                     idDisableExtra: '',
                     listExtra: [...prevState.listUserBeforEditExtra], // Trả về giá trị trước khi edit
-                    listUserBeforEditExtra: [] // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    listUserBeforEditExtra: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    extraUpdate: {}
                 };
             }
-
-
             return null;
         });
     };
 
     render() {
         console.log(this.state)
-        let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra } = this.state
+        let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
             <>
@@ -489,11 +582,11 @@ class Personnel extends Component {
                                                         <td style={{ width: "10%", }}>{item.fullName}</td>
                                                         <td style={{ width: "11%" }}>
                                                             <Select
-                                                                value={item.statusUserId}
+                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.statusUserId : item.statusUserId}
                                                                 options={listStatusUserReport}
                                                                 name='statusUserId'
                                                                 isDisabled={this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId}
-                                                                onChange={(selectOptions, actionMeta) => this.handleChange(selectOptions, actionMeta, item.userId)}
+                                                                onChange={(selectOptions, actionMeta) => this.handleChangeSelect(selectOptions, actionMeta, item.userId)}
                                                             />
                                                         </td>
                                                         <td style={{ width: "2%" }}>
@@ -501,29 +594,40 @@ class Personnel extends Component {
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    id={item.userId}
+                                                                    id={item.id === userUpdate.id ? userUpdate.userId : item.userId}
                                                                     name="licensed"
-                                                                    checked={item.licensed === 1}
+                                                                    checked={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.licensed === 1 : item.licensed === 1}
                                                                     // value={0}
                                                                     disabled={
-                                                                        item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                        !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                            ?
+                                                                            userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                            (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                            :
+                                                                            item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                            (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                     }
-                                                                    onChange={(event) => this.handleCheckBox(event, item)}
+                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
                                                                 />
-                                                                <label className="form-check-label" htmlFor={item.userId}></label>
+                                                                {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                             </>
                                                         </td>
                                                         <td style={{ width: "7%" }}>
                                                             <Select
-                                                                value={item.delayId}
+                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.delayId : item.delayId}
                                                                 options={listTime}
                                                                 name='delayId'
-                                                                onChange={(selectOptions, actionMeta) => this.handleChange(selectOptions, actionMeta, item.userId)}
+                                                                onChange={(selectOptions, actionMeta) => this.handleChangeSelect(selectOptions, actionMeta, item.userId)}
                                                                 isDisabled={
-                                                                    item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                    item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
-                                                                    (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                    !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                        ?
+                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.NGHI ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                        :
+                                                                        item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                 }
                                                             />
                                                         </td>
@@ -531,11 +635,16 @@ class Personnel extends Component {
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
-                                                                value={item.note}
-                                                                onChange={(event) => this.handleChangeInput(event, item)}
+                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.note ?? "" : item.note ?? ""} // dấu ?? để check giá trị bên phải dấu ?? nếu là null hoặc undefine thì sử dụng giá trị bên trái dấu ??
+                                                                onChange={(event) => this.handleChangeInput(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
                                                                 disabled={
-                                                                    item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                    (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
+                                                                    !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                        ?
+                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                        :
+                                                                        item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                 }
                                                             />
                                                         </td>
@@ -544,17 +653,17 @@ class Personnel extends Component {
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    id={item.userId}
+                                                                    id={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.userId : item.userId}
                                                                     name="repastMId"
                                                                     disabled={
                                                                         item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
                                                                         (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                     }
                                                                     // value={1}
-                                                                    checked={item.repastMId === 1}
-                                                                    onChange={(event) => this.handleCheckBox(event, item)}
+                                                                    checked={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.repastMId === 1 : item.repastMId === 1}
+                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
                                                                 />
-                                                                <label className="form-check-label" htmlFor={item.userId}></label>
+                                                                {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                             </>
                                                         </td>
                                                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
@@ -567,7 +676,7 @@ class Personnel extends Component {
                                                                     </div>
                                                                     :
                                                                     <div className='icon-group-handle'>
-                                                                        <div className='icon-group-handle-save'>
+                                                                        <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditPesonel')}>
                                                                             <i className="fas fa-save" ></i>
                                                                         </div>
                                                                         <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
@@ -611,11 +720,11 @@ class Personnel extends Component {
                                                                     <select
                                                                         className="form-select"
                                                                         aria-label="Default select example"
-                                                                        value={item.userType}
+                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.userType : item.userType}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
-                                                                        onChange={(event) => this.handleSelectExtra(event, item, index)}
+                                                                        onChange={(event) => this.handleSelectExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item)}
                                                                     >
                                                                         <option>Tuy chọn...</option>
                                                                         <option value="KH">Khách hàng</option>
@@ -627,9 +736,9 @@ class Personnel extends Component {
                                                                     <input
                                                                         type="number"
                                                                         min={1}
-                                                                        value={item.quantity}
+                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.quantity : item.quantity}
                                                                         className="form-control "
-                                                                        onChange={(event) => this.handleChangeInputExtra(event, item, index, 'quantity')}
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item, 'quantity')}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
@@ -639,8 +748,8 @@ class Personnel extends Component {
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
-                                                                        value={item.note}
-                                                                        onChange={(event) => this.handleChangeInputExtra(event, item, index, 'note')}
+                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.note ?? "" : item.note}
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item, 'note')}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
@@ -656,13 +765,13 @@ class Personnel extends Component {
                                                                                 (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                             }
                                                                             // value={1}
-                                                                            checked={item.repastMId === 1}
-                                                                            onChange={(event) => this.handleCheckBoxExtra(event, item, index)}
+                                                                            checked={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? (extraUpdate.repastMId ?? 0) === 1 : item.repastMId === 1}
+                                                                            onChange={(event) => this.handleCheckBoxExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item)}
                                                                         />
                                                                         {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                                     </>
                                                                 </td>
-                                                                {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length === 0 &&
+                                                                {((this.props.allPersonnelExtra && this.props.allPersonnelExtra.length === 0) || index >= this.props.allPersonnelExtra.length) &&
                                                                     < td style={{ width: "6%" }}>
                                                                         <div className=' icon-group-handle'>
                                                                             <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
@@ -684,7 +793,7 @@ class Personnel extends Component {
                                                                             </div>
                                                                             :
                                                                             <div className='icon-group-handle'>
-                                                                                <div className='icon-group-handle-save'>
+                                                                                <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditExtra')}>
                                                                                     <i className="fas fa-save"></i>
                                                                                 </div>
                                                                                 <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEditExtra')}>
@@ -713,7 +822,7 @@ class Personnel extends Component {
                                                 <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
                                                     <i className="fas fa-times fa-lg"></i>
                                                 </button>
-                                                <button type="button" className="btn btn-warning" onClick={() => this.UpdateNewExtra()}>Update</button>
+                                                <button type="button" className="btn btn-warning" onClick={() => this.UpdateAddNewExtra()}>Update</button>
                                             </>
                                         }
                                     </div>
@@ -723,9 +832,11 @@ class Personnel extends Component {
                                         <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
                                             <i className="fas fa-plus"></i>
                                         </button>
-                                        <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
-                                            <i className="fas fa-times fa-lg"></i>
-                                        </button>
+                                        {listExtra.length > 1 &&
+                                            <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
+                                                <i className="fas fa-times fa-lg"></i>
+                                            </button>
+                                        }
                                     </>
                                 }
                             </>

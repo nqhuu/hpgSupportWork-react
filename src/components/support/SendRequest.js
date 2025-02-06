@@ -163,7 +163,7 @@ class SendRequest extends Component {
         if (window.confirm("bạn có thực sự muốn xóa yêu cầu này")) {
             let response = await updateRequestSupport({
                 requestId: item.id,
-                status: VALUE.CANCEL
+                handleCancelRequest: VALUE.CANCEL
             })
 
             if (response && response.errCode === 0) {

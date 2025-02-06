@@ -391,7 +391,7 @@ class ModalHandleRequest extends Component {
         data.note = this.state.note;
         data.requestId = requestId;
         data.img = imgSelect;
-        data.handleEditRequest = VALUE.SEND_REQUEST
+        data.handleEditRequest = VALUE.EDIT_REQUEST
 
         let response = await updateRequestSupport(data)
 

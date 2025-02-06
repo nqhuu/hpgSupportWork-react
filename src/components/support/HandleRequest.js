@@ -153,7 +153,6 @@ class HandleRequest extends Component {
                 selectRequestId: id,
                 selectedOption: selectedOption,
                 description: item?.description || ''
-
             })
         }
 
@@ -178,7 +177,7 @@ class HandleRequest extends Component {
             requestId: item.id,
             repairer: selectedOption,
             description: description,
-            handleEditRequest: VALUE.HANDLE_REQUEST
+            handleRequest: VALUE.HANDLE_REQUEST
         }
 
         if (data) {
@@ -192,9 +191,6 @@ class HandleRequest extends Component {
 
     }
 
-    handleComplete = async (item) => {
-
-    }
 
     handleChangeInput = async (event, id) => {
         this.setState({
@@ -206,10 +202,12 @@ class HandleRequest extends Component {
         if (window.confirm("Xác nhận đã xử lý xong")) {
             let data = {
                 requestId: item.id,
-                statusId: item.statusId
+                statusId: item.statusId,
+                handleCompleteRequest: VALUE.COMPLETE
             }
             if (data) {
                 let response = await updateRequestSupport(data)
+                console.log('updateRequestSupport', response)
                 if (response && response.errCode === 0) {
                     toast.success(response.errMessage)
                     this.getRequestSupport()
@@ -355,7 +353,9 @@ class HandleRequest extends Component {
                                                                             </div>
                                                                         </>
                                                                         :
-                                                                        <div className='icon-handle' onClick={() => this.handleProcessing(item, item.id)}><i className="fas fa-wrench"></i></div>
+                                                                        <div className='icon-handle' onClick={() => this.handleProcessing(item, item.id)}>
+                                                                            <i className="fas fa-wrench"></i>
+                                                                        </div>
                                                                 )
                                                             }
                                                             {
@@ -371,7 +371,9 @@ class HandleRequest extends Component {
                                                                         </>
                                                                         :
                                                                         <>
-                                                                            <div className='icon-handle' onClick={() => this.handleProcessing(item, item.id)}><i className="fas fa-edit"></i></div>
+                                                                            <div className='icon-handle' onClick={() => this.handleProcessing(item, item.id)}>
+                                                                                <i className="fas fa-edit"></i>
+                                                                            </div>
                                                                             <div className='icon-complete' onClick={() => this.handleComplete(item)}>
                                                                                 <i className="fas fa-check"></i>
                                                                             </div>
