@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import './Personnel.scss'
 import * as actions from "../../redux/actions";
 import { STATUS_REPORT_HR } from '../../ultil/constant';
-import { getAllUser, handleCreateUpdatePerSonnelReport } from '../../services/userService'
+import { getAllUser, handleCreateUpdatePerSonnelReport, handleDeletePersonnelExtra } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
@@ -23,7 +23,7 @@ class Personnel extends Component {
         listUser: [],
         listTime: [],
         listStatusUserReport: [],
-        isOpenModal: false,
+        isOpenModal: true,
         listExtra: [],
         showHide: false,
         idDisable: '',
@@ -229,10 +229,32 @@ class Personnel extends Component {
 
     handleSave = async (item, id) => {
         if (id === 'saveEditPesonel') {
-
+            let response = await handleCreateUpdatePerSonnelReport({
+                id: item.id,
+                userUpdate: this.state.userUpdate
+            })
+            if (response && response.errCode === 0) {
+                toast.success(response.errMessage)
+                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+                this.setState({
+                    idDisable: '',
+                    userUpdate: {},
+                })
+            }
         }
         if (id === 'saveEditExtra') {
-
+            let response = await handleCreateUpdatePerSonnelReport({
+                id: item.id,
+                extraUpdate: this.state.extraUpdate
+            })
+            if (response && response.errCode === 0) {
+                toast.success(response.errMessage)
+                await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+                this.setState({
+                    idDisableExtra: '',
+                    extraUpdate: {},
+                })
+            }
         }
     };
 
@@ -284,7 +306,7 @@ class Personnel extends Component {
         if (!_.isEmpty(this.state.listExtra)) {
             let check = await this.validateExtra();
             if (check) {
-                toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng"')
+                toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng", nhấn X để hủy bỏ')
                 return;
             }
         }
@@ -302,7 +324,7 @@ class Personnel extends Component {
             await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
             await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
         }
-        console.log(response)
+
         if (response && response.errCode === 1) {
             toast.success(response.errMessage)
             await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
@@ -362,15 +384,13 @@ class Personnel extends Component {
         };
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
 
-        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0) {
-            console.log('updatextra', updatedItem)
-
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate.id) {
             this.setState({
                 extraUpdate: updatedItem
             });
         } else {
             this.setState((prevState) => ({
-                listExtra: prevState.listExtra.map((user, indexList) =>
+                listExtra: prevState.listExtra.map((user) =>
                     user.id === item.id ? updatedItem : user
                 ),
             }));
@@ -393,14 +413,13 @@ class Personnel extends Component {
         };
 
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
-        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0) {
-            console.log(this.state.extraUpdate)
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate.id) {
             this.setState((prevState) => ({
                 extraUpdate: updatedItem
             }));
         } else {
             this.setState((prevState) => ({
-                listExtra: prevState.listExtra.map((user, indexList) =>
+                listExtra: prevState.listExtra.map((user) =>
                     user.id === item.id ? updatedItem : user
                 ),
             }));
@@ -409,40 +428,52 @@ class Personnel extends Component {
 
     HandleDeleteExtra = async (event, item, index) => {
         let listExtraCopy = [...this.state.listExtra]
-        if (listExtraCopy.length > 1) {
+        if (listExtraCopy.length > 0) {
             if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
-                listExtraCopy.splice(index, 1)
-                this.setState({
-                    listExtra: [...listExtraCopy]
-                }, () => toast.success('Xóa thành công'))
-            }
-        } else {
-            let check = await this.validateExtra();
-            // let listExtraCopy = [...this.state.listExtra];
-            if (!check) {
-                if (window.confirm("Bạn có thực sự muốn xóa bản ghi này?")) {
+                let checkProps = false;
+                if (this.props.allPersonnelExtra) {
+                    checkProps = this.props.allPersonnelExtra.some(extra => extra.id === item.id) // check tồn tại trong redux
+                }
+
+                if (checkProps) {
+                    let response = await handleDeletePersonnelExtra(item.id)
+                    console.log(response)
+                    if (response && response.errCode === 0) {
+                        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+                        toast.success('Xóa thành công')
+                        return;
+                    }
+                } else {
+                    if (listExtraCopy.length === 1) {
+                        let check = await this.validateExtra();
+                        if (!check) {
+                            this.setState({
+                                listExtra: [{
+                                    id: Date.now(),
+                                    reporterId: this.props.userInfo.id,
+                                    quantity: '',
+                                    departmentId: this.props.userInfo.departmentId,
+                                    shiftId: this.props.userInfo.shiftId,
+                                    userType: '',
+                                    overtimeId: null,
+                                    repastMId: 1,
+                                    repastEId: null,
+                                    note: null,
+                                    statusId: null,
+                                }]
+                            }, () => toast.success('Xóa thành công'))
+                        } else {
+                            toast.error('Chưa có bản ghi nào, Click X đỏ để hủy bỏ ')
+                        }
+                        return;
+                    }
+                    listExtraCopy.splice(index, 1)
                     this.setState({
-                        listExtra: [{
-                            id: Date.now(),
-                            reporterId: this.props.userInfo.id,
-                            quantity: '',
-                            departmentId: this.props.userInfo.departmentId,
-                            shiftId: this.props.userInfo.shiftId,
-                            userType: '',
-                            overtimeId: null,
-                            repastMId: 1,
-                            repastEId: null,
-                            note: null,
-                            statusId: null,
-                        }]
+                        listExtra: [...listExtraCopy]
                     }, () => toast.success('Xóa thành công'))
                 }
-            } else {
-                toast.error('Chưa có bản ghi nào, Click X đỏ để hủy bỏ ')
             }
         }
-
-
     }
 
     UpdateAddNewExtra = () => {
@@ -485,7 +516,7 @@ class Personnel extends Component {
             }
             listExtraCopy.push(addExtra);
         } else {
-            toast.warning('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng"')
+            toast.warning('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng", nhấn X để hủy bỏ')
         }
         this.setState({
             listExtra: listExtraCopy
@@ -534,7 +565,9 @@ class Personnel extends Component {
     };
 
     render() {
-        console.log(this.state)
+        // console.log('listExtra', this.state.listExtra)
+        // console.log('allPersonnelExtra', this.props.allPersonnelExtra)
+
         let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
         return (
@@ -816,7 +849,6 @@ class Personnel extends Component {
                                         <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
                                             <i className="fas fa-plus"></i>
                                         </button>
-
                                         {this.props.allPersonnelExtra.length - listExtra.length < 0 &&
                                             <>
                                                 <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
@@ -832,10 +864,11 @@ class Personnel extends Component {
                                         <button style={{ width: "55px" }} type="button" className="btn btn-success" onClick={() => this.handleAddExtra()} >
                                             <i className="fas fa-plus"></i>
                                         </button>
-                                        {listExtra.length > 1 &&
-                                            <button style={{ width: "55px", margin: "0 10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
-                                                <i className="fas fa-times fa-lg"></i>
-                                            </button>
+                                        <button style={{ width: "55px", marginLeft: "10px" }} type="button" className="btn btn-danger" onClick={() => this.handleCancelExtra()}>
+                                            <i className="fas fa-times fa-lg"></i>
+                                        </button>
+                                        {this.props.allPersonnel.length > 0 &&
+                                            <button style={{ marginLeft: "10px" }} type="button" className="btn btn-warning" onClick={() => this.UpdateAddNewExtra()}>Update</button>
                                         }
                                     </>
                                 }
@@ -869,8 +902,8 @@ const mapStateToProps = state => {
         isLoggedIn: state.user.isLoggedIn,
         userInfo: state.user.userInfo,
         allPersonnel: state.user.allPersonnel,
-        allSelectPersonnel: state.user.allSelectPersonnel,
         allPersonnelExtra: state.user.allPersonnelExtra,
+        allSelectPersonnel: state.user.allSelectPersonnel,
     };
 };
 

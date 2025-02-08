@@ -162,8 +162,6 @@ export const getAllErrorCode = () => {
     }
 }
 
-
-
 export const getAllErrorCodeSuccess = (data) => ({
     type: actionTypes.FETCH_ALL_ERROR_CODE_SUCCESS,
     allErrorCode: data
@@ -209,9 +207,6 @@ export const getAllPersonnelReduxFailed = () => ({
 })
 
 
-
-
-
 export const getAllPersonnelExtraRedux = (dataDay, shiftsId, departmentId) => {
     if (!shiftsId) shiftsId = '';
     if (!departmentId) departmentId = '';
@@ -240,7 +235,6 @@ export const getAllPersonnelExtraReduxSuccess = (data) => ({
     type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_SUCCESS,
     allPersonnelExtra: data.listPersonnelExtra
 })
-
 
 export const getAllPersonnelExtraReduxFailed = () => ({
     type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_FAIL,

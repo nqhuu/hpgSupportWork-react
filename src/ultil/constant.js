@@ -34,6 +34,11 @@ export const STATUS_REPORT_HR = {
     NGHI: 'STUR3'
 }
 
+export const STATUS_REPORT_HR_ID = {
+    TANG_CA: 'STR2',
+    DI_LAM: 'STR1',
+}
+
 export const CODE = {
     IT: 'IT',
     CD: 'CD',
@@ -70,5 +75,4 @@ export const DEPARTMENT = {
     XN: 'B20',
     BV: 'B21',
     QC: 'B22',
-
 }

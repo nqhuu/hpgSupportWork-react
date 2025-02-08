@@ -60,11 +60,13 @@ const handleCreateUpdatePerSonnelReport = (data) => {
     return axios.post('/users/api/create-update-personnel-report', data)
 }
 
-
+const handleDeletePersonnelExtra = (id) => {
+    return axios.post(`/users/api/delete-personnel-extra-report?id=${id}`);
+}
 
 export {
     handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
     getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport, getAllPersonnel,
-    handleCreateUpdatePerSonnelReport, getAllPersonnelExtra
+    handleCreateUpdatePerSonnelReport, getAllPersonnelExtra, handleDeletePersonnelExtra
 }
 

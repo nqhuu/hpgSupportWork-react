@@ -86,7 +86,7 @@ const userReducer = (state = initialState, action) => {
         case actionTypes.FETCH_ALL_PERSONNEL_SUCCESS:
             return {
                 ...state,
-                allPersonnel: action.allPersonnel
+                allPersonnel: action.allPersonnel.map(person => ({ ...person })) // Clone từng object
             }
         case actionTypes.FETCH_ALL_PERSONNEL_FAIL:
             return {
