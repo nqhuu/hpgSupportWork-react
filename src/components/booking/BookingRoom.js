@@ -5,15 +5,11 @@ import { connect } from 'react-redux';
 // import HomeHeader from '../../containers/HomePage/HomeHeader';
 
 
-
-
 class BookingRoom extends Component {
 
     state = {
 
     }
-
-
 
     render() {
         return (
@@ -37,6 +33,8 @@ const mapDispatchToProps = dispatch => {
     return {
 
     };
+
+
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(BookingRoom);

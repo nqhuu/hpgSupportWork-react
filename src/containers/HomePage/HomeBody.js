@@ -111,18 +111,23 @@ class Homebody extends Component {
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-room">
+                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
                                                 Quản lý thiết bị
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-car">
+                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
                                                 Quản ly nhân viên
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/menu-tast/booking-car">
+                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
                                                 Phân quyền
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
+                                                In Tem Tài Sản
                                             </NavLink>
                                         </li>
                                     </ul>

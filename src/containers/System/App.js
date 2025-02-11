@@ -12,8 +12,9 @@ import Login from '../Auth/Login';
 import HomePage from '../HomePage/HomePage';
 import Support from '../../routes/Support';
 import HomeBody from '../HomePage/HomeBody';
-import ProtectedRoute from './ProtectedRoute'
-import HumanResources from '../../routes/HumanResources'
+import ProtectedRoute from './ProtectedRoute';
+import HumanResources from '../../routes/HumanResources';
+import Manager from '../../routes/Manager'
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
 
@@ -54,11 +55,18 @@ class App extends Component {
               </ProtectedRoute>)
             } />
 
+            <Route path="/manager/" render={() => (
+              <ProtectedRoute>
+                <Manager />
+              </ProtectedRoute>)
+            } />
+
             <Route path="/" render={() => (
               <ProtectedRoute>
                 <HomePage />
               </ProtectedRoute>)
             } />
+
 
           </Switch>
           <ToastContainer
