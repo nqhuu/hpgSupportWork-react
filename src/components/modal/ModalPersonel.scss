@@ -55,6 +55,23 @@
         vertical-align: middle; // căn giữa chiều cao của thẻ td
 
     }
+
+    .th-flex {
+
+        // display: flex;
+        // align-items: center;
+        /* Căn giữa theo chiều dọc */
+        // gap: 5px;
+        /* Khoảng cách giữa input và span */
+        .th-time {
+            padding-left: 5px;
+        }
+
+        .th-input-number {
+            width: 40px;
+            outline: none;
+        }
+    }
 }
 
 .modal-hr-footer {

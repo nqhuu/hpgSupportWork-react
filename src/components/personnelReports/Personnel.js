@@ -477,8 +477,6 @@ class Personnel extends Component {
     }
 
     UpdateAddNewExtra = () => {
-        // alert('add new extra')
-        console.log(this.state.listExtra.length > this.props.allPersonnelExtra.length)
         if (this.state.listExtra.length > this.props.allPersonnelExtra.length) {
             this.handleSendReport()
         }

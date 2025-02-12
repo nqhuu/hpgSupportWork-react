@@ -43,46 +43,85 @@ class ExcelToPDF extends Component {
 
     generatePDF = (headers, records) => {
         const pages = records.map((row, index) => ({
-            table: {
-                widths: ["auto", "*"],
-                body: [
-                    [
-                        { image: this.logoBase64, width: 40, height: 40, margin: [0, 0, 10, 0] }, // Logo
-                        {
-                            text: [
-                                { text: "Công ty cổ phần đầu tư và thương mại Hồng Phúc\n", fontSize: 7, bold: true, alignment: "center" },  // Căn giữa
-                                { text: "TÀI SẢN CÔNG TY", fontSize: 9, bold: true, alignment: "center" }  // Căn trái
+            stack: [
+                {
+                    table: {
+                        widths: ["auto", "*", "auto"],
+                        body: [
+                            [
+                                {
+                                    image: this.logoBase64,
+                                    width: 20, height: 20,
+                                    margin: [0, 0, 0, 0],
+                                    absolutePosition: { x: 3, y: 3 } // Cố định vị trí 
+
+                                }, // Logo
+                                {
+                                    text: [
+                                        { text: "Công ty cổ phần đầu tư sản xuất và thương mại Hồng Phúc\n", fontSize: 6, bold: true, alignment: "center" },
+                                        { text: "TÀI SẢN CÔNG TY KÍNH HỒNG PHÚC", fontSize: 10, bold: true, alignment: "center" }
+                                    ],
+                                    lineHeight: 1.5,
+                                    bold: true,
+                                    margin: [3, 0, 0, 0],
+                                    absolutePosition: "center", // Cố định vị trí 
+                                    absolutePosition: { y: 3 }, // Cố định vị trí 
+                                }, // tên cty
+                                {
+                                    canvas: [ // đường kẻ
+                                        {
+                                            type: "line",
+                                            x1: 2, y1: 12.5, // Điểm bắt đầu
+                                            x2: 225, y2: 12.5, // Điểm kết thúc (chiều dài đường thẳng)
+                                            lineWidth: 0.3 // Độ dày đường viền
+                                        }
+                                    ],
+                                    absolutePosition: { x: 0, y: 12.5 } // Điều chỉnh vị trí cho border
+                                }
                             ],
-                            lineHeight: 1.5, // Dãn dòng (Mặc định là 1)
-                            fontSize: 7,
-                            bold: true,
-                            margin: [2, 2, 2, 2]
-                        }, // Tiêu đề
-                    ],
-                    [
-                        {
-                            colSpan: 2, text: headers.map((header, colIndex) => `${header}: ${row[colIndex] || ""}`).join("\n"),
-                            fontSize: 9,
-                            margin: [0, 5, 0, 0],
-                            lineHeight: 1.5, // Dãn dòng (Mặc định là 1)
-                        },
-                        {},
-                    ],
-                ],
-            },
-            margin: [5, 5, 5, 5], // Cách mép nhỏ lại
+                            [
+                                {
+                                    colSpan: 2,
+                                    text: headers.slice(1, -1).map((header, colIndex) => `${header}: ${row[colIndex + 1] || ""}`).join("\n"),
+                                    fontSize: 10,
+                                    margin: [0, 2, 0, 0],
+                                    lineHeight: 1.4,
+                                    bold: true,
+                                    absolutePosition: { x: 2, y: 35 } // Cố định vị trí 
+
+                                },
+                                {}, {},
+                            ]
+                        ],
+                    },
+                    layout: "noBorders",
+                },
+                {
+                    text: `Ngày K/K: ${row[row.length - 1] || ""}`,
+                    fontSize: 8.5,
+                    bold: true,
+                    alignment: "right",
+                    absolutePosition: { x: 100, y: 128 } // Cố định vị trí sát mép phải, gần cuối trang
+                },
+                {
+                    text: `STT: ${row[0] || ""}`,
+                    fontSize: 8.5,
+                    bold: true,
+                    alignment: "left",
+                    absolutePosition: { x: 2, y: 128 } // Cố định vị trí sát mép trái, gần cuối trang
+                },
+            ],
             ...(index > 0 ? { pageBreak: "before" } : {}),
         }));
 
         const docDefinition = {
-            pageSize: { width: 226.8, height: 226.8 }, // 80mm x 80mm
-            pageMargins: [2, 2, 2, 2], // Cách mép toàn trang
+            pageSize: { width: 226.8, height: 141.73 }, // 80mm x 50mm
+            pageMargins: [3, 3, 3, 3], // Giảm khoảng cách mép trang
             content: pages,
-            defaultStyle: {
-                font: "Roboto",
-            },
+            // defaultStyle: {
+            //     font: "Roboto",
+            // },
         };
-
         pdfMake.createPdf(docDefinition).download("Labels_80x80.pdf");
     };
 

@@ -39,6 +39,12 @@ export const STATUS_REPORT_HR_ID = {
     DI_LAM: 'STR1',
 }
 
+export const STATUS_USER_TYPE_EXTRA = {
+    KHACH_HANG: 'KH',
+    THOI_VU: 'TV',
+    HOC_VIEC: 'HV'
+}
+
 export const CODE = {
     IT: 'IT',
     CD: 'CD',

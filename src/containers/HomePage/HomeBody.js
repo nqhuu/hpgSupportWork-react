@@ -93,6 +93,16 @@ class Homebody extends Component {
                                                 Xin nghỉ phép
                                             </NavLink>
                                         </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/hr/personel-report">
+                                                Xin ra ngoài
+                                            </NavLink>
+                                        </li>
+                                        <li>
+                                            <NavLink className="dropdown-item" exact to="/hr/personel-report">
+                                                Mang vật tư ra ngoài
+                                            </NavLink>
+                                        </li>
                                     </ul>
                                 </div>
                                 <div className='report-all'>
