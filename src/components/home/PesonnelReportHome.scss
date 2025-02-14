@@ -1,0 +1,105 @@
+@function randomColor() {
+    $hue: random(360); // Màu ngẫu nhiên từ 0 đến 360 độ HSL
+    $saturation: random(30) + 10%; // Độ bão hòa từ 50% - 40%
+    $lightness: random(30) + 40%; // Độ sáng từ 40% - 70%
+
+    @return hsl($hue, $saturation, $lightness);
+}
+
+// Tạo danh sách màu ngẫu nhiên
+$colors: (
+);
+
+@for $i from 1 through 15 {
+    // Tạo 15 màu
+    $colors: append($colors, randomColor());
+}
+
+$background-light: #f9f9f9;
+$background-dark: #eaeaea;
+$border-color: #ddd;
+$text-dark: #555;
+
+@mixin flex-container($direction: row, $wrap: wrap, $justify: flex-start, $align: flex-start) {
+    display: flex;
+    flex-direction: $direction;
+    flex-wrap: $wrap;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+.personnel-home-container {
+    @include flex-container();
+    gap: 10px;
+    padding: 10px;
+}
+
+.personnel-home-report-department {
+    width: 300px;
+    height: 180px; // Giảm chiều cao xuống 1/2 nhưng vẫn đủ hiển thị nội dung
+    background: linear-gradient(to bottom, $background-light, $background-dark);
+    border: 1px solid $border-color;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    transition: all 0.3s ease-in-out;
+
+    &:hover {
+        transform: translateY(-3px);
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    @for $i from 1 through length($colors) {
+        &:nth-child(#{$i}) .department-name {
+            background-color: nth($colors, $i);
+        }
+    }
+
+    .department-name {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        padding: 6px;
+        // background-color: $primary-color;
+        color: #fff;
+        border-radius: 6px;
+        margin-bottom: 6px;
+        width: 70px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .report-list {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); // Chia thành 2 cột
+        grid-template-rows: repeat(2, auto); // Tự động chia thành 2 hàng gọn gàng
+        gap: 4px 6px; // Giảm khoảng cách để tiết kiệm không gian
+        padding: 4px;
+        flex-grow: 1;
+    }
+
+    .report-item,
+    .report-sub-item {
+        background: white;
+        border-radius: 4px;
+        padding: 4px;
+        font-size: 12px; // Giảm kích thước chữ để vừa đủ hiển thị
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid $border-color;
+        min-width: 0;
+    }
+
+    .report-sub-item {
+        font-weight: 400;
+        color: $text-dark;
+        background: rgba(0, 0, 0, 0.05);
+    }
+}

@@ -9,6 +9,7 @@ import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
 import HandleRequest from '../../components/support/HandleRequest'
+import PesonnelReportHome from '../../components/home/PesonnelReportHome'
 import './HomeBody.scss'
 
 
@@ -164,7 +165,7 @@ class Homebody extends Component {
                                         biểu đồ cột kết quả hoàn thành
                                     </div>
                                 </div>
-                                <div className='d-flex  cd-support-container'>
+                                {/* <div className='d-flex  cd-support-container'>
                                     <div className='table-content cd-suport ' >
                                         <div className='header'>Cơ Điện - Home</div>
                                         <div className='body'>
@@ -177,11 +178,13 @@ class Homebody extends Component {
                                     <div className='bar-chart'>
                                         biểu đồ cột kết quả hoàn thành
                                     </div>
-                                </div>
+                                </div> */}
                                 <div className='d-flex  personnel-Reports-container'>
                                     <div className='table-content personnel-Reports ' >
                                         <div className='header'>Báo cáo nhân sự - Home</div>
-
+                                        <div className='body'>
+                                            <PesonnelReportHome />
+                                        </div>
                                     </div>
                                     <div className='bar-chart'>
                                         bảng phụ gì đó
