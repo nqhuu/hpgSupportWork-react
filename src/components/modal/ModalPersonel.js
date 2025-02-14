@@ -6,7 +6,7 @@ import './ModalPersonel.scss'
 import * as actions from "../../redux/actions";
 import Select from 'react-select';
 import { over, values } from 'lodash';
-import { STATUS_USER_TYPE_EXTRA, STATUS_REPORT_HR, STATUS_REPORT_HR_ID } from '../../ultil/constant';
+import { STATUS_USER_TYPE_EXTRA, STATUS_REPORT_HR, STATUS_REPORT_HR_ID, } from '../../ultil/constant';
 import { uploadsFile } from '../../services/userService'
 import handleUploadFile from "../../config/HandleUploadFile"
 import { handleCreateRequest, updateRequestSupport } from "../../services/userService"
@@ -18,8 +18,9 @@ import _ from 'lodash'
 class ModalPersonel extends Component {
 
     state = {
-        listUser: [],
+        listUserModal: [],
         listExtra: [],
+        userUpdate: [],
         checkedOverAll: false,
         showHideChecked: false,
         checkedRepastAll: false,
@@ -27,9 +28,7 @@ class ModalPersonel extends Component {
         showHideEditCheckAll: false,
         idDisable: '',
         idDisableExtra: '',
-        listUserBeforEdit: [],
-        checkedOverAllBeforEdit: '',
-        checkedRepastAllBeforEdit: '',
+        listUserModalBeforEdit: [],
         showHideExtra: false
 
     }
@@ -40,48 +39,53 @@ class ModalPersonel extends Component {
 
 
     async componentDidUpdate(prevProps, prevState, snapshot) {
+        if (prevProps.resetModal !== this.props.resetModal && this.props.resetModal) {
+            this.setState({
+                showHideEditCheckAll: false
+            });
+            // Tắt cờ reset sau khi reset state modal
+            this.props.onResetModal();
+        }
 
         if (prevProps.allPersonnel !== this.props.allPersonnel) {
             let allPersonnelRedux = this.props.allPersonnel
-            let allPersonnel = allPersonnelRedux.map((item, index) => {
-                item.fullName = `${item.personnelReportData.firstName} ${item.personnelReportData.lastName}`;
-                // item.employeeCode = item.personnelReportData.employeeCode;
-                // item.statusUserId = listStatusUserReport.filter(status => item.statusUserId === status.value)[0];
-                // if (item.delayId) item.delayId = listTime.filter(time => item.delayId === +time.label)[0];
-                return item;
-            })
-            let allPersonnelToWork = [] // danh sách nhân viên đi làm
 
+            let allPersonnel = allPersonnelRedux.map((item) => ({
+                ...item,
+                fullName: `${item.personnelReportData.firstName} ${item.personnelReportData.lastName}`
+            }));
+
+            console.log('allPersonnel', allPersonnel)
+
+
+            let allPersonnelToWork = [] // danh sách nhân viên đi làm
             if (allPersonnel && allPersonnel.length > 0) {
-                allPersonnelToWork = allPersonnel.filter(item => item.statusUserId.value !== STATUS_REPORT_HR.NGHI)
+                allPersonnelToWork = allPersonnel.filter(item => item.statusUserId !== STATUS_REPORT_HR.NGHI)  ///////////////////// lưu ý phần này, đang bị chuyển thành string thay vì item.statusUserId.value
             }
+
             this.setState({
-                listUser: allPersonnelToWork
+                listUserModal: allPersonnelToWork,
+                listUserModalBeforEdit: allPersonnelToWork
             })
         };
 
-
-        if (prevProps.allPersonnelExtra !== this.props.allPersonnelExtra) {
-            let allPersonnelExtraRedux = [...this.props.allPersonnelExtra]
-            let allPersonnelExtra = allPersonnelExtraRedux.map((item, index) => {
-                let newItem = { ...item }
-                delete newItem.createdAt;
-                delete newItem.personnelExtraReportData;
-                delete newItem.updatedAt;
-                return newItem
-            })
-            let allPersonnelExtraReduxManufacture = [] // danh sách nhân viên thuộc cty
-            allPersonnelExtraReduxManufacture = allPersonnelExtra.filter(item => item.userType !== STATUS_USER_TYPE_EXTRA.KHACH_HANG)
-            this.setState({
-                listExtra: allPersonnelExtraReduxManufacture,
-                showHideExtra: true,
-            })
-        }
-
-
+        // if (prevProps.allPersonnelExtra !== this.props.allPersonnelExtra) {
+        //     let allPersonnelExtraRedux = [...this.props.allPersonnelExtra]
+        //     let allPersonnelExtra = allPersonnelExtraRedux.map((item, index) => {
+        //         let newItem = { ...item }
+        //         delete newItem.createdAt;
+        //         delete newItem.personnelExtraReportData;
+        //         delete newItem.updatedAt;
+        //         return newItem
+        //     })
+        //     let allPersonnelExtraReduxManufacture = [] // danh sách nhân viên thuộc cty
+        //     allPersonnelExtraReduxManufacture = allPersonnelExtra.filter(item => item.userType !== STATUS_USER_TYPE_EXTRA.KHACH_HANG)
+        //     this.setState({
+        //         listExtra: allPersonnelExtraReduxManufacture,
+        //         showHideExtra: true,
+        //     })
+        // }
     }
-
-
 
     handleOnchangeInput = (e, id) => {
         let copyState = { ...this.state };
@@ -91,16 +95,15 @@ class ModalPersonel extends Component {
         })
     }
 
-
     handleCloseModal = () => {
         this.props.handleCloseModal()
-        this.setState({
-
-        })
-    }
-
-    handleChangeSelect = (selectOptions, actionMeta) => {
-        console.log(actionMeta)
+        this.setState(prevState => ({
+            showHideEditCheckAll: false,
+            listUserModal: prevState.listUserModalBeforEdit.length > 0 ? [...prevState.listUserModalBeforEdit] : prevState.listUserModal, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+            checkedOverAll: false,
+            checkedRepastAll: false,
+            idDisable: '',
+        }))
     }
 
     handleCheckedAll = (id) => {
@@ -109,50 +112,58 @@ class ModalPersonel extends Component {
         this.setState((prevState) =>
         ({
             [id]: !this.state[id],
-            listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser.map(item => {
-                if (item.overtimeId === null) item.overtimeId = "";
-                return item
-            })] : prevState.listUserBeforEdit,
-            // listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa    
+            listUserModalBeforEdit: _.isEmpty(prevState.listUserModalBeforEdit)
+                ?
+                [...prevState.listUserModal.map(item => {
+                    if (item.overtimeId === null) item.overtimeId = "";
+                    return item
+                })]
+                :
+                prevState.listUserModalBeforEdit,
+            // listUserModal: prevState.listUserModalBeforEdit.length > 0 ? [...prevState.listUserModalBeforEdit] : prevState.listUserModal, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa    
         }),
             async () => {
                 if (id === 'checkedOverAll') {
-                    let listUserCopy = [...this.state.listUser];
+                    let listUserCopy = [...this.state.listUserModal];
                     if (listUserCopy.length > 0) {
                         listUserCopy = listUserCopy.map(item => ({
                             ...item,
                             statusId: this.state.checkedOverAll
                                 ? STATUS_REPORT_HR_ID.TANG_CA
-                                : STATUS_REPORT_HR_ID.DI_LAM
+                                : STATUS_REPORT_HR_ID.DI_LAM,
+                            repastEId: this.state.checkedOverAll ? 0 : null,
+                            overtimeId: this.state.checkedOverAll ? 1 : "",
                         }));
                     }
-                    // console.log('listUserCopyDeep', listUserCopyDeep)
                     this.setState({
-                        listUser: this.state.checkedOverAll ? listUserCopy : this.state.listUserBeforEdit,
+                        listUserModal: listUserCopy,
                         checkedRepastAll: !this.state.checkedOverAll && !this.state.checkedRepastAll
                     });
                 }
                 if (this.state.checkedOverAll) {
                     if (id === 'checkedRepastAll') {
-                        let listUserCopy = [...this.state.listUser];
+                        let listUserCopy = [...this.state.listUserModal];
                         if (listUserCopy.length > 0) {
                             listUserCopy = listUserCopy.map(item => ({
                                 ...item,
-                                repastEId: this.state.checkedRepastAll ? 1 : 0
+                                repastEId: item.statusId === STATUS_REPORT_HR_ID.TANG_CA && this.state.checkedRepastAll ? 1 : 0
                             }));
-                            this.setState({ listUser: listUserCopy });
                         }
+                        this.setState({ listUserModal: listUserCopy });
                     }
                 }
             }
         );
     }
+
     handleCheckBox = async (event, item, id) => {
         let updatedItem = {}
         if (id === 'statusId') {
             updatedItem = {
                 ...item,
                 [event.target.name]: event.target.checked === true ? STATUS_REPORT_HR_ID.TANG_CA : STATUS_REPORT_HR_ID.DI_LAM, // Thêm hoặc cập nhật thuộc tính giá trị. 
+                repastEId: event.target.checked && 0,
+                overtimeId: event.target.checked && 1,
             };
             if (event.target.checked === false) {
                 updatedItem.repastEId = null
@@ -172,12 +183,16 @@ class ModalPersonel extends Component {
             }
 
         }
-
-        this.setState((prevState) => ({
-            listUser: prevState.listUser.map((user) =>
-                user.id === updatedItem.id ? updatedItem : user,
-            ),
-        }));
+        if (this.state.userUpdate && this.state.userUpdate.length > 0) {
+            this.setState((prevState) => ({
+                userUpdate: [{ ...updatedItem }]
+            }));
+        } else
+            this.setState((prevState) => ({
+                listUserModal: prevState.listUserModal.map((user) =>
+                    user.id === updatedItem.id ? updatedItem : user,
+                ),
+            }));
 
 
         // if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
@@ -186,7 +201,7 @@ class ModalPersonel extends Component {
         //     }));
         // } else {
         //     this.setState((prevState) => ({
-        //         listUser: prevState.listUser.map((user) =>
+        //         listUserModal: prevState.listUserModal.map((user) =>
         //             user.userId === updatedItem.userId ? updatedItem : user
         //         ),
         //     }));
@@ -204,29 +219,28 @@ class ModalPersonel extends Component {
                 return;
             }
 
-
-            if (+overtimeId < 0.5) {
-                toast.warning('Thời gian tăng ca tối thiểu là 30')
+            if (+overtimeId < 1) {
+                toast.warning('Thời gian tăng ca tối thiểu là 1 giờ')
                 return;
             }
 
             updatedItem = {
                 ...item,
-                [id]: +event.target.value > 0.5 ? +event.target.value : null, // Thêm hoặc cập nhật thuộc tính giá trị. 
+                [id]: +event.target.value >= 1 ? +event.target.value : null, // Thêm hoặc cập nhật thuộc tính giá trị. 
             };
         }
 
         if (id === "overtimeIdAll") {
             this.setState((prevState) => ({
-                listUser: prevState.listUser.map((user) => {
-                    user.overtimeId = overtimeId;
+                listUserModal: prevState.listUserModal.map((user) => {
+                    user.overtimeId = user.statusId === STATUS_REPORT_HR_ID.TANG_CA ? overtimeId : '';
                     return user;
                 }),
             }));
         }
 
         this.setState((prevState) => ({
-            listUser: prevState.listUser.map((user) =>
+            listUserModal: prevState.listUserModal.map((user) =>
                 user.userId === updatedItem.userId ? updatedItem : user,
             ),
         }));
@@ -237,9 +251,10 @@ class ModalPersonel extends Component {
         this.setState(prevState => {
             if (!this.state.showHideEditCheckAll) {
                 return {
+                    idDisable: '',
                     showHideEditCheckAll: !this.state.showHideEditCheckAll,
-                    listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
-                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa    
+                    listUserModalBeforEdit: _.isEmpty(prevState.listUserModalBeforEdit) ? [...prevState.listUserModal] : prevState.listUserModalBeforEdit,
+                    listUserModal: prevState.listUserModalBeforEdit.length > 0 ? [...prevState.listUserModalBeforEdit] : prevState.listUserModal, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa    
                     checkedOverAllBeforEdit: prevState.checkedOverAll,
                     checkedRepastAllBeforEdit: prevState.checkedRepastAll,
                 }
@@ -248,8 +263,8 @@ class ModalPersonel extends Component {
             if (this.state.showHideEditCheckAll) {
                 return {
                     showHideEditCheckAll: !this.state.showHideEditCheckAll,
-                    listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
-                    listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    listUserModal: [...prevState.listUserModalBeforEdit], // Trả về giá trị trước khi edit
+                    // listUserModalBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
                     checkedOverAllBeforEdit: "",
                     checkedRepastAllBeforEdit: "",
                     checkedOverAll: prevState.checkedOverAllBeforEdit,
@@ -263,22 +278,23 @@ class ModalPersonel extends Component {
         this.setState(prevState => {
             if (id === 'edit') {
                 return {
+                    userUpdate: [{ ...item }],
                     idDisable: item.id,
-                    listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
-                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    listUserModalBeforEdit: _.isEmpty(prevState.listUserModalBeforEdit) ? [...prevState.listUserModal] : prevState.listUserModalBeforEdit,
+                    listUserModal: prevState.listUserModalBeforEdit.length > 0 ? [...prevState.listUserModalBeforEdit] : prevState.listUserModal, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
                 };
             }
 
             if (id === 'close') {
                 return {
-                    idDisable: '',
-                    listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
-                    listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    userUpdate: [],
+                    idDisable: "",
+                    listUserModal: [...prevState.listUserModalBeforEdit], // Trả về giá trị trước khi edit
+                    // listUserModalBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
                 };
             }
         });
     }
-
 
     renderCheckboxAll = (type, isChecked) => {
         const { allPersonnel } = this.props;
@@ -296,17 +312,54 @@ class ModalPersonel extends Component {
         );
     };
 
+    renderSelectNumberAll = (type, isSelect) => {
+        const { allPersonnel } = this.props;
+        const { showHideEditCheckAll } = this.state;
+
+        // Điều kiện hiển thị checkbox
+        const shouldShowCheckbox =
+            (allPersonnel.some(item => item.statusId === STATUS_REPORT_HR_ID.TANG_CA) && showHideEditCheckAll) ||
+            (allPersonnel.every(item => item.statusId !== STATUS_REPORT_HR_ID.TANG_CA));
+
+        return shouldShowCheckbox && (
+            <input
+                type="number"
+                min={1}
+                // value={item.overtimeId}
+                className="th-input-number"
+                disabled={!this.state.checkedOverAll}
+                onChange={(event) => this.handleChangeInputExtra(event, type, isSelect)}
+            />
+        );
+    }
+
+    handleOvertimeReportModal = async () => {
+        let dataUpdate = await this.state.listUserModal.filter((item, index) => {
+            return item.statusId === STATUS_REPORT_HR_ID.TANG_CA
+        })
+        for (let item of dataUpdate) {
+            if (!item.overtimeId) {
+                toast.error('Bạn cần nhập thời gian tăng ca dự kiến');
+                break; // Dừng vòng lặp ngay lập tức
+            }
+        }
+
+        if (this.state.listUserModal && this.state.listUserModal.length > 0) { // gửi dữ liệu sang bên personnel
+            this.props.handleOvertimeReport(this.state.listUserModal, 'overtimeReport')
+        }
+    }
 
 
     render() {
+        console.log(this.state)
+
         let {
-            listUser, checkedOverAll, listExtra,
-            checkedRepastAll, idDisable,
+            listUserModal, checkedOverAll, userUpdate,
+            checkedRepastAll, idDisable, showHideEditCheckAll
         } = this.state
 
         let hasOvertime = this.props.allPersonnel.some(item => item.statusId === STATUS_REPORT_HR_ID.TANG_CA);
 
-        console.log('state', this.state)
         return (
             <Modal
                 isOpen={this.props.isOpenModal}
@@ -338,17 +391,7 @@ class ModalPersonel extends Component {
                                         <span>Tăng ca</span>
                                     </th>
                                     <th className="th-flex">
-                                        {this.state.checkedOverAll &&
-                                            <input
-                                                type="number"
-                                                min={1}
-                                                // value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.quantity : item.quantity}
-                                                // value={item.overtimeId}
-                                                className="th-input-number"
-                                                disabled={!this.state.checkedOverAll}
-                                                onChange={(event) => this.handleChangeInputExtra(event, "", 'overtimeIdAll')}
-                                            />
-                                        }
+                                        {this.state.checkedOverAll && this.renderSelectNumberAll("", 'overtimeIdAll')}
                                         <span className='th-time'>Thời gian</span>
                                     </th>
                                     <th>
@@ -357,21 +400,20 @@ class ModalPersonel extends Component {
                                     </th>
                                     {hasOvertime && (
                                         <th>
-                                            <span style={{ marginRight: '5px' }}>Hành Động</span>
+                                            {/* <span style={{ marginRight: '5px' }}>Hành Động</span> */}
                                             <i
-                                                className={this.state.showHideEditCheckAll ? "fas fa-window-close" : "fas fa-edit"}
+                                                className={this.state.showHideEditCheckAll ? "fas fa-window-close icon-close" : "fas fa-edit icon-edit"}
                                                 onClick={this.handleShowHideSelectAll}
                                             ></i>
                                         </th>
                                     )}
                                 </tr>
                             </thead>
-                            <tbody>
-                                {listUser && listUser.length > 0 &&
-                                    listUser.map((item, index) => {
-
+                            <tbody className='moda-hr-body-tbody'>
+                                {listUserModal && listUserModal.length > 0 &&
+                                    listUserModal.map((item, index) => {
                                         let user = this.props.allPersonnel.find(itemR => itemR.id === item.id)
-                                        let isOvertime = item.statusId === STATUS_REPORT_HR_ID.TANG_CA;
+                                        let isOvertime = !_.isEmpty(userUpdate) ? userUpdate[0].statusId === STATUS_REPORT_HR_ID.TANG_CA : item.statusId === STATUS_REPORT_HR_ID.TANG_CA;
                                         let isDisabledCheckBoxOvertime = this.state.showHideEditCheckAll ? false : (user ? (user.statusId === STATUS_REPORT_HR_ID.TANG_CA && idDisable !== item.id) : false);
                                         let isDisabledOvertimeInput = this.state.showHideEditCheckAll
                                             ? (item.statusId === STATUS_REPORT_HR_ID.TANG_CA ? false : true) // Nếu mở hết input, chỉ cho phép khi item.statusId === TANG_CA
@@ -397,59 +439,56 @@ class ModalPersonel extends Component {
                                             <>
                                                 <tr key={item.id}>
                                                     <td style={{ width: "3%", }}>{index + 1}</td>
-                                                    <td style={{ width: "15%", }}>{item.employeeCode}</td>
-                                                    <td style={{ width: "20%", }}>{item.fullName}</td>
+                                                    <td style={{ width: "24%", }}>{item.personnelReportData.employeeCode}</td>
+                                                    <td style={{ width: "25%", }}>{item.fullName}</td>
                                                     <td style={{ width: "10%" }}>
-                                                        <>
-                                                            <input
-                                                                className="form-check-input"
-                                                                type="checkbox"
-                                                                name="statusId"
-                                                                checked={isOvertime}
-                                                                // value={0}
-                                                                disabled={isDisabledCheckBoxOvertime}
-                                                                // onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
-                                                                onChange={(event) => this.handleCheckBox(event, item, 'statusId')}
-                                                            />
-                                                        </>
+                                                        <input
+                                                            className="form-check-input moda-hr-body-tbody-icon-check-box"
+                                                            type="checkbox"
+                                                            name="statusId"
+                                                            checked={isOvertime}
+                                                            // value={0}
+                                                            disabled={isDisabledCheckBoxOvertime}
+                                                            onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate[0].id ? userUpdate[0] : item, 'statusId')}
+                                                        />
                                                     </td>
-                                                    <td style={{ width: "10%" }} >
+                                                    <td style={{ width: "15%" }} >
                                                         <input
                                                             type="number"
                                                             min={1}
-                                                            // value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.quantity : item.quantity}
-                                                            value={item.overtimeId}
+                                                            value={item.overtimeId > 0 ? item.overtimeId : ""}
+                                                            // value={!_.isEmpty(userUpdate) && userUpdate[0] && userUpdate[0].overtimeId > 0 ? (userUpdate[0].overtimeId || "") : (item?.overtimeId || "")}
                                                             className="form-control "
                                                             disabled={isDisabledOvertimeInput}
-                                                            // onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item, 'quantity')}
                                                             onChange={(event) => this.handleChangeInputExtra(event, item, 'overtimeId')}
                                                         />
                                                     </td>
-                                                    <td style={{ width: "10%" }}>
+                                                    <td style={{ width: "15%" }}>
                                                         <>
                                                             <input
-                                                                className="form-check-input"
+                                                                className="form-check-input moda-hr-body-tbody-icon-check-box"
                                                                 type="checkbox"
                                                                 name="repastEId"
                                                                 checked={item.repastEId === 1}
+                                                                // checked={!_.isEmpty(userUpdate) ? userUpdate[0].repastEId === 1 : item.repastEId === 1}
                                                                 disabled={isDisabledRepastE}
-                                                                // onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
                                                                 onChange={(event) => this.handleCheckBox(event, item, 'repastEId')}
-                                                            // onChange={item.statusId === STATUS_REPORT_HR_ID.TANG_CA ? (event) => this.handleCheckBox(event, item, 'repastEId') : undefined} // không cho tick khi chưa báo tăng ca
                                                             />
                                                         </>
                                                     </td>
-                                                    {user && user.statusId === STATUS_REPORT_HR_ID.TANG_CA && idDisable !== item.id &&
-                                                        <td>
-                                                            <i className="fas fa-edit" onClick={() => this.handleEdit(item, 'edit')}></i>
+                                                    {/* {(user && user.statusId === STATUS_REPORT_HR_ID.TANG_CA && idDisable !== item.id && !showHideEditCheckAll) ?
+                                                        <td style={{ width: "20%" }}>
+                                                            <i className="fas fa-edit moda-hr-body-tbody-icon-edit" onClick={() => this.handleEdit(item, 'edit')}></i>
                                                         </td>
+                                                        :
+                                                        ""
                                                     }
-                                                    {idDisable === item.id &&
-                                                        <td>
-                                                            <i className="fas fa-save" ></i>
-                                                            <i className="fas fa-window-close" onClick={() => this.handleEdit(item, 'close')} ></i>
+                                                    {idDisable === item.id && !showHideEditCheckAll &&
+                                                        <td style={{ width: "20%" }}>
+                                                            <i className="fas fa-save moda-hr-body-tbody-icon-save"  ></i>
+                                                            <i className="fas fa-window-close moda-hr-body-tbody-icon-close" onClick={() => this.handleEdit(item, 'close')} ></i>
                                                         </td>
-                                                    }
+                                                    } */}
                                                 </tr>
                                             </>
                                         )
@@ -535,12 +574,15 @@ class ModalPersonel extends Component {
                 </div>
 
                 <div className='modal-hr-footer'>
-                    <button
-                        type="button" className="btn btn-primary btn-modal"
-                        onClick={() => this.handleCreateRequestUi()}
-                    >
-                        Xác nhận
-                    </button>
+                    {((hasOvertime && showHideEditCheckAll) || !hasOvertime) &&
+                        <button
+                            type="button" className="btn btn-primary btn-modal"
+                            onClick={() => this.handleOvertimeReportModal()}
+                        >
+                            Xác nhận
+                        </button>
+                    }
+
                     <button
                         type="button" className="btn btn-danger btn-modal"
                         onClick={() => this.handleCloseModal()}

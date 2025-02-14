@@ -23,15 +23,16 @@ class Personnel extends Component {
         listUser: [],
         listTime: [],
         listStatusUserReport: [],
-        isOpenModal: true,
+        isOpenModal: false,
         listExtra: [],
         showHide: false,
         idDisable: '',
         idDisableExtra: '',
         listUserBeforEdit: [],
         listUserBeforEditExtra: [],
-        userUpdate: {},
+        userUpdate: [],
         extraUpdate: {},
+        resetModal: false
     };
 
     componentDidMount = async () => {
@@ -160,6 +161,7 @@ class Personnel extends Component {
 
     handleChangeSelect = async (selectOptions, actionMeta, id,) => {
 
+
         let selectCopy = { ...this.state[actionMeta.name] }
         selectCopy.value = selectOptions.value;
         selectCopy.label = selectOptions.label;
@@ -167,7 +169,7 @@ class Personnel extends Component {
         if (selectCopy.value === STATUS_REPORT_HR.DI_LAM) {
             if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
                 this.setState((prevState) => ({
-                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, note: null, delayId: null, licensed: null, repastMId: 1 }
+                    userUpdate: [{ ...this.state.userUpdate[0], [actionMeta.name]: selectCopy, note: null, delayId: null, licensed: null, repastMId: 1 }]
                 }));
                 return;
             }
@@ -182,7 +184,7 @@ class Personnel extends Component {
         if (selectCopy.value === STATUS_REPORT_HR.NGHI) {
             if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
                 this.setState((prevState) => ({
-                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, delayId: null, licensed: 0, repastMId: 0 }
+                    userUpdate: [{ ...this.state.userUpdate[0], [actionMeta.name]: selectCopy, delayId: null, licensed: 0, repastMId: 0 }]
                 }));
                 return;
             }
@@ -195,12 +197,12 @@ class Personnel extends Component {
             return;
         }
 
-
         if (selectCopy.value === STATUS_REPORT_HR.DI_MUON) {
             if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
                 this.setState((prevState) => ({
-                    userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy, licensed: 0, repastMId: 1 }
+                    userUpdate: [{ ...this.state.userUpdate[0], [actionMeta.name]: selectCopy, licensed: 0, repastMId: 1 }]
                 }));
+
                 return;
             }
             this.setState((prevState) => ({
@@ -213,7 +215,7 @@ class Personnel extends Component {
 
         if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
             this.setState((prevState) => ({
-                userUpdate: { ...this.state.userUpdate, [actionMeta.name]: selectCopy }
+                userUpdate: [{ ...this.state.userUpdate[0], [actionMeta.name]: selectCopy }]
             }));
             return;
         }
@@ -230,15 +232,18 @@ class Personnel extends Component {
     handleSave = async (item, id) => {
         if (id === 'saveEditPesonel') {
             let response = await handleCreateUpdatePerSonnelReport({
-                id: item.id,
                 userUpdate: this.state.userUpdate
             })
-            if (response && response.errCode === 0) {
-                toast.success(response.errMessage)
+
+            console.log('response', response)
+            if (response.length > 0) {
+                if (response[0] === 0) toast.success("Cập nhật báo cáo thành công");
+                if (response[0] === 1) toast.warning("Cập nhật không thành công");
+
                 await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
                 this.setState({
-                    idDisable: '',
-                    userUpdate: {},
+                    idDisable: "",
+                    userUpdate: [],
                 })
             }
         }
@@ -247,12 +252,30 @@ class Personnel extends Component {
                 id: item.id,
                 extraUpdate: this.state.extraUpdate
             })
+            console.log(response)
             if (response && response.errCode === 0) {
                 toast.success(response.errMessage)
                 await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
                 this.setState({
                     idDisableExtra: '',
                     extraUpdate: {},
+                })
+            }
+        }
+
+        if (id === 'overtimeReport') { //dữ liệu gửi về bên modal
+            let response = await handleCreateUpdatePerSonnelReport({
+                userUpdate: item
+            })
+            console.log(response)
+            if (response && response.length > 0) {
+                let checkUpdate = await response.some(item => item === 0)
+                console.log(checkUpdate)
+                checkUpdate ? toast.success("Cập nhật báo cáo tăng ca thành công") : toast.warning("Không có cập nhật nào");
+                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+                this.setState({
+                    isOpenModal: false,
+                    resetModal: true,
                 })
             }
         }
@@ -268,7 +291,7 @@ class Personnel extends Component {
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
         if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
             this.setState((prevState) => ({
-                userUpdate: updatedItem
+                userUpdate: [{ ...updatedItem }]
             }));
         } else {
             this.setState((prevState) => ({
@@ -282,14 +305,13 @@ class Personnel extends Component {
     };
 
     handleCheckBox = async (event, item) => {
-        const updatedItem = {
+        let updatedItem = {
             ...item,
             [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-
         if (this.props.allPersonnel && this.props.allPersonnel.length > 0) {
             this.setState((prevState) => ({
-                userUpdate: updatedItem
+                userUpdate: [{ ...updatedItem }]
             }));
         } else {
             this.setState((prevState) => ({
@@ -528,7 +550,7 @@ class Personnel extends Component {
                     idDisable: item.userId,
                     listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
                     listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
-                    userUpdate: { ...item }
+                    userUpdate: [{ ...item }]
                 };
             }
 
@@ -537,7 +559,7 @@ class Personnel extends Component {
                     idDisable: '',
                     listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
                     listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
-                    userUpdate: {}
+                    userUpdate: []
                 };
             }
 
@@ -563,8 +585,6 @@ class Personnel extends Component {
     };
 
     render() {
-        // console.log('listExtra', this.state.listExtra)
-        // console.log('allPersonnelExtra', this.props.allPersonnelExtra)
 
         let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
@@ -613,7 +633,7 @@ class Personnel extends Component {
                                                         <td style={{ width: "10%", }}>{item.fullName}</td>
                                                         <td style={{ width: "11%" }}>
                                                             <Select
-                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.statusUserId : item.statusUserId}
+                                                                value={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].statusUserId : item.statusUserId}
                                                                 options={listStatusUserReport}
                                                                 name='statusUserId'
                                                                 isDisabled={this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId}
@@ -625,36 +645,36 @@ class Personnel extends Component {
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    id={item.id === userUpdate.id ? userUpdate.userId : item.userId}
+                                                                    // id={item.id === userUpdate[0].id ? userUpdate[0].userId : item.userId}
                                                                     name="licensed"
-                                                                    checked={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.licensed === 1 : item.licensed === 1}
+                                                                    checked={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].licensed === 1 : item.licensed === 1}
                                                                     // value={0}
                                                                     disabled={
-                                                                        !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                        !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id
                                                                             ?
-                                                                            userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                            (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                            userUpdate[0]?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                            (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate[0].userId)
                                                                             :
                                                                             item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
                                                                             (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                     }
-                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
+                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0] : item)}
                                                                 />
                                                                 {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                             </>
                                                         </td>
                                                         <td style={{ width: "7%" }}>
                                                             <Select
-                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.delayId : item.delayId}
+                                                                value={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].delayId : item.delayId}
                                                                 options={listTime}
                                                                 name='delayId'
                                                                 onChange={(selectOptions, actionMeta) => this.handleChangeSelect(selectOptions, actionMeta, item.userId)}
                                                                 isDisabled={
-                                                                    !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                    !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id
                                                                         ?
-                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.NGHI ||
-                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                        userUpdate[0]?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        userUpdate[0]?.statusUserId?.value === STATUS_REPORT_HR.NGHI ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate[0].userId)
                                                                         :
                                                                         item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
                                                                         item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
@@ -666,13 +686,13 @@ class Personnel extends Component {
                                                             <input
                                                                 type="text"
                                                                 className="form-control"
-                                                                value={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.note ?? "" : item.note ?? ""} // dấu ?? để check giá trị bên phải dấu ?? nếu là null hoặc undefine thì sử dụng giá trị bên trái dấu ??
-                                                                onChange={(event) => this.handleChangeInput(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
+                                                                value={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].note ?? "" : item.note ?? ""} // dấu ?? để check giá trị bên phải dấu ?? nếu là null hoặc undefine thì sử dụng giá trị bên trái dấu ??
+                                                                onChange={(event) => this.handleChangeInput(event, !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0] : item)}
                                                                 disabled={
-                                                                    !_.isEmpty(userUpdate) && item.id === userUpdate.id
+                                                                    !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id
                                                                         ?
-                                                                        userUpdate?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
-                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate.userId)
+                                                                        userUpdate[0]?.statusUserId?.value === STATUS_REPORT_HR.DI_LAM ||
+                                                                        (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== userUpdate[0].userId)
                                                                         :
                                                                         item.statusUserId.value === STATUS_REPORT_HR.DI_LAM ||
                                                                         (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
@@ -684,15 +704,15 @@ class Personnel extends Component {
                                                                 <input
                                                                     className="form-check-input"
                                                                     type="checkbox"
-                                                                    id={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.userId : item.userId}
+                                                                    id={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].userId : item.userId}
                                                                     name="repastMId"
                                                                     disabled={
                                                                         item.statusUserId.value === STATUS_REPORT_HR.NGHI ||
                                                                         (this.props.allPersonnel && this.props.allPersonnel.length > 0 && idDisable !== item.userId)
                                                                     }
                                                                     // value={1}
-                                                                    checked={!_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate.repastMId === 1 : item.repastMId === 1}
-                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate) && item.id === userUpdate.id ? userUpdate : item)}
+                                                                    checked={!_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0].repastMId === 1 : item.repastMId === 1}
+                                                                    onChange={(event) => this.handleCheckBox(event, !_.isEmpty(userUpdate[0]) && item.id === userUpdate[0].id ? userUpdate[0] : item)}
                                                                 />
                                                                 {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                             </>
@@ -886,6 +906,9 @@ class Personnel extends Component {
                     <ModalPersonel
                         isOpenModal={this.state.isOpenModal}
                         handleCloseModal={this.handleCloseModal}
+                        handleOvertimeReport={this.handleSave}
+                        resetModal={this.state.resetModal}
+                        onResetModal={() => this.setState({ resetModal: false })}
                     />
                 </div >
 

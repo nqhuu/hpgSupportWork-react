@@ -72,6 +72,58 @@
             outline: none;
         }
     }
+
+    .icon-checkbox-all,
+    .icon-edit,
+    .icon-close {
+        &:hover {
+            cursor: pointer;
+            opacity: 80%;
+        }
+    }
+
+    .icon-close {
+        color: red;
+    }
+
+    .icon-edit {
+        color: #464444;
+    }
+
+
+
+
+    .moda-hr-body-tbody {
+
+        .moda-hr-body-tbody-icon-check-box,
+        .moda-hr-body-tbody-icon-edit,
+        .moda-hr-body-tbody-icon-save,
+        .moda-hr-body-tbody-icon-close {
+            &:hover {
+                cursor: pointer;
+                opacity: 80%;
+            }
+        }
+
+        .moda-hr-body-tbody-icon-edit,
+        .moda-hr-body-tbody-icon-save,
+        .moda-hr-body-tbody-icon-close {
+            font-size: 20px;
+        }
+
+        .moda-hr-body-tbody-icon-edit {
+            color: #464444;
+        }
+
+        .moda-hr-body-tbody-icon-save {
+            color: orange;
+            margin-right: 10px;
+        }
+
+        .moda-hr-body-tbody-icon-close {
+            color: red;
+        }
+    }
 }
 
 .modal-hr-footer {

@@ -31,7 +31,7 @@ export const VALUE = {
 export const STATUS_REPORT_HR = {
     DI_LAM: 'STUR1',
     DI_MUON: 'STUR2',
-    NGHI: 'STUR3'
+    NGHI: 'STUR3',
 }
 
 export const STATUS_REPORT_HR_ID = {
