@@ -8,8 +8,10 @@ import { path, CODE, VALUE } from '../../ultil/constant';
 import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
-import HandleRequest from '../../components/support/HandleRequest'
-import PesonnelReportHome from '../../components/home/PesonnelReportHome'
+import HandleRequest from '../../components/support/HandleRequest';
+import PesonnelReportHome from '../../components/home/PesonnelReportHome';
+import OverallReport from '../../components/home/OverallReport';
+import ColumnChart from '../../components/dashboard/ColumnChart';
 import './HomeBody.scss'
 
 
@@ -161,8 +163,11 @@ class Homebody extends Component {
                                             />
                                         </div>
                                     </div>
-                                    <div className='bar-chart'>
-                                        biểu đồ cột kết quả hoàn thành
+                                    <div className='bar-chart bar-chart-support'>
+                                        <div className='header'>Biểu đồ</div>
+                                        <div className='body'>
+                                            <ColumnChart />
+                                        </div>
                                     </div>
                                 </div>
                                 {/* <div className='d-flex  cd-support-container'>
@@ -186,8 +191,11 @@ class Homebody extends Component {
                                             <PesonnelReportHome />
                                         </div>
                                     </div>
-                                    <div className='bar-chart'>
-                                        bảng phụ gì đó
+                                    <div className='table-content bar-chart'>
+                                        <div className='header'>Báo cáo tổng quát</div>
+                                        <div className='body'>
+                                            <OverallReport />
+                                        </div>
                                     </div>
                                 </div>
                             </>

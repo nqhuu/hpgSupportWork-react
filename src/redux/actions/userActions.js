@@ -172,14 +172,14 @@ export const getAllErrorCodeFailed = () => ({
 })
 
 
-export const getAllPersonnelRedux = (dataDay, shiftsId, departmentId) => {
-    if (!shiftsId) shiftsId = '';
+export const getAllPersonnelRedux = (dataDay, shiftId, departmentId) => {
+
+    if (!shiftId) shiftId = '';
     if (!departmentId) departmentId = '';
-    console.log()
     return async (dispatch, getState) => {
         try {
             dispatch({ type: actionTypes.FETCH_ALL_PERSONNEL_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
-            let listPersonnel = await getAllPersonnel(dataDay, shiftsId, departmentId)
+            let listPersonnel = await getAllPersonnel(dataDay, shiftId, departmentId)
             let response = {
                 listPersonnel: listPersonnel.data
             }
@@ -207,14 +207,14 @@ export const getAllPersonnelReduxFailed = () => ({
 })
 
 
-export const getAllPersonnelExtraRedux = (dataDay, shiftsId, departmentId) => {
-    if (!shiftsId) shiftsId = '';
+export const getAllPersonnelExtraRedux = (dataDay, shiftId, departmentId) => {
+
+    if (!shiftId) shiftId = '';
     if (!departmentId) departmentId = '';
-    console.log()
     return async (dispatch, getState) => {
         try {
             dispatch({ type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
-            let listPersonnelExtra = await getAllPersonnelExtra(dataDay, shiftsId, departmentId)
+            let listPersonnelExtra = await getAllPersonnelExtra(dataDay, shiftId, departmentId)
             let response = {
                 listPersonnelExtra: listPersonnelExtra.data
             }

@@ -1,0 +1,65 @@
+// Biến màu sắc
+$primary-color: #007bff;
+$secondary-color: #929394;
+$warning-color: #e49b13e5;
+$background-light: #f9f9f9;
+$background-dark: #eaeaea;
+$text-dark: #333;
+$border-color: #ddd;
+
+.overall-report-home-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px 2px 0 2px;
+    background: $background-light;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+    .overall-report-home-to-day,
+    .overall-report-home-month {
+        background: white;
+        padding: 5px;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        height: 180px; // Chiều cao cố định
+        overflow-y: auto; // Hiển thị thanh trượt khi cần
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            transform: translateY(-3px);
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+        }
+    }
+
+    .overall-report-home-name {
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        padding: 3px;
+        background: $warning-color;
+        color: #fff;
+        border-radius: 6px;
+        margin-bottom: 6px;
+    }
+
+    .item-content {
+        display: flex;
+        justify-content: space-between;
+        padding: 3px;
+        background: $background-dark;
+        border-radius: 5px;
+        font-size: 14px;
+        font-weight: 600;
+        color: $text-dark;
+
+        span:last-child {
+            font-weight: bold;
+            color: $primary-color;
+        }
+    }
+}

@@ -37,9 +37,9 @@ class Personnel extends Component {
 
     componentDidMount = async () => {
         await this.props.getAllSelectPersonnelRedux();
-        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
-        await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
-        // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
+        await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
+        // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
             this.getAllUser()
         };
@@ -126,7 +126,7 @@ class Personnel extends Component {
                 select.shiftId = item.shiftId;
                 select.departmentId = item.departmentId;
                 select.reporterId = this.props?.userInfo?.id;
-                select.statusUserId = { value: `${STATUS_REPORT_HR.DI_LAM}`, label: 'Đi làm đúng giờ' };; // tình trạng đi làm
+                select.statusUserId = { value: `${STATUS_REPORT_HR.DI_LAM}`, label: 'Đúng giờ' };; // tình trạng đi làm
                 select.licensed = null;
                 select.note = null;
                 select.delayId = null;
@@ -240,7 +240,7 @@ class Personnel extends Component {
                 if (response[0] === 0) toast.success("Cập nhật báo cáo thành công");
                 if (response[0] === 1) toast.warning("Cập nhật không thành công");
 
-                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
                 this.setState({
                     idDisable: "",
                     userUpdate: [],
@@ -255,7 +255,7 @@ class Personnel extends Component {
             console.log(response)
             if (response && response.errCode === 0) {
                 toast.success(response.errMessage)
-                await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+                await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
                 this.setState({
                     idDisableExtra: '',
                     extraUpdate: {},
@@ -272,7 +272,7 @@ class Personnel extends Component {
                 let checkUpdate = await response.some(item => item === 0)
                 console.log(checkUpdate)
                 checkUpdate ? toast.success("Cập nhật báo cáo tăng ca thành công") : toast.warning("Không có cập nhật nào");
-                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
+                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
                 this.setState({
                     isOpenModal: false,
                     resetModal: true,
@@ -343,13 +343,13 @@ class Personnel extends Component {
 
         if (response && response.errCode === 0) {
             toast.success(response.errMessage)
-            await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId);
-            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+            await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
+            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
         }
 
         if (response && response.errCode === 1) {
             toast.success(response.errMessage)
-            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
         }
 
     };
@@ -461,7 +461,7 @@ class Personnel extends Component {
                     let response = await handleDeletePersonnelExtra(item.id)
                     console.log(response)
                     if (response && response.errCode === 0) {
-                        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftsId, this.props.userInfo.departmentId)
+                        await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
                         toast.success('Xóa thành công')
                         return;
                     }
@@ -588,6 +588,7 @@ class Personnel extends Component {
 
         let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
+
         return (
             <>
                 <div className='personel-container'>
@@ -931,8 +932,8 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         // handleDataHomeRedux: (data) => dispatch(actions.handleDataHomeRedux(data)),
-        getAllPersonnelRedux: (dataDay, shiftsId, departmentId) => dispatch(actions.getAllPersonnelRedux(dataDay, shiftsId, departmentId)),
-        getAllPersonnelExtraRedux: (dataDay, shiftsId, departmentId) => dispatch(actions.getAllPersonnelExtraRedux(dataDay, shiftsId, departmentId)),
+        getAllPersonnelRedux: (dataDay, shiftId, departmentId) => dispatch(actions.getAllPersonnelRedux(dataDay, shiftId, departmentId)),
+        getAllPersonnelExtraRedux: (dataDay, shiftId, departmentId) => dispatch(actions.getAllPersonnelExtraRedux(dataDay, shiftId, departmentId)),
         getAllSelectPersonnelRedux: () => dispatch(actions.getAllSelectPersonnelRedux())
     };
 };

@@ -45,14 +45,14 @@ const updateRequestSupport = (data) => {
     return axios.post(`/users/api/update-request-support`, data);
 }
 
-const getAllPersonnel = (dataDay, shiftsId, departmentId) => {
-    if (dataDay.day) return axios.get(`/users/api/all-personnel?day=${dataDay.day}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
-    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
+const getAllPersonnel = (dataDay, shiftId, departmentId) => {
+    if (dataDay.day) return axios.get(`/users/api/all-personnel?day=${dataDay.day}&shiftId=${shiftId}&departmentId=${departmentId}`);
+    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftId=${shiftId}&departmentId=${departmentId}`);
 }
 
-const getAllPersonnelExtra = (dataDay, shiftsId, departmentId) => {
-    if (dataDay.day) return axios.get(`/users/api/all-personnel-extra?day=${dataDay.day}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
-    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel-extra?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftsId=${shiftsId}&departmentId=${departmentId}`);
+const getAllPersonnelExtra = (dataDay, shiftId, departmentId) => {
+    if (dataDay.day) return axios.get(`/users/api/all-personnel-extra?day=${dataDay.day}&shiftId=${shiftId}&departmentId=${departmentId}`);
+    if (dataDay.fromDate && dataDay.toDate) return axios.get(`/users/api/all-personnel-extra?fromDate=${dataDay.fromDate}&toDate=${dataDay.toDate}&shiftId=${shiftId}&departmentId=${departmentId}`);
 }
 
 

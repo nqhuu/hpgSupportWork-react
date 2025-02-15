@@ -55,9 +55,6 @@ class ModalPersonel extends Component {
                 fullName: `${item.personnelReportData.firstName} ${item.personnelReportData.lastName}`
             }));
 
-            console.log('allPersonnel', allPersonnel)
-
-
             let allPersonnelToWork = [] // danh sách nhân viên đi làm
             if (allPersonnel && allPersonnel.length > 0) {
                 allPersonnelToWork = allPersonnel.filter(item => item.statusUserId !== STATUS_REPORT_HR.NGHI)  ///////////////////// lưu ý phần này, đang bị chuyển thành string thay vì item.statusUserId.value
@@ -351,8 +348,6 @@ class ModalPersonel extends Component {
 
 
     render() {
-        console.log(this.state)
-
         let {
             listUserModal, checkedOverAll, userUpdate,
             checkedRepastAll, idDisable, showHideEditCheckAll

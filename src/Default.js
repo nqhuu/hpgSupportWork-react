@@ -12,7 +12,13 @@ class Default extends Component {
 
     }
 
+    componentDidMount = async () => {
 
+    };
+
+    componentDidUpdate = async (prevProps, prevState, snapshot) => {
+
+    };
 
     render() {
         return (

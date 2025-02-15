@@ -54,8 +54,15 @@
             justify-content: space-between;
 
             .it-suport {
+                height: auto;
+                max-height: 500px;
                 overflow: auto;
+            }
 
+            .bar-chart {
+                max-height: 500px;
+                height: auto;
+                overflow-x: auto;
             }
         }
 
@@ -64,12 +71,32 @@
             justify-content: space-between;
 
             .cd-suport {
+                max-height: 500px;
+                height: auto;
                 overflow: auto;
+            }
+
+            .bar-chart {
+                max-height: 500px;
+                height: auto;
+                overflow-x: auto;
             }
         }
 
         .personnel-Reports-container {
-            .personnel-Reports {}
+
+            .personnel-Reports {
+                max-height: 500px;
+                height: auto;
+                overflow-x: auto;
+
+            }
+
+            .bar-chart {
+                max-height: 500px;
+                height: auto;
+                overflow-x: auto;
+            }
         }
 
 
@@ -81,6 +108,31 @@
             /* Bo tròn các góc */
             box-shadow: 0 4px 6px rgba(3, 3, 3, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
             /* Hiệu ứng đổ bóng */
+        }
+
+        .bar-chart-support {
+
+            display: flex;
+            // align-items: flex-end;
+            justify-content: space-between;
+            flex-direction: column;
+
+            .header {
+                position: sticky;
+                z-index: 10;
+                top: 0;
+                // height: 11%;
+                padding: 10px 0;
+                font-size: 16px;
+                font-weight: 700;
+                background-color: rgb(67, 163, 252);
+                padding-left: 10px;
+            }
+
+            .body {
+                padding-bottom: 8px;
+            }
+
         }
 
         .table-content {

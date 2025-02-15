@@ -35,7 +35,7 @@ $text-dark: #555;
 }
 
 .personnel-home-report-department {
-    width: 300px;
+    width: 327.5px;
     height: 180px; // Giảm chiều cao xuống 1/2 nhưng vẫn đủ hiển thị nội dung
     background: linear-gradient(to bottom, $background-light, $background-dark);
     border: 1px solid $border-color;
@@ -68,10 +68,14 @@ $text-dark: #555;
         border-radius: 6px;
         margin-bottom: 6px;
         width: 70px;
-
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+
+    .department-content-left,
+    .department-content-right {
+        width: 100px;
     }
 
     .report-list {
