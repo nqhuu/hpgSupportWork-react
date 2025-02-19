@@ -2,10 +2,12 @@
 import actionTypes from '../actions/actionTypes';
 import { VALUE } from '../../ultil/constant';
 import { getAllPersonnel } from '../../services/userService';
+import { dayOrNight } from '../actions';
 
 const initialState = {
     isLoggedIn: false,
     userInfo: null,
+    dayOrNight: null,
     reqSupportIt: [],
     reqSupportCd: [],
     allSupport: [],
@@ -13,7 +15,8 @@ const initialState = {
     allErrorCode: [],
     allPersonnel: [],
     allSelectPersonnel: [],
-    allPersonnelExtra: []
+    allPersonnelExtra: [],
+    allDepartment: [],
 
 }
 
@@ -112,6 +115,30 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 allPersonnelExtra: []
+            }
+        case actionTypes.FETCH_ALL_DEPARTMENT_SUCCESS:
+            return {
+                ...state,
+                allDepartment: action.allDepartment
+            }
+        case actionTypes.FETCH_ALL_DEPARTMENT_FAIL:
+            return {
+                ...state,
+                allDepartment: []
+            }
+
+
+
+
+        case actionTypes.IS_DAY_OR_NIGHT_SUCCESS:
+            return {
+                ...state,
+                dayOrNight: action.dayOrNight
+            }
+        case actionTypes.IS_DAY_OR_NIGHT_FAIL:
+            return {
+                ...state,
+                dayOrNight: ''
             }
 
         default:

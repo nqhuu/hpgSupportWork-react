@@ -7,12 +7,13 @@ import { getAllUser, handleCreateUpdatePerSonnelReport, handleDeletePersonnelExt
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
-import _ from 'lodash'
+import _, { some } from 'lodash'
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // import moment from 'moment'
 import moment from 'moment-timezone';
 import ModalPersonel from '../modal/ModalPersonel';
+import determineDayAndNight from '../formating/determineDayAndNight'
 
 
 
@@ -26,13 +27,17 @@ class Personnel extends Component {
         isOpenModal: false,
         listExtra: [],
         showHide: false,
+        dayNight: null,
+        dayNightBeforEdit: '',
+        disableDayNight: '',
         idDisable: '',
         idDisableExtra: '',
         listUserBeforEdit: [],
         listUserBeforEditExtra: [],
         userUpdate: [],
-        extraUpdate: {},
-        resetModal: false
+        extraUpdate: [],
+        resetModal: false,
+        isDisableDayNight: false,
     };
 
     componentDidMount = async () => {
@@ -75,7 +80,8 @@ class Personnel extends Component {
             };
         };
 
-        if (prevProps.allPersonnel !== this.props.allPersonnel) {
+        // if (prevProps.allPersonnel !== this.props.allPersonnel) {
+        if (!_.isEqual(prevProps.allPersonnel, this.props.allPersonnel)) {
             let listStatusUserReport = this.state?.listStatusUserReport;
             let listTime = this.state?.listTime;
             let allPersonnelRedux = this.props.allPersonnel
@@ -87,7 +93,8 @@ class Personnel extends Component {
                 return item
             })
             this.setState({
-                listUser: allPersonnel
+                listUser: allPersonnel,
+                dayNight: this.props.allPersonnel && this.props.allPersonnel[0] && (this.props.allPersonnel[0].dayNight === 0 || this.props.allPersonnel[0].dayNight === 1) ? this.props.allPersonnel[0].dayNight : (determineDayAndNight().day === 'NA' ? 1 : 0)
             })
         };
 
@@ -117,11 +124,13 @@ class Personnel extends Component {
     setStateListUser = async (listUser) => {
         let listUserWorkShifts
         // let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD HH:mm:ss');
+        let DayAndNight = determineDayAndNight();
         let listUserFullDepartment = [];
         if (listUser && listUser.length > 0) {
             listUserFullDepartment = listUser.map((item, index) => {
                 let select = {};
                 select.userId = item.id;
+                select.dayNight = null;
                 select.fullName = `${item.firstName} ${item.lastName}`;
                 select.shiftId = item.shiftId;
                 select.departmentId = item.departmentId;
@@ -133,6 +142,7 @@ class Personnel extends Component {
                 select.overtimeId = null;
                 select.repastMId = 1; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
                 select.employeeCode = item.employeeCode; // nếu đi làm hoặc đi trế (1 tiếng ?) là 1 nếu không đi làm thì 0 - tức là không ăn
+                select.dayNight = DayAndNight.day === 'NA' ? 1 : 0;
                 return select
             })
         }
@@ -232,33 +242,42 @@ class Personnel extends Component {
     handleSave = async (item, id) => {
         if (id === 'saveEditPesonel') {
             let response = await handleCreateUpdatePerSonnelReport({
-                userUpdate: this.state.userUpdate
+                userUpdate: this.state.userUpdate,
+                extraUpdate: this.state.extraUpdate,
             })
-
-            console.log('response', response)
+            console.log(response)
             if (response.length > 0) {
                 if (response[0] === 0) toast.success("Cập nhật báo cáo thành công");
                 if (response[0] === 1) toast.warning("Cập nhật không thành công");
-
                 await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
                 this.setState({
                     idDisable: "",
+                    idDisableExtra: '',
+                    isDisableDayNight: false,
+                    dayNightBeforEdit: '',
+                    listUserBeforEdit: [],
+                    listUserBeforEditExtra: [],
                     userUpdate: [],
                 })
             }
         }
         if (id === 'saveEditExtra') {
             let response = await handleCreateUpdatePerSonnelReport({
-                id: item.id,
                 extraUpdate: this.state.extraUpdate
             })
-            console.log(response)
-            if (response && response.errCode === 0) {
-                toast.success(response.errMessage)
+            if (response && response.length > 0) {
+                if (response[0] === 0) toast.success("Cập nhật báo cáo khác thành công");
+                if (response[0] === 1) toast.warning("Cập nhật không thành công");
+                // toast.success(response.errMessage)
                 await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
                 this.setState({
+                    idDisable: "",
                     idDisableExtra: '',
-                    extraUpdate: {},
+                    isDisableDayNight: false,
+                    dayNightBeforEdit: '',
+                    listUserBeforEdit: [],
+                    listUserBeforEditExtra: [],
+                    extraUpdate: [],
                 })
             }
         }
@@ -326,11 +345,18 @@ class Personnel extends Component {
     handleSendReport = async () => {
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
         if (!_.isEmpty(this.state.listExtra)) {
-            let check = await this.validateExtra();
+            let check = await this.validateExtra(this.state.listExtra);
             if (check) {
                 toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng", nhấn X để hủy bỏ')
                 return;
             }
+        }
+
+        let checkDayNight = await this.validatedayNight(this.state.listUser);
+        // let checkDayNightExtra = this.state.dayNight === 0 || this.state.dayNight === 1;
+        if (checkDayNight) {
+            toast.error('Bạn cần nhập ca/kíp')
+            return;
         }
 
         let response = await handleCreateUpdatePerSonnelReport({
@@ -371,7 +397,8 @@ class Personnel extends Component {
                         repastMId: 1,
                         repastEId: null,
                         note: null,
-                        statusId: null
+                        statusId: null,
+                        dayNight: this.state.dayNight,
                     }
                 ],
         })
@@ -392,35 +419,46 @@ class Personnel extends Component {
             ...item,
             [event.target.name]: event.target.checked === true ? 1 : 0, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-        this.setState((prevState) => ({
-            listExtra: prevState.listExtra.map((user, indexList) =>
-                user.id === item.id ? updatedItem : user
-            ),
-        }));
+        console.log(updatedItem)
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate[0].id) {
+            this.setState((prevState) => ({
+                extraUpdate: [{ ...updatedItem }]
+            }));
+        } else {
+            this.setState((prevState) => ({
+                listExtra: prevState.listExtra.map((user, indexList) =>
+                    user.id === updatedItem.id ? updatedItem : user
+                ),
+            }));
+        }
+
     };
 
     handleSelectExtra = async (event, item) => {
+        console.log('item', item)
         const updatedItem = {
             ...item,
             userType: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-        //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
 
-        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate.id) {
+        console.log('updatedItem', updatedItem)
+
+
+        //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate[0]?.id) {
             this.setState({
-                extraUpdate: updatedItem
+                extraUpdate: [{ ...updatedItem }]
             });
         } else {
             this.setState((prevState) => ({
                 listExtra: prevState.listExtra.map((user) =>
-                    user.id === item.id ? updatedItem : user
+                    user.id === updatedItem.id ? updatedItem : user
                 ),
             }));
         }
     }
 
     handleChangeInputExtra = async (event, item, id) => {
-
         if (id === 'quantity') {
             let quantity = +event.target.value;
             if (quantity < 1 || !Number.isInteger(quantity)) {
@@ -435,14 +473,14 @@ class Personnel extends Component {
         };
 
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
-        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate.id) {
+        if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate[0]?.id) {
             this.setState((prevState) => ({
-                extraUpdate: updatedItem
+                extraUpdate: [{ ...updatedItem }]
             }));
         } else {
             this.setState((prevState) => ({
                 listExtra: prevState.listExtra.map((user) =>
-                    user.id === item.id ? updatedItem : user
+                    user.id === updatedItem.id ? updatedItem : user
                 ),
             }));
         };
@@ -482,6 +520,7 @@ class Personnel extends Component {
                                     repastEId: null,
                                     note: null,
                                     statusId: null,
+                                    dayNight: this.state.dayNight
                                 }]
                             }, () => toast.success('Xóa thành công'))
                         } else {
@@ -504,9 +543,9 @@ class Personnel extends Component {
         }
     }
 
-    validateExtra = async () => {
-        let listExtra = [...this.state.listExtra]
-        let listExtraCopy = [listExtra[listExtra.length - 1].userType, listExtra[listExtra.length - 1].quantity];
+    validateExtra = async (list) => {
+        let listExtra = [...list];
+        let listExtraCopy = [listExtra[listExtra.length - 1].userType, listExtra[listExtra.length - 1].quantity, listExtra[listExtra.length - 1].dayNight];
         let validate = false;
         validate = await listExtraCopy.some(item => item === null ||
             item === undefined ||
@@ -517,8 +556,20 @@ class Personnel extends Component {
         return validate
     }
 
+
+    validatedayNight = async (list) => {
+        let listUserCopy = [...list];
+        let validate = false;
+        validate = await listUserCopy.some(item =>
+            item.dayNight === null ||
+            item.dayNight === undefined ||
+            item.dayNight === NaN)
+        return validate
+    }
+
+
     handleAddExtra = async () => {
-        let check = await this.validateExtra();
+        let check = await this.validateExtra(this.state.listExtra);
         let listExtraCopy = [...this.state.listExtra];
         if (!check) {
             let addExtra = {
@@ -533,6 +584,7 @@ class Personnel extends Component {
                 repastEId: null,
                 note: null,
                 statusId: null,
+                dayNight: this.state.dayNight
             }
             listExtraCopy.push(addExtra);
         } else {
@@ -548,8 +600,9 @@ class Personnel extends Component {
             if (id === 'edit') { // Lần click vào "edit"
                 return {
                     idDisable: item.userId,
+                    idDisableExtra: '',
                     listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? [...prevState.listUser] : prevState.listUserBeforEdit,
-                    listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    // listUser: prevState.listUserBeforEdit.length > 0 ? [...prevState.listUserBeforEdit] : prevState.listUser, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
                     userUpdate: [{ ...item }]
                 };
             }
@@ -566,9 +619,10 @@ class Personnel extends Component {
             if (id === 'editExtra') { // Lần click vào "edit"
                 return {
                     idDisableExtra: item.id,
+                    idDisable: '',
                     listUserBeforEditExtra: _.isEmpty(prevState.listUserBeforEditExtra) ? [...prevState.listExtra] : prevState.listUserBeforEditExtra,
-                    listExtra: prevState.listUserBeforEditExtra.length > 0 ? [...prevState.listUserBeforEditExtra] : prevState.listExtra, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
-                    extraUpdate: { ...item }
+                    // listExtra: prevState.listUserBeforEditExtra.length > 0 ? [...prevState.listUserBeforEditExtra] : prevState.listExtra, // set lại state cho việc click vào edit (lần 2) dòng dưới khi mà không muốn sửa ở dòng trước đó nữa
+                    extraUpdate: [{ ...item }]
                 };
             }
 
@@ -577,18 +631,110 @@ class Personnel extends Component {
                     idDisableExtra: '',
                     listExtra: [...prevState.listUserBeforEditExtra], // Trả về giá trị trước khi edit
                     listUserBeforEditExtra: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
-                    extraUpdate: {}
+                    extraUpdate: []
                 };
             }
             return null;
         });
     };
 
+    handleSelectDayNight = async (event) => {
+        let value = '';
+        if (+event.target.value === 0 || +event.target.value === 1) {
+            value = +event.target.value;
+        } else {
+            value = null;
+        };
+        let userUpdateCopy = _.cloneDeep(this.state.listUser);
+        let userUpdateExtraCopy = _.cloneDeep(this.state.listExtra);
+
+        userUpdateCopy.map(item => {
+            item.dayNight = value;
+            return item
+        });
+
+        if (userUpdateExtraCopy && userUpdateExtraCopy.length > 0) {
+            userUpdateExtraCopy.map(item => {
+                item.dayNight = value;
+                return item;
+            });
+        }
+
+        this.setState({
+            listUser: this.props.allPersonnel.length === 0 && userUpdateCopy.length > 0 ? userUpdateCopy : this.state.listUser,
+            listExtra: this.props.allPersonnelExtra.length === 0 && userUpdateExtraCopy.length > 0 ? userUpdateExtraCopy : this.state.listExtra,
+            userUpdate: this.props.allPersonnel.length > 0 && this.props.allPersonnel.length > 0 && userUpdateCopy.length > 0 ? userUpdateCopy : [],
+            extraUpdate: this.props.allPersonnelExtra.length > 0 && userUpdateExtraCopy && userUpdateExtraCopy.length > 0 ? userUpdateExtraCopy : [],
+            dayNight: value,
+        })
+    }
+
+    handleUpdateDayNight = async (id) => {
+
+        if (id === 'saveEditDayNight') {
+            if (this.state.dayNight === this.state.dayNightBeforEdit) {
+                toast.warning('Không có thay đổi Ca/Kíp nào');
+                this.setState(prevState => ({
+                    isDisableDayNight: false,
+                    idDisable: '',
+                    listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
+                    listExtra: [...prevState.listUserBeforEditExtra], // Trả về giá trị trước khi edit
+                    listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    listUserBeforEditExtra: [],
+                    userUpdate: [],
+                    extraUpdate: [],
+                    dayNight: prevState.dayNightBeforEdit,
+                    dayNightBeforEdit: ''
+                }))
+                return;
+            }
+
+            this.handleSave('', 'saveEditPesonel')
+            this.handleSave('', 'saveEditExtra')
+            return;
+        }
+
+        this.setState((prevState) => {
+            if (id === 'opentEditDayNight') { // Lần click vào "edit"
+                return {
+                    isDisableDayNight: true,
+                    dayNightBeforEdit: _.isEmpty(prevState.dayNightBeforEdit) ? prevState.dayNight : prevState.dayNightBeforEdit,
+                    idDisable: '',
+                    idDisableExtra: '',
+                    listUserBeforEdit: _.isEmpty(prevState.listUserBeforEdit) ? _.cloneDeep(prevState.listUser) : prevState.listUserBeforEdit,
+                    listUserBeforEditExtra: _.isEmpty(prevState.listUserBeforEditExtra) ? _.cloneDeep(prevState.listExtra) : prevState.listUserBeforEditExtra,
+                    userUpdate: [],
+                    extraUpdate: {}
+                };
+            }
+
+            if (id === "CancelEditDayNight") { // Click vào "cancelEdit"
+                return {
+                    isDisableDayNight: false,
+                    idDisable: '',
+                    listUser: [...prevState.listUserBeforEdit], // Trả về giá trị trước khi edit
+                    listExtra: [...prevState.listUserBeforEditExtra], // Trả về giá trị trước khi edit
+                    listUserBeforEdit: [], // Reset lại để đảm bảo khi edit mới, nó lưu lại giá trị đúng
+                    listUserBeforEditExtra: [],
+                    userUpdate: [],
+                    extraUpdate: {},
+                    dayNight: prevState.dayNightBeforEdit,
+                    dayNightBeforEdit: ''
+                };
+            }
+            return null;
+        });
+    }
+
+
     render() {
 
-        let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate } = this.state
+        let { listUser, listTime, listStatusUserReport, idDisable, listExtra, idDisableExtra, userUpdate, extraUpdate,
+            isDisableDayNight, dayNight
+        } = this.state
         let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('DD-MM-YYYY');
-
+        let DayAndNight = determineDayAndNight();
+        console.log(this.state)
         return (
             <>
                 <div className='personel-container'>
@@ -599,7 +745,27 @@ class Personnel extends Component {
                         <h2>Báo cáo nhận sự</h2>
                         <p>{`Ngày: ${formattedDate}`}</p>
                         <p>{`Bộ phận: ${this.props?.userInfo?.departmentUserData?.departmentName || ''}`}</p>
-                        <p>{`Ca/Kip: ${this.props?.userInfo?.shiftId || ''}`}</p>
+                        <p>{`Nhóm: ${this.props?.userInfo?.shiftId || ''}`}</p>
+                        <div className='select-day-night-container'>
+                            <select
+                                className="form-select select-day-night"
+                                aria-label="Default select example"
+                                value={(dayNight === 0 || dayNight === 1) ? dayNight : (DayAndNight.day === 'NA' ? 1 : 0)}
+                                disabled={this.props.allPersonnel && this.props.allPersonnel.length > 0 && !isDisableDayNight}
+                                onChange={(event) => this.handleSelectDayNight(event)}
+                            >
+                                <option value="1">Ca Ngày</option>
+                                <option value="0">Ca Đêm</option>
+                            </select>
+                            {this.props.allPersonnel && this.props.allPersonnel.length > 0 && (!isDisableDayNight
+                                ? <i className="fas fa-edit select-day-night-icon-edit" onClick={() => this.handleUpdateDayNight('opentEditDayNight')}></i>
+                                : <>
+                                    <i className="fas fa-save select-day-night-icon-save" onClick={() => this.handleUpdateDayNight('saveEditDayNight')}></i>
+                                    <i className="fas fa-window-close select-day-night-icon-close" onClick={() => this.handleUpdateDayNight('CancelEditDayNight')} ></i>
+                                </>
+                            )
+                            }
+                        </div>
                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
                             <button style={{ width: "120px" }} type="button" className="btn btn-primary" onClick={() => this.handleOpenModal()}>Báo tăng ca</button>
                         }
@@ -720,21 +886,24 @@ class Personnel extends Component {
                                                         </td>
                                                         {this.props.allPersonnel && this.props.allPersonnel.length > 0 &&
                                                             <td style={{ width: "6%" }}>
-                                                                {idDisable !== item.userId ?
-                                                                    <div className='icon-group-handle'>
-                                                                        <div className='icon-edit' onClick={() => this.handleEdit(item, 'edit')}>
-                                                                            <i className="fas fa-edit" ></i>
-                                                                        </div>
-                                                                    </div>
-                                                                    :
-                                                                    <div className='icon-group-handle'>
-                                                                        <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditPesonel')}>
-                                                                            <i className="fas fa-save" ></i>
-                                                                        </div>
-                                                                        <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
-                                                                            <i className="fas fa-window-close" ></i>
-                                                                        </div>
-                                                                    </div >
+                                                                {!isDisableDayNight &&
+                                                                    (
+                                                                        idDisable !== item.userId ?
+                                                                            <div className='icon-group-handle'>
+                                                                                <div className='icon-edit' onClick={() => this.handleEdit(item, 'edit')}>
+                                                                                    <i className="fas fa-edit" ></i>
+                                                                                </div>
+                                                                            </div>
+                                                                            :
+                                                                            <div className='icon-group-handle'>
+                                                                                <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditPesonel')}>
+                                                                                    <i className="fas fa-save" ></i>
+                                                                                </div>
+                                                                                <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEdit')}>
+                                                                                    <i className="fas fa-window-close" ></i>
+                                                                                </div>
+                                                                            </div >
+                                                                    )
                                                                 }
                                                             </td>
                                                         }
@@ -764,6 +933,7 @@ class Personnel extends Component {
                                         <tbody>
                                             {listExtra && listExtra.length > 0 &&
                                                 listExtra.map((item, index) => {
+                                                    // console.log(!_.isEmpty(extraUpdate[0]))
                                                     return (
                                                         <>
                                                             <tr key={item.id}>
@@ -772,11 +942,11 @@ class Personnel extends Component {
                                                                     <select
                                                                         className="form-select"
                                                                         aria-label="Default select example"
-                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.userType : item.userType}
+                                                                        value={!_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0].userType : item.userType}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
-                                                                        onChange={(event) => this.handleSelectExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item)}
+                                                                        onChange={(event) => this.handleSelectExtra(event, !_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0] : item)}
                                                                     >
                                                                         <option>Tuy chọn...</option>
                                                                         <option value="KH">Khách hàng</option>
@@ -788,9 +958,9 @@ class Personnel extends Component {
                                                                     <input
                                                                         type="number"
                                                                         min={1}
-                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.quantity : item.quantity}
+                                                                        value={!_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0].quantity : item.quantity}
                                                                         className="form-control "
-                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item, 'quantity')}
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0] : item, 'quantity')}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
@@ -800,8 +970,8 @@ class Personnel extends Component {
                                                                     <input
                                                                         type="text"
                                                                         className="form-control"
-                                                                        value={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate.note ?? "" : item.note}
-                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item, 'note')}
+                                                                        value={!_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0].note ?? "" : item.note}
+                                                                        onChange={(event) => this.handleChangeInputExtra(event, !_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0] : item, 'note')}
                                                                         disabled={
                                                                             (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                         }
@@ -817,8 +987,8 @@ class Personnel extends Component {
                                                                                 (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && idDisableExtra !== item.id && (this.props.allPersonnelExtra.length - index > 0))
                                                                             }
                                                                             // value={1}
-                                                                            checked={!_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? (extraUpdate.repastMId ?? 0) === 1 : item.repastMId === 1}
-                                                                            onChange={(event) => this.handleCheckBoxExtra(event, !_.isEmpty(extraUpdate) && item.id === extraUpdate.id ? extraUpdate : item)}
+                                                                            checked={!_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? (extraUpdate[0].repastMId ?? 0) === 1 : item.repastMId === 1}
+                                                                            onChange={(event) => this.handleCheckBoxExtra(event, !_.isEmpty(extraUpdate[0]) && item.id === extraUpdate[0].id ? extraUpdate[0] : item)}
                                                                         />
                                                                         {/* <label className="form-check-label" htmlFor={item.userId}></label> */}
                                                                     </>
@@ -834,24 +1004,27 @@ class Personnel extends Component {
                                                                 }
                                                                 {this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && (this.props.allPersonnelExtra.length - index > 0) &&
                                                                     < td style={{ width: "6%" }}>
-                                                                        {idDisableExtra !== item.id ?
-                                                                            <div className=' icon-group-handle'>
-                                                                                <div className='icon-edit' onClick={() => this.handleEdit(item, 'editExtra')}>
-                                                                                    <i className="fas fa-edit"></i>
-                                                                                </div>
-                                                                                <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
-                                                                                    <i className="far fa-trash-alt"></i>
-                                                                                </div>
-                                                                            </div>
-                                                                            :
-                                                                            <div className='icon-group-handle'>
-                                                                                <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditExtra')}>
-                                                                                    <i className="fas fa-save"></i>
-                                                                                </div>
-                                                                                <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEditExtra')}>
-                                                                                    <i className="fas fa-window-close"></i>
-                                                                                </div>
-                                                                            </div>
+                                                                        {!isDisableDayNight &&
+                                                                            (
+                                                                                idDisableExtra !== item.id ?
+                                                                                    <div className=' icon-group-handle'>
+                                                                                        <div className='icon-edit' onClick={() => this.handleEdit(item, 'editExtra')}>
+                                                                                            <i className="fas fa-edit"></i>
+                                                                                        </div>
+                                                                                        <div className='icon-group-handle-trash' onClick={(event) => this.HandleDeleteExtra(event, item, index)}>
+                                                                                            <i className="far fa-trash-alt"></i>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    :
+                                                                                    <div className='icon-group-handle'>
+                                                                                        <div className='icon-group-handle-save' onClick={() => this.handleSave(item, 'saveEditExtra')}>
+                                                                                            <i className="fas fa-save"></i>
+                                                                                        </div>
+                                                                                        <div className='icon-group-handle-close' onClick={() => this.handleEdit(item, 'cancelEditExtra')}>
+                                                                                            <i className="fas fa-window-close"></i>
+                                                                                        </div>
+                                                                                    </div>
+                                                                            )
                                                                         }
                                                                     </td>
                                                                 }

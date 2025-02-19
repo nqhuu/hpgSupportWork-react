@@ -274,7 +274,7 @@ class HandleRequest extends Component {
                                     return (
                                         <>
                                             <tr key={item.id || `${item.requestCode}-${index}`} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                                <td>{index + stt}</td>
+                                                <td>{index}</td>
                                                 <td>{`${CODE.IT}-${item.requestCode}`}</td>
                                                 <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                                 <td className='select-container'>

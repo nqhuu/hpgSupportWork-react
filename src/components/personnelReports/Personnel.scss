@@ -10,6 +10,49 @@
     /* Đẩy footer xuống */
     padding: 20px 50px;
 
+    .select-day-night-container {
+        display: flex;
+
+        .select-day-night {
+            display: flex;
+            outline: none;
+            border: none;
+            padding: 0;
+            width: 150px;
+            margin-bottom: 15px;
+        }
+
+        // i {
+        //     padding-left: 5px;
+        //     font-size: 23px;
+        // }
+
+        .select-day-night-icon-edit {
+            color: rgb(99, 92, 87);
+        }
+
+        .select-day-night-icon-save {
+            color: orange;
+        }
+
+        .select-day-night-icon-close {
+            color: red;
+        }
+
+        .select-day-night-icon-edit,
+        .select-day-night-icon-save,
+        .select-day-night-icon-close {
+            padding-left: 5px;
+            font-size: 23px;
+            cursor: pointer;
+
+            &:hover {
+                opacity: 60%;
+            }
+        }
+    }
+
+
     .table-responsive {
         overflow: visible !important;
         /* Cho phép phần tử con hiển thị vượt ra ngoài */

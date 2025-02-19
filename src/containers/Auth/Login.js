@@ -4,6 +4,7 @@ import * as actions from "../../redux/actions";
 import { Redirect } from 'react-router-dom';
 import './Login.scss';
 import { handleLoginApi } from '../../services/userService'
+import determineDayAndNight from '../../components/formating/determineDayAndNight'
 
 
 class Login extends Component {
@@ -52,6 +53,8 @@ class Login extends Component {
             if (data && data.errCode === 0) {
                 console.log(data.user)
                 await this.props.userLoginSuccess(data.user)
+                let dayOrNight = await determineDayAndNight()
+                await this.props.dayOrNight(dayOrNight.day)
                 this.props.history.push('/');
             }
 
@@ -134,7 +137,8 @@ const mapDispatchToProps = dispatch => {
     return {
         // navigate: (path) => dispatch(push(path)),
         userLoginFail: () => dispatch(actions.userLoginFail()),
-        userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo))
+        userLoginSuccess: (userInfo) => dispatch(actions.userLoginSuccess(userInfo)),
+        dayOrNight: (dayOrNight) => dispatch(actions.dayOrNight(dayOrNight))
     };
 };
 

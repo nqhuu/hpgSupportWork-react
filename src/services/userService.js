@@ -64,9 +64,14 @@ const handleDeletePersonnelExtra = (id) => {
     return axios.post(`/users/api/delete-personnel-extra-report?id=${id}`);
 }
 
+const getAllDepartment = () => {
+    return axios.get(`/users/api/all-department`);
+}
+
 export {
     handleLoginApi, handleDataRequestSupport, getAllUser, getAllCodeService, getAllLocationService,
     getAllErrorCodeService, uploadsFile, handleCreateRequest, updateRequestSupport, getAllPersonnel,
-    handleCreateUpdatePerSonnelReport, getAllPersonnelExtra, handleDeletePersonnelExtra
+    handleCreateUpdatePerSonnelReport, getAllPersonnelExtra, handleDeletePersonnelExtra, getAllDepartment,
+
 }
 

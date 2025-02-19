@@ -115,7 +115,7 @@ class ExcelToPDF extends Component {
         }));
 
         const docDefinition = {
-            pageSize: { width: 226.8, height: 141.73 }, // 80mm x 50mm
+            pageSize: { width: 226.8, height: 184.9 }, // 80mm x 50mm (141.73)
             pageMargins: [3, 3, 3, 3], // Giảm khoảng cách mép trang
             content: pages,
             // defaultStyle: {

@@ -1,5 +1,5 @@
 import actionTypes from './actionTypes'
-import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel, getAllPersonnelExtra } from '../../services/userService'
+import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel, getAllPersonnelExtra, getAllDepartment } from '../../services/userService'
 
 
 export const addUserSuccess = () => ({
@@ -201,11 +201,9 @@ export const getAllPersonnelReduxSuccess = (data) => ({
     allPersonnel: data.listPersonnel
 })
 
-
 export const getAllPersonnelReduxFailed = () => ({
     type: actionTypes.FETCH_ALL_PERSONNEL_FAIL,
 })
-
 
 export const getAllPersonnelExtraRedux = (dataDay, shiftId, departmentId) => {
 
@@ -239,6 +237,48 @@ export const getAllPersonnelExtraReduxSuccess = (data) => ({
 export const getAllPersonnelExtraReduxFailed = () => ({
     type: actionTypes.FETCH_ALL_SELECT_PERSONNEL_EXTRA_FAIL,
 })
+
+export const getAllDepartmentRedux = () => {
+
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_DEPARTMENT_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let listDeparment = await getAllDepartment()
+            if (listDeparment && listDeparment.errCode === 0) {
+                dispatch(getAllDepartmentReduxSuccess(listDeparment.data))
+            }
+            else {
+                dispatch(getAllDepartmentReduxFailed())
+            }
+        } catch (e) {
+            dispatch(getAllDepartmentReduxFailed())
+            console.log('getAllDepartmentReduxFailed error', e)
+        }
+    }
+}
+
+export const getAllDepartmentReduxSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_DEPARTMENT_SUCCESS,
+    allDepartment: data
+})
+
+export const getAllDepartmentReduxFailed = () => ({
+    type: actionTypes.FETCH_ALL_DEPARTMENT_FAIL,
+})
+
+export const dayOrNight = (dayOrNight) => ({
+    type: actionTypes.IS_DAY_OR_NIGHT_SUCCESS,
+    dayOrNight: dayOrNight
+})
+
+export const dayOrNightfail = () => ({
+    type: actionTypes.IS_DAY_OR_NIGHT_FAIL,
+})
+
+
+
+
+
 
 
 
