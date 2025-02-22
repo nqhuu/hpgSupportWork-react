@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { push } from "connected-react-router";
-import * as actions from "../../redux/actions/actionTypes";
+import * as actions from "../../redux/actions";
 
 
 

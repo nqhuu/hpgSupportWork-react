@@ -1,4 +1,13 @@
 // Biến màu sắc
+// $primary-color: #007bff;
+// $secondary-color: #929394;
+// $warning-color: #e49b13e5;
+// $background-light: #f9f9f9;
+// $background-dark: #eaeaea;
+// $text-dark: #333;
+// $border-color: #ddd;
+
+// Biến màu sắc
 $primary-color: #007bff;
 $secondary-color: #929394;
 $warning-color: #e49b13e5;
@@ -6,6 +15,8 @@ $background-light: #f9f9f9;
 $background-dark: #eaeaea;
 $text-dark: #333;
 $border-color: #ddd;
+$active-color: #089c03;
+$hover-color: #c2b48a;
 
 .overall-report-home-container {
     display: flex;
@@ -60,6 +71,46 @@ $border-color: #ddd;
         span:last-child {
             font-weight: bold;
             color: $primary-color;
+        }
+    }
+}
+
+.dayOrNight {
+    display: flex;
+    justify-content: center;
+    gap: 1px;
+    margin-top: 8px;
+
+    .dayNight {
+        width: calc(50% - 4px); // Mỗi phần chiếm 50% trừ đi 2px
+        padding: 5px 20px;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        background: $secondary-color;
+        color: white;
+        // border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+            background: $hover-color;
+            opacity: 90%;
+            color: #fff;
+        }
+
+        &.active {
+            background: $active-color;
+            color: white;
+            box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        &.day {
+            border-radius: 6px 0 0 6px;
+        }
+
+        &.night {
+            border-radius: 0 6px 6px 0;
         }
     }
 }

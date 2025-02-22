@@ -32,6 +32,8 @@ $text-dark: #555;
     @include flex-container();
     gap: 10px;
     padding: 10px;
+    // position: relative; // Để làm cơ sở cho position absolute của .dayOrNight
+
 }
 
 .personnel-home-report-department {
@@ -106,4 +108,9 @@ $text-dark: #555;
         color: $text-dark;
         background: rgba(0, 0, 0, 0.05);
     }
+}
+
+
+.personnel-home-container {
+    position: relative; // Để các phần tử con có thể dùng absolute dựa trên nó
 }

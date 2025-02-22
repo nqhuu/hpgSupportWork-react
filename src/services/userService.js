@@ -13,7 +13,8 @@ const handleLoginApi = (userName, password) => {
 
 const getAllUser = (id, departmentId) => {
     if (id) return axios.get(`/users/api/all-user?id=${id}`);
-    return axios.get(`/users/api/all-user?departmentId=${departmentId}`);
+    if (departmentId) return axios.get(`/users/api/all-user?departmentId=${departmentId}`);
+    return axios.get(`/users/api/all-user`);
 }
 
 const getAllCodeService = (inputType) => {

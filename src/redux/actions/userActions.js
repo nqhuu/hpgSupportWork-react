@@ -1,5 +1,6 @@
 import actionTypes from './actionTypes'
 import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel, getAllPersonnelExtra, getAllDepartment } from '../../services/userService'
+import { getAllPersonnelReport } from '../../services/HrService'
 
 
 export const addUserSuccess = () => ({
@@ -274,6 +275,74 @@ export const dayOrNight = (dayOrNight) => ({
 export const dayOrNightfail = () => ({
     type: actionTypes.IS_DAY_OR_NIGHT_FAIL,
 })
+
+
+
+
+
+
+
+export const getAllPersonnelReportRedux = () => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let allReport = await getAllPersonnelReport({ day: 'toDay' })
+            if (allReport && allReport.errCode === 0) {
+                dispatch(getAllPersonnelReportSuccess(allReport.data))
+            }
+            else {
+                dispatch(getAllPersonnelReportFailed())
+            }
+        } catch (e) {
+            dispatch(getAllPersonnelReportFailed())
+            console.log('getAllPersonnelReportFailed error', e)
+        }
+    }
+}
+
+export const getAllPersonnelReportSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_SUCCESS,
+    allReport: data
+})
+
+export const getAllPersonnelReportFailed = () => ({
+    type: actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_FAIL,
+})
+
+
+
+
+
+export const getAllPersonnelReportInMonthRedux = (dataDay) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_MONTH_PESSONEL_REPORT_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let allReport = await getAllPersonnelReport({ fromDate: dataDay.firstDayOfMonth, toDate: dataDay.firstDayOfNextMonth })
+            if (allReport && allReport.errCode === 0) {
+                dispatch(getAllPersonnelReportInMonthSuccess(allReport.data))
+            }
+            else {
+                dispatch(getAllPersonnelReportInMonthFailed())
+            }
+        } catch (e) {
+            dispatch(getAllPersonnelReportInMonthFailed())
+            console.log('getAllPersonnelReportInMonthFailed error', e)
+        }
+    }
+}
+
+export const getAllPersonnelReportInMonthSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_MONTH_PESSONEL_REPORT_SUCCESS,
+    allReportInMonth: data
+})
+
+export const getAllPersonnelReportInMonthFailed = () => ({
+    type: actionTypes.FETCH_ALL_MONTH_PESSONEL_REPORT_FAIL,
+})
+
+
+
+
 
 
 

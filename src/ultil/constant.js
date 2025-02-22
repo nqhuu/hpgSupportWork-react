@@ -6,7 +6,9 @@ export const path = {
     LINK_SAVE_IMG: '192.168.1.68',
 };
 
-
+export const STATUS_USER = {
+    HOAT_DONG: 'SU1',
+}
 
 export const VALUE = {
     NOT_YET_COMPLETE_IT: 'IT_HOME',
@@ -25,7 +27,9 @@ export const VALUE = {
     HANDLE_REQUEST: 'HANDLE_REQUEST',
     MAIN_MEAL: 'RPM',
     SIDE_MEAL: 'RPE',
-    OVER_TIME: 'STR2'
+    OVER_TIME: 'STR2',
+    NGAY: 'NA',
+    DEM: 'DE',
 }
 
 export const STATUS_REPORT_HR = {

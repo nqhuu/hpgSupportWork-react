@@ -44,6 +44,11 @@ class Personnel extends Component {
         await this.props.getAllSelectPersonnelRedux();
         await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
         await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
+        let DayAndNight = determineDayAndNight();
+        this.setState({
+            dayNight: DayAndNight.day === 'NA' ? 1 : 0
+        });
+
         // await this.props.getAllPersonnelRedux({ fromDate: '2025-01-8', toDate: '2025-01-8' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
         if (!this.props.allPersonnel || this.props.allPersonnel.length === 0) {
             this.getAllUser()
@@ -52,6 +57,12 @@ class Personnel extends Component {
     };
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
+
+        if (prevProps.dayOrNight !== this.props.dayOrNight) {
+            this.setState({
+                dayNight: this.props.dayOrNight,
+            })
+        }
 
         if (prevProps.allSelectPersonnel !== this.props.allSelectPersonnel) {
             if (this.props.allSelectPersonnel && this.props.allSelectPersonnel.listStatusUserReport) {
@@ -435,14 +446,10 @@ class Personnel extends Component {
     };
 
     handleSelectExtra = async (event, item) => {
-        console.log('item', item)
         const updatedItem = {
             ...item,
             userType: event.target.value, // Thêm hoặc cập nhật thuộc tính giá trị
         };
-
-        console.log('updatedItem', updatedItem)
-
 
         //Cập nhật state với callback prevState cập nhật hoặc thêm, xóa 1 item trong mảng kết hợp với các vòng lặp
         if (this.props.allPersonnelExtra && this.props.allPersonnelExtra.length > 0 && item.id === this.state.extraUpdate[0]?.id) {
@@ -1099,6 +1106,7 @@ const mapStateToProps = state => {
         allPersonnel: state.user.allPersonnel,
         allPersonnelExtra: state.user.allPersonnelExtra,
         allSelectPersonnel: state.user.allSelectPersonnel,
+        dayOrNight: state.user.dayOrNight
     };
 };
 

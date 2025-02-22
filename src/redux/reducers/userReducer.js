@@ -17,7 +17,8 @@ const initialState = {
     allSelectPersonnel: [],
     allPersonnelExtra: [],
     allDepartment: [],
-
+    allReport: [],
+    allReportInMonth: [],
 }
 
 const userReducer = (state = initialState, action) => {
@@ -127,9 +128,6 @@ const userReducer = (state = initialState, action) => {
                 allDepartment: []
             }
 
-
-
-
         case actionTypes.IS_DAY_OR_NIGHT_SUCCESS:
             return {
                 ...state,
@@ -141,10 +139,33 @@ const userReducer = (state = initialState, action) => {
                 dayOrNight: ''
             }
 
+        case actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_SUCCESS:
+            return {
+                ...state,
+                allReport: action.allReport
+            }
+        case actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_FAIL:
+            return {
+                ...state,
+                allReport: []
+            }
+
+        case actionTypes.FETCH_ALL_MONTH_PESSONEL_REPORT_SUCCESS:
+            return {
+                ...state,
+                allReportInMonth: action.allReportInMonth
+            }
+        case actionTypes.FETCH_ALL_MONTH_PESSONEL_REPORT_FAIL:
+            return {
+                ...state,
+                allReportInMonth: []
+            }
+
         default:
             return state;
     }
 }
+
 
 
 

@@ -117,7 +117,6 @@ class Login extends Component {
                             <span className='forgot-password'>Liên hệ admin để được cung cấp tài khoản</span>
                         </div>
                         <div className='col-12 social-login'>
-
                         </div>
                     </div>
                 </div>
@@ -129,7 +128,6 @@ class Login extends Component {
 const mapStateToProps = state => {
     return {
         isLoggedIn: state.user.isLoggedIn
-
     };
 };
 
