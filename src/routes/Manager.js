@@ -6,6 +6,8 @@ import { connect } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
 import { Redirect } from 'react-router-dom';
 import ExcelToPDF from '../components/manager/inTem';
+import PersonnelManagement from '../components/manager/PersonnelManagement';
+import DeviceManagement from '../components/manager/DeviceManagement';
 
 
 
@@ -29,6 +31,16 @@ class Manager extends Component {
                             <Route
                                 path="/manager/inTem"
                                 render={(props) => <ExcelToPDF />}
+                            // component={HandleRequest} 
+                            />
+                            <Route
+                                path="/manager/user"
+                                render={(props) => <PersonnelManagement />}
+                            // component={HandleRequest} 
+                            />
+                            <Route
+                                path="/manager/devices"
+                                render={(props) => <DeviceManagement />}
                             // component={HandleRequest} 
                             />
 

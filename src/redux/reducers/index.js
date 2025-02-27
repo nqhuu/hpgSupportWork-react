@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 // import appReducer from './appReducer'
 import userReducer from './userReducer';
+import managerReducer from './managerReducer';
 import { history } from '../../history';
 import { persistReducer } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage'; // sử dụng localStorage
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     // Các reducer khác của bạn
     // app: persistReducer(appPersistConfig, appReducer),
     user: persistReducer(userPersistConfig, userReducer),
+    manager: managerReducer,
 
 });
 

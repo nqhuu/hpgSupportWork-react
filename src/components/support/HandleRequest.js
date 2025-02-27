@@ -21,7 +21,6 @@ class HandleRequest extends Component {
         currentPage: 0,
         limit: '',
         totalPages: 0,
-        // isDeparment: VALUE.NOT_YET_COMPLETE_IT,
         isDeparment: '',
         selectRequestId: '',
         selectedOption: {},
@@ -271,10 +270,12 @@ class HandleRequest extends Component {
                             {reqSupport && reqSupport.length > 0
                                 ?
                                 reqSupport.map((item, index) => {
+                                    let stt = currentPage === 0 ? index + 1 : (index + (currentPage * limit) + 1)
+
                                     return (
                                         <>
                                             <tr key={item.id || `${item.requestCode}-${index}`} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                                <td>{index}</td>
+                                                <td>{stt}</td>
                                                 <td>{`${CODE.IT}-${item.requestCode}`}</td>
                                                 <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                                 <td className='select-container'>

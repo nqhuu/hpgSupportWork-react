@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 // import { push } from "connected-react-router";
 // import { history } from '../../history';
-import { Route, Switch, NavLink, Redirect } from 'react-router-dom';
+import { Route, Switch, NavLink } from 'react-router-dom';
 import { withRouter } from "react-router";
-import { path, CODE, VALUE } from '../../ultil/constant';
+import { path, VALUE } from '../../ultil/constant';
 import BookingCar from '../../components/booking/BookingCar';
 import BookingRoom from '../../components/booking/BookingRoom';
 import HomeHeader from './HomeHeader';
@@ -124,12 +124,12 @@ class Homebody extends Component {
                                     </button>
                                     <ul className="dropdown-menu">
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
+                                            <NavLink className="dropdown-item" exact to="/manager/devices">
                                                 Quản lý thiết bị
                                             </NavLink>
                                         </li>
                                         <li>
-                                            <NavLink className="dropdown-item" exact to="/manager/inTem">
+                                            <NavLink className="dropdown-item" exact to="/manager/user">
                                                 Quản ly nhân viên
                                             </NavLink>
                                         </li>

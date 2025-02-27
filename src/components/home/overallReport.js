@@ -33,7 +33,6 @@ class OverallReport extends Component {
         let allUserDb = await getAllUser()
         if (allUserDb && allUserDb.errCode === 0) {
             let dataUser = allUserDb.data
-            console.log(dataUser)
             let allUser = dataUser && dataUser.length > 0 ? dataUser.filter(item => item.statusId === STATUS_USER.HOAT_DONG) : []
             this.setState({ allUser })
         }
@@ -183,12 +182,11 @@ class OverallReport extends Component {
         // Lấy số ngày từ đầu tháng đến hôm nay
         const daysFromStartOfMonth = moment().diff(moment().startOf('month'), 'days') + 1;
         let percentage = Number((allReportMonthHandle.allPersonnel / (allUser.length * daysFromStartOfMonth) * 100).toFixed(2))
-        console.log(percentage)
         return (
             <>
                 <div className='overall-report-home-container'>
                     <div className='overall-report-home-to-day'>
-                        <div className='overall-report-home-name'>{`${isDayNight === VALUE.NGAY ? 'Báo cáo ngày' : (isDayNight === VALUE.DEM ? 'Bao cáo đêm' : '')}`} <span>{today}</span></div>
+                        <div className='overall-report-home-name'>{`${isDayNight === VALUE.NGAY ? 'Báo cáo ngày' : (isDayNight === VALUE.DEM ? 'Báo cáo đêm' : '')}`} <span>{today}</span></div>
                         <div className='item-content'><span>NS chính thức (theo b/c) : </span><span>{`${reportDayOrNight && reportDayOrNight.allToWork && reportDayOrNight.allToWork || 0}/${reportDayOrNight && reportDayOrNight.allPersonnel && reportDayOrNight.allPersonnel || 0}`}</span></div>
                         <div className='item-content'><span>Suất cơm: </span><span>{reportDayOrNight && reportDayOrNight.allRepastM && reportDayOrNight.allRepastM || 0}</span></div>
                         <div className='item-content'><span>Nhân sự tăng ca: </span><span>{reportDayOrNight && reportDayOrNight.allOverTime && reportDayOrNight.allOverTime || 0}</span></div>

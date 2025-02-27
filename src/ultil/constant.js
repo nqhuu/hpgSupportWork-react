@@ -19,6 +19,7 @@ export const VALUE = {
     WAITTING: 'ER0',
     CANCEL: 'ER3',
     LIMIT: 5,
+    LIMIT_DEVICES: 20,
     LIMIT_HANDLE: 20,
     PHAN_CUNG: 'PC',
     PHAN_MEM: 'PM',

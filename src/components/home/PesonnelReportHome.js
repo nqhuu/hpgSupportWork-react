@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { push } from "connected-react-router";
 import * as actions from "../../redux/actions";
 import './PesonnelReportHome.scss'
-import moment from 'moment'
-import { getAllPersonnelReport } from '../../services/HrService'
+// import moment from 'moment'
+// import { getAllPersonnelReport } from '../../services/HrService'
 import determineDayAndNight from '../formating/determineDayAndNight'
-import { STATUS_REPORT_HR_ID, STATUS_REPORT_HR, STATUS_USER_TYPE_EXTRA } from '../../ultil/constant'
-import { current } from '@reduxjs/toolkit';
+import { STATUS_REPORT_HR_ID, STATUS_REPORT_HR } from '../../ultil/constant'
 
 
 
@@ -41,7 +39,6 @@ class PesonnelReportHome extends Component {
         //         isDayNight: this.props.dayOrNight,
         //     })
         // }
-
 
     };
 
@@ -148,10 +145,7 @@ class PesonnelReportHome extends Component {
     }
 
     render() {
-        let { dayReport,
-            nightReport,
-            allDepartment,
-            isDayNight, reportData } = this.state
+        let { reportData } = this.state
         // console.log('allReport', this.props.allReport)
 
         return (
