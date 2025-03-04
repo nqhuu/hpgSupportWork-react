@@ -5,12 +5,23 @@
 }
 
 
+.home-header-homepage {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: white; // Điều chỉnh màu nền nếu cần
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
 .home-body-container {
     width: 100%;
     background-color: #f8f4f4;
     display: flex;
     padding-top: 20px;
     padding-right: 10px;
+    margin-top: 80px;
 
     .body-left {
         flex: 1;

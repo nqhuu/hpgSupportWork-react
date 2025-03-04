@@ -1,7 +1,18 @@
+.home-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: white; // Điều chỉnh màu nền nếu cần
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+
 .device-container {
     max-width: 100%;
     margin: auto;
-    margin: 20px;
+    margin: 85px 20px 20px 20px;
     background: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
@@ -16,24 +27,22 @@
     .search-add-container {
         display: flex;
         // justify-content: space-between;
-        padding-bottom: 20px;
 
-        .select-search {
-            width: 200px;
+        .button-add {
+            height: 38px;
+        }
+
+        .input-search {
+            width: 300px;
             border: none;
-            margin-bottom: 15px;
-            font-size: 16px;
-            padding-right: 10px;
+            height: 38px;
+            margin-right: 20px;
 
             &:focus {
                 border-color: #007bff;
                 outline: none;
                 box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
             }
-        }
-
-        .select-search {
-            height: 20px;
         }
     }
 

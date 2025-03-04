@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import ReactPaginate from 'react-paginate';
 import './HandleRequest.scss'
 import * as actions from "../../redux/actions";
-import { VALUE, CODE, path } from '../../ultil/constant';
+import { VALUE, CODE } from '../../ultil/constant';
 import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../../services/userService'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import Select from 'react-select';
@@ -270,12 +270,10 @@ class HandleRequest extends Component {
                             {reqSupport && reqSupport.length > 0
                                 ?
                                 reqSupport.map((item, index) => {
-                                    let stt = currentPage === 0 ? index + 1 : (index + (currentPage * limit) + 1)
-
                                     return (
                                         <>
                                             <tr key={item.id || `${item.requestCode}-${index}`} className={`${item.priorityId === 'CO' ? "table-warning" : item.priorityId === 'TB' ? "table-success" : "table-light"}`}>
-                                                <td>{stt}</td>
+                                                <td>{index + stt}</td>
                                                 <td>{`${CODE.IT}-${item.requestCode}`}</td>
                                                 <td>{item.userRequestData?.id ? `${item.userRequestData.firstName} ${item.userRequestData.lastName}` : ''}</td>
                                                 <td className='select-container'>

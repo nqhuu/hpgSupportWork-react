@@ -1,0 +1,184 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.Modal-device-container {
+    .modal-content {
+        border-radius: 8px; // Bo tròn góc modal
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); // Thêm bóng cho modal
+    }
+}
+
+.modal-device-content {
+    display: flex;
+    flex-direction: column; // Sắp xếp nội dung theo chiều dọc
+    min-height: 200px; // Chiều cao tối thiểu của modal content
+}
+
+.modal-device-header {
+    display: flex;
+    justify-content: space-between; // Căn chỉnh header và nút đóng
+    align-items: center; // Căn chỉnh theo chiều dọc
+    padding: 16px 24px; // Padding cho header
+    border-bottom: 1px solid #eee; // Đường kẻ dưới header
+}
+
+.content-header {
+    font-size: 1.25rem; // Kích thước chữ tiêu đề
+    font-weight: 500; // Độ đậm chữ tiêu đề
+}
+
+.btn-close {
+    cursor: pointer; // Con trỏ chuột khi hover vào nút đóng
+    font-size: 1.2rem; // Kích thước icon đóng
+    color: #777; // Màu icon đóng
+    transition: color 0.2s ease; // Hiệu ứng màu khi hover
+
+    &:hover {
+        color: #333; // Màu icon đóng khi hover
+    }
+}
+
+.modal-device-body {
+    flex: 1; // Modal body chiếm phần còn lại
+    padding: 24px; // Padding cho body
+    overflow-y: auto; // Thanh cuộn nếu nội dung dài
+
+    .disabled {
+        pointer-events: none; // Ngăn chặn click
+        opacity: 0.5; // Làm mờ
+    }
+
+    td {
+        vertical-align: middle; // căn giữa chiều cao của thẻ td
+
+    }
+
+    .th-flex {
+
+        // display: flex;
+        // align-items: center;
+        /* Căn giữa theo chiều dọc */
+        // gap: 5px;
+        /* Khoảng cách giữa input và span */
+        .th-time {
+            padding-left: 5px;
+        }
+
+        .th-input-number {
+            width: 40px;
+            outline: none;
+        }
+    }
+
+
+    .icon-edit,
+    .icon-close {
+        &:hover {
+            cursor: pointer;
+            opacity: 80%;
+        }
+    }
+
+    .icon-close {
+        color: red;
+    }
+
+    .icon-edit {
+        color: #464444;
+    }
+
+
+
+
+    .moda-device-body-tbody {
+
+        .moda-device-body-tbody-icon-check-box,
+        .moda-device-body-tbody-icon-edit,
+        .moda-device-body-tbody-icon-save,
+        .moda-device-body-tbody-icon-close {
+            &:hover {
+                cursor: pointer;
+                opacity: 80%;
+            }
+        }
+
+        .moda-device-body-tbody-icon-edit,
+        .moda-device-body-tbody-icon-save,
+        .moda-device-body-tbody-icon-close {
+            font-size: 20px;
+        }
+
+        .moda-device-body-tbody-icon-edit {
+            color: #464444;
+        }
+
+        .moda-device-body-tbody-icon-save {
+            color: orange;
+            margin-right: 10px;
+        }
+
+        .moda-device-body-tbody-icon-close {
+            color: red;
+        }
+    }
+}
+
+.modal-device-footer {
+    display: flex;
+    justify-content: flex-end; // Căn chỉnh nút bấm sang phải
+    padding: 16px 24px; // Padding cho footer
+    border-top: 1px solid #eee; // Đường kẻ trên footer
+}
+
+.btn-modal {
+    margin-left: 8px; // Khoảng cách giữa các nút
+    border-radius: 4px; // Bo tròn góc nút
+    padding: 8px 16px; // Padding cho nút
+    min-width: 80px; // Chiều rộng tối thiểu của nút
+    transition: all 0.2s ease; // Hiệu ứng cho nút
+
+    &:hover {
+        transform: translateY(-2px); // Hiệu ứng nâng nhẹ khi hover
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); // Thêm bóng khi hover
+    }
+}
+
+.btn-primary {
+    &.btn-modal {
+        background-color: #007bff; // Màu nền nút primary
+        border-color: #007bff; // Màu viền nút primary
+        color: white; // Màu chữ nút primary
+    }
+}
+
+.btn-danger {
+    &.btn-modal {
+        background-color: #dc3545; // Màu nền nút danger
+        border-color: #dc3545; // Màu viền nút danger
+        color: white; // Màu chữ nút danger
+    }
+}
+
+// Responsive (tùy chỉnh theo nhu cầu)
+@media (max-width: 768px) {
+    .modal-device-header {
+        flex-direction: column; // Sắp xếp header theo chiều dọc
+        align-items: flex-start; // Căn chỉnh bên trái
+    }
+
+    .content-header {
+        margin-bottom: 8px; // Khoảng cách giữa tiêu đề và nút đóng
+    }
+
+    .modal-device-footer {
+        flex-direction: column-reverse; // Sắp xếp nút bấm theo chiều dọc
+        align-items: stretch; // Kéo dài nút bấm theo chiều ngang
+    }
+
+    .btn-modal {
+        margin: 8px 0; // Khoảng cách giữa các nút
+    }
+}

@@ -34,7 +34,9 @@ class Homebody extends Component {
         let homeRoute = path.HOME;
         return (
             <>
-                <HomeHeader />
+                <div className='home-header-homepage'>
+                    <HomeHeader />
+                </div>
                 <div className='home-body-container'>
                     <div className='body-left'>
                         <div className='menu-container'>

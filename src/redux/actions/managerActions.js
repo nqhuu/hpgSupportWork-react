@@ -2,11 +2,11 @@ import actionTypes from './actionTypes'
 import { getAllDeviceByDepartment } from '../../services/managerService'
 
 
-export const getAllDeviceByDepartmentredux = (mngDepartmentId, limit, currentPage) => {
+export const getAllDeviceByDepartmentredux = (mngDepartmentId, limit, currentPage, search) => {
     return async (dispatch, getState) => {
         try {
             dispatch({ type: actionTypes.FETCH_ALL_DEVICES_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
-            let allDevices = await getAllDeviceByDepartment(mngDepartmentId, limit, currentPage)
+            let allDevices = await getAllDeviceByDepartment(mngDepartmentId, limit, currentPage, search)
             if (allDevices && allDevices.errCode === 0) {
                 dispatch(getAllDeviceByDepartmentSuccess(allDevices.data))
             }

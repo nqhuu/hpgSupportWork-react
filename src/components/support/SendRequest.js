@@ -61,7 +61,6 @@ class SendRequest extends Component {
         if (this.state.isDeparment === VALUE.NOT_YET_COMPLETE_IT) {
             if (prevProps.reqSupportIt !== this.props.reqSupportIt) {
                 let data = this.props.reqSupportIt
-                console.log('IT', data)
                 this.setState({
                     reqSupport: data.rows,
                     totalPages: data.totalPages,
@@ -192,7 +191,6 @@ class SendRequest extends Component {
     render() {
         let { reqSupport, currentPage } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
-
         return (
             <div className='send-request-container'>
                 <div className='header-home'>

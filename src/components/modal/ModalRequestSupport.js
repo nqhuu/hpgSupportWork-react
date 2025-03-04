@@ -426,7 +426,7 @@ class ModalHandleRequest extends Component {
             listErrorPm,
             listLevel,
         } = this.state
-
+        console.log(this.props.allSupport)
         return (
             <Modal
                 isOpen={this.props.isOpenModal}

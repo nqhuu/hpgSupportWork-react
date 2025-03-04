@@ -354,41 +354,43 @@ class Personnel extends Component {
     };
 
     handleSendReport = async () => {
-        let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
-        if (!_.isEmpty(this.state.listExtra)) {
-            let check = await this.validateExtra(this.state.listExtra);
-            if (check) {
-                toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng", nhấn X để hủy bỏ')
+        if (window.confirm("Xác nhận gửi báo cáo")) {
+
+            let formattedDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYY-MM-DD');
+            if (!_.isEmpty(this.state.listExtra)) {
+                let check = await this.validateExtra(this.state.listExtra);
+                if (check) {
+                    toast.error('Bạn cần nhập đủ các trường "Tùy chọn" và "Số lượng", nhấn X để hủy bỏ')
+                    return;
+                }
+            }
+
+            let checkDayNight = await this.validatedayNight(this.state.listUser);
+            // let checkDayNightExtra = this.state.dayNight === 0 || this.state.dayNight === 1;
+            if (checkDayNight) {
+                toast.error('Bạn cần nhập ca/kíp')
                 return;
             }
+
+            let response = await handleCreateUpdatePerSonnelReport({
+                listUser: this.state.listUser,
+                listExtra: this.state.listExtra,
+                date: formattedDate,
+                departmentId: this.props.userInfo.departmentId,
+                shiftId: this.props.userInfo.shiftId
+            })
+
+            if (response && response.errCode === 0) {
+                toast.success(response.errMessage)
+                await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
+                await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
+            }
+
+            if (response && response.errCode === 1) {
+                toast.success(response.errMessage)
+                await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
+            }
         }
-
-        let checkDayNight = await this.validatedayNight(this.state.listUser);
-        // let checkDayNightExtra = this.state.dayNight === 0 || this.state.dayNight === 1;
-        if (checkDayNight) {
-            toast.error('Bạn cần nhập ca/kíp')
-            return;
-        }
-
-        let response = await handleCreateUpdatePerSonnelReport({
-            listUser: this.state.listUser,
-            listExtra: this.state.listExtra,
-            date: formattedDate,
-            departmentId: this.props.userInfo.departmentId,
-            shiftId: this.props.userInfo.shiftId
-        })
-
-        if (response && response.errCode === 0) {
-            toast.success(response.errMessage)
-            await this.props.getAllPersonnelRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId);
-            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
-        }
-
-        if (response && response.errCode === 1) {
-            toast.success(response.errMessage)
-            await this.props.getAllPersonnelExtraRedux({ day: 'toDay' }, this.props.userInfo.shiftId, this.props.userInfo.departmentId)
-        }
-
     };
 
     handleShowHide = async () => {

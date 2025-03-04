@@ -87,3 +87,16 @@ export const DEPARTMENT = {
     BV: 'B21',
     QC: 'B22',
 }
+
+export const TYPE_DEVICE = {
+    GD1: 'MVT',
+    GD2: 'TBM',
+    GD3: 'MI',
+    GD4: 'MH',
+    GD5: 'DT',
+    GD6: 'AT',
+    GD7: 'MQ',
+    GD8: 'BD',
+    GD9: 'LT',
+    GD10: 'MC',
+}
