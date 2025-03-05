@@ -80,7 +80,7 @@ class PesonnelReportHome extends Component {
 
     isDepartment = (dpm) => {
         let department = this.state?.allDepartment.find(item => item.departmentId === dpm.department)
-        return department?.description
+        return department?.departmentName
     }
 
     results = async (list) => {

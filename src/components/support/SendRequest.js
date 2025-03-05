@@ -191,6 +191,7 @@ class SendRequest extends Component {
     render() {
         let { reqSupport, currentPage } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
+        console.log(this.props.allLocation)
         return (
             <div className='send-request-container'>
                 <div className='header-home'>

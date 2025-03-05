@@ -20,12 +20,16 @@ class DeviceManagement extends Component {
         limit: VALUE.LIMIT_DEVICES,
         totalPages: 0,
         search: "",
-        isOpenModal: false
+        isOpenModal: false,
+        deviceAdded: {},
     }
 
     componentDidMount = async () => {
         await this.props.getAllDeviceByDepartment(DEPARTMENT.IT, this.state.limit, this.state.currentPage, this.state.search);
-        await this.props.getAllSupport()
+        await this.props.getAllSupport();
+        await this.props.getAllLocation();
+        await this.props.getAllDepartmentRedux();
+
     };
 
     componentDidUpdate = async (prevProps, prevState, snapshot) => {
@@ -76,6 +80,8 @@ class DeviceManagement extends Component {
     render() {
         const { devices, currentPage, limit } = this.state;
         let stt = currentPage > 0 ? (currentPage * limit + 1) : (currentPage + 1)
+        // console.log(this.state)
+
         return (
             <>
                 <div className='home-header'>
@@ -165,7 +171,7 @@ class DeviceManagement extends Component {
                 <ModalAddDevice
                     isOpenModal={this.state.isOpenModal}
                     handleOpenOrCloseModal={this.handleOpenOrCloseModal}
-
+                    allDevices={devices}
                 />
             </>
         )
@@ -175,7 +181,10 @@ class DeviceManagement extends Component {
 const mapStateToProps = state => {
     return {
         allDevices: state.manager.allDevices,
-        allSupport: state.user.allSupport
+        allSupport: state.user.allSupport,
+        allLocation: state.user.allLocation,
+        allDepartment: state.user.allDepartment,
+
     };
 };
 
@@ -183,6 +192,8 @@ const mapDispatchToProps = dispatch => {
     return {
         getAllDeviceByDepartment: (mngDepartmentId, limit, currentPage, search) => dispatch(actions.getAllDeviceByDepartmentredux(mngDepartmentId, limit, currentPage, search)),
         getAllSupport: (data) => dispatch(actions.getAllSupport(data)),
+        getAllLocation: () => dispatch(actions.getAllLocation()),
+        getAllDepartmentRedux: () => dispatch(actions.getAllDepartmentRedux()),
     };
 };
 

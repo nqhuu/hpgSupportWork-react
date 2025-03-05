@@ -45,6 +45,12 @@
     flex: 1; // Modal body chiếm phần còn lại
     padding: 24px; // Padding cho body
     overflow-y: auto; // Thanh cuộn nếu nội dung dài
+    position: relative;
+
+
+    .modal-device-body-select {
+        z-index: 1051 !important;
+    }
 
     .disabled {
         pointer-events: none; // Ngăn chặn click
@@ -95,7 +101,6 @@
 
     .moda-device-body-tbody {
 
-        .moda-device-body-tbody-icon-check-box,
         .moda-device-body-tbody-icon-edit,
         .moda-device-body-tbody-icon-save,
         .moda-device-body-tbody-icon-close {
