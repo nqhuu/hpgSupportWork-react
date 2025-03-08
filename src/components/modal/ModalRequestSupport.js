@@ -7,7 +7,6 @@ import * as actions from "../../redux/actions";
 import Select from 'react-select';
 import { values } from 'lodash';
 import { CODE, VALUE, DATA_TABLE, DEPARTMENT } from '../../ultil/constant';
-import { uploadsFile } from '../../services/userService'
 import handleUploadFile from "../../config/HandleUploadFile"
 import { handleCreateRequest, updateRequestSupport } from "../../services/userService"
 import _ from 'lodash'
@@ -426,7 +425,7 @@ class ModalHandleRequest extends Component {
             listErrorPm,
             listLevel,
         } = this.state
-        console.log(this.props.allSupport)
+        // console.log(this.state.imgSelect)
         return (
             <Modal
                 isOpen={this.props.isOpenModal}

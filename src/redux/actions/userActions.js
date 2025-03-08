@@ -1,5 +1,9 @@
 import actionTypes from './actionTypes'
-import { getAllCodeService, getAllLocationService, getAllErrorCodeService, getAllPersonnel, getAllPersonnelExtra, getAllDepartment } from '../../services/userService'
+import {
+    getAllCodeService, getAllLocationService, getAllErrorCodeService,
+    getAllPersonnel, getAllPersonnelExtra, getAllDepartment,
+    getAllUser
+} from '../../services/userService'
 import { getAllPersonnelReport } from '../../services/HrService'
 
 
@@ -277,11 +281,6 @@ export const dayOrNightfail = () => ({
 })
 
 
-
-
-
-
-
 export const getAllPersonnelReportRedux = () => {
     return async (dispatch, getState) => {
         try {
@@ -308,9 +307,6 @@ export const getAllPersonnelReportSuccess = (data) => ({
 export const getAllPersonnelReportFailed = () => ({
     type: actionTypes.FETCH_ALL_DAY_PESSONEL_REPORT_FAIL,
 })
-
-
-
 
 
 export const getAllPersonnelReportInMonthRedux = (dataDay) => {
@@ -344,6 +340,33 @@ export const getAllPersonnelReportInMonthFailed = () => ({
 
 
 
+
+export const getAllUserRedux = (dataDay) => {
+    return async (dispatch, getState) => {
+        try {
+            dispatch({ type: actionTypes.FETCH_ALL_USER_START }) // để phát đi 1 action báo hiệu quá trình lấy dữ liệu bắt đầu
+            let allUserDb = await getAllUser()
+            if (allUserDb && allUserDb.errCode === 0) {
+                dispatch(getAllUserSuccess(allUserDb.data))
+            }
+            else {
+                dispatch(getAllUserFailed())
+            }
+        } catch (e) {
+            dispatch(getAllUserFailed())
+            console.log('getAllUserFailed error', e)
+        }
+    }
+}
+
+export const getAllUserSuccess = (data) => ({
+    type: actionTypes.FETCH_ALL_USER_SUCCESS,
+    allUser: data
+})
+
+export const getAllUserFailed = () => ({
+    type: actionTypes.FETCH_ALL_USER_FAIL,
+})
 
 
 

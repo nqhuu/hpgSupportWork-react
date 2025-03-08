@@ -100,3 +100,11 @@ export const TYPE_DEVICE = {
     GD9: 'LT',
     GD10: 'MC',
 }
+
+export const DATE_SELECT = {
+    handoverDate: 'handoverDate',
+    maintenance: 'maintenance',
+    maintenancePeriod: 'maintenancePeriod',
+    purchaseDate: 'purchaseDate',
+    warranty: 'warranty'
+}

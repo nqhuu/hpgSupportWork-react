@@ -5,8 +5,8 @@ import './SendRequest.scss'
 import * as actions from "../../redux/actions";
 import { VALUE, CODE, DEPARTMENT } from '../../ultil/constant';
 import { handleDataRequestSupport, getAllUser, updateRequestSupport } from '../../services/userService'
-import Select from 'react-select';
-import _ from 'lodash'
+// import Select from 'react-select';
+// import _ from 'lodash'
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import ModalRequestSupport from '../modal/ModalRequestSupport'
@@ -191,7 +191,6 @@ class SendRequest extends Component {
     render() {
         let { reqSupport, currentPage } = this.state
         let stt = currentPage * VALUE.LIMIT_HANDLE + 1
-        console.log(this.props.allLocation)
         return (
             <div className='send-request-container'>
                 <div className='header-home'>

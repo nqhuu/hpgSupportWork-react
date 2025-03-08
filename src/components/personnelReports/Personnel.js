@@ -7,7 +7,7 @@ import { getAllUser, handleCreateUpdatePerSonnelReport, handleDeletePersonnelExt
 import HomeHeader from '../../containers/HomePage/HomeHeader';
 import HomeFooter from '../../containers/HomePage/HomeFooter'
 import Select from 'react-select';
-import _, { some } from 'lodash'
+import _ from 'lodash'
 import { withRouter } from 'react-router-dom';
 import { toast } from 'react-toastify';
 // import moment from 'moment'

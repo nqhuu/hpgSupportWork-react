@@ -1,8 +1,8 @@
 
 import actionTypes from '../actions/actionTypes';
 import { VALUE } from '../../ultil/constant';
-import { getAllPersonnel } from '../../services/userService';
-import { dayOrNight } from '../actions';
+// import { getAllPersonnel } from '../../services/userService';
+// import { dayOrNight } from '../actions';
 
 const initialState = {
     isLoggedIn: false,
@@ -19,6 +19,7 @@ const initialState = {
     allDepartment: [],
     allReport: [],
     allReportInMonth: [],
+    allUser: [],
 }
 
 const userReducer = (state = initialState, action) => {
@@ -160,6 +161,18 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 allReportInMonth: []
             }
+
+        case actionTypes.FETCH_ALL_USER_SUCCESS:
+            return {
+                ...state,
+                allUser: action.allUser
+            }
+        case actionTypes.FETCH_ALL_USER_FAIL:
+            return {
+                ...state,
+                allUser: []
+            }
+
 
         default:
             return state;

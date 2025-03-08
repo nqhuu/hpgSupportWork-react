@@ -29,6 +29,7 @@ class DeviceManagement extends Component {
         await this.props.getAllSupport();
         await this.props.getAllLocation();
         await this.props.getAllDepartmentRedux();
+        await this.props.getAllUser();
 
     };
 
@@ -184,7 +185,6 @@ const mapStateToProps = state => {
         allSupport: state.user.allSupport,
         allLocation: state.user.allLocation,
         allDepartment: state.user.allDepartment,
-
     };
 };
 
@@ -194,6 +194,7 @@ const mapDispatchToProps = dispatch => {
         getAllSupport: (data) => dispatch(actions.getAllSupport(data)),
         getAllLocation: () => dispatch(actions.getAllLocation()),
         getAllDepartmentRedux: () => dispatch(actions.getAllDepartmentRedux()),
+        getAllUser: () => dispatch(actions.getAllUserRedux()),
     };
 };
 
