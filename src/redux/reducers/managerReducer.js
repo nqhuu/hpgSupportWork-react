@@ -3,6 +3,7 @@ import actionTypes from '../actions/actionTypes';
 
 const initialState = {
     allDevices: [],
+    allVendors: [],
 }
 
 const managerReducer = (state = initialState, action) => {
@@ -17,10 +18,22 @@ const managerReducer = (state = initialState, action) => {
                 ...state,
                 allDevices: []
             }
+
+        case actionTypes.FETCH_ALL_VENDOR_SUCCESS:
+            return {
+                ...state,
+                allVendors: action.allVendors
+            }
+        case actionTypes.FETCH_ALL_VENDOR_FAIL:
+            return {
+                ...state,
+                allVendors: []
+            }
         default:
             return state;
     }
 }
+
 
 
 export default managerReducer;

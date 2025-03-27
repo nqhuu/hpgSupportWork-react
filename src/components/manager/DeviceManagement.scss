@@ -46,6 +46,9 @@
         }
     }
 
+    .select-department {
+        margin-right: 20px;
+    }
 
     table {
         width: 100%;
@@ -82,23 +85,10 @@
                     border-radius: 5px;
                     font-size: 14px;
 
-                    &:first-child {
-                        background: #ffc107;
-                        color: #333;
-
-                        &:hover {
-                            background: #e0a800;
-                        }
+                    &:hover {
+                        opacity: 90%;
                     }
 
-                    &:last-child {
-                        background: #dc3545;
-                        color: white;
-
-                        &:hover {
-                            background: #c82333;
-                        }
-                    }
                 }
             }
         }

@@ -101,10 +101,26 @@ export const TYPE_DEVICE = {
     GD10: 'MC',
 }
 
+export const STATUS_DEVICE = {
+    SD1: 'Đang sử sụng',
+    SD2: 'Lưu kho',
+    SD3: 'Thanh lý',
+    SD4: 'Hỏng',
+    SD5: 'Đã xuất kho',
+}
+
 export const DATE_SELECT = {
     handoverDate: 'handoverDate',
     maintenance: 'maintenance',
     maintenancePeriod: 'maintenancePeriod',
     purchaseDate: 'purchaseDate',
-    warranty: 'warranty'
+    warranty: 'warranty',
+    importDate: 'importDate',
+    exportDate: 'exportDate',
+}
+
+export const ACTION = {
+    CREATE: 'create',
+    UPDATE: 'update',
+    DELETE: 'delete',
 }

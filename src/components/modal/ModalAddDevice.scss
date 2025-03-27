@@ -1,3 +1,358 @@
+// // Reset cơ bản
+// * {
+//     box-sizing: border-box;
+//     margin: 0;
+//     padding: 0;
+// }
+
+// // Modal container
+// .Modal-device-container {
+//     .modal-content {
+//         border-radius: 8px;
+//         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+//         border: none;
+//     }
+
+//     z-index: 1050 !important; // z-index của modal
+// }
+
+// .modal-backdrop {
+//     z-index: 1040 !important; // Backdrop thấp hơn DatePicker
+// }
+
+// // Modal content
+// .modal-device-content {
+//     display: flex;
+//     flex-direction: column;
+//     min-height: 400px; // Đảm bảo modal có chiều cao tối thiểu
+// }
+
+// // Modal header
+// .modal-device-header {
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+//     padding: 10px 24px;
+//     border-bottom: 1px solid #e9ecef;
+//     // background-color: #f8f9fa;
+
+//     .content-header {
+//         font-size: 1.25rem;
+//         font-weight: 600;
+//         color: #333;
+//     }
+
+//     .btn-close {
+//         cursor: pointer;
+//         font-size: 1.5rem;
+//         color: #6c757d;
+//         transition: color 0.2s ease;
+
+//         &:hover {
+//             color: #343a40;
+//         }
+//     }
+// }
+
+// // Modal body
+// .modal-device-body {
+//     flex: 1;
+//     padding: 24px;
+//     overflow-y: auto;
+//     position: relative;
+
+//     &.datepicker-container {
+//         overflow: visible !important; // Đảm bảo DatePicker không bị cắt
+//     }
+
+//     // Đồng bộ chiều rộng và style cho các input/select/datepicker
+//     .form-group {
+//         margin-bottom: 16px;
+
+
+//         .custom-warranty-group input {
+//             border-radius: 5px 0 0 5px;
+
+//         }
+
+//         .custom-warranty-group span {
+//             border-radius: 0 5px 5px 0;
+//             height: 37.99px !important;
+
+//             &:hover {
+//                 cursor: pointer;
+//             }
+//         }
+
+//         label {
+//             font-size: 0.9rem;
+//             font-weight: 500;
+//             color: #495057;
+//             margin-bottom: 6px;
+//             display: block;
+//         }
+
+//         // Style chung cho tất cả input/select/datepicker
+//         .form-control,
+//         .modal-device-body-select,
+//         .modal-device-body-datePicker {
+//             width: 100%;
+//             max-width: 100%;
+//             box-sizing: border-box;
+//             font-size: 0.9rem;
+//             border-radius: 4px;
+//             border: 1px solid #ced4da;
+//             transition: border-color 0.2s ease;
+
+//             &:focus {
+//                 outline: none;
+//                 border-color: #84bcf8e5;
+//                 box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+//             }
+//         }
+
+//         // Input mặc định (text, file, v.v.)
+//         .form-control {
+//             height: 38px;
+//             padding: 8px 12px;
+//             color: #495057;
+
+//             &[type="file"] {
+//                 padding: 6px 12px; // Điều chỉnh padding cho input file
+//             }
+//         }
+
+//         // Áp dụng cho tất cả các input, select, button khi bị disabled
+//         .form-control:disabled,
+//         .modal-device-body-select .css-1s2u09g-control[aria-disabled="true"],
+//         .modal-device-body-datePicker input:disabled,
+//         .btn-modal:disabled {
+//             background-color: #e9ecef !important; // Màu nền giống nhau
+//             color: #6c757d !important; // Màu chữ mờ đi để thể hiện trạng thái disabled
+//             border-color: #ced4da !important; // Giữ đồng bộ viền
+//             cursor: not-allowed !important;
+//             opacity: 0.65; // Giảm độ đậm
+//         }
+
+//         // Đặc biệt với react-select, cần style thêm cho placeholder
+//         .modal-device-body-select {
+//             .css-1s2u09g-control[aria-disabled="true"] {
+//                 .css-1wa3eu0-placeholder {
+//                     color: #6c757d !important;
+//                 }
+//             }
+//         }
+
+//         // Style cho Select (react-select)
+//         .modal-device-body-select {
+//             .css-1s2u09g-control {
+//                 // Class của react-select control
+//                 min-height: 38px;
+//                 width: 100% !important;
+//                 border-radius: 4px;
+//                 border: 1px solid #ced4da;
+//                 font-size: 0.9rem;
+
+//                 &:hover {
+//                     border-color: #adb5bd;
+//                 }
+//             }
+
+//             .css-1pahdxg-control {
+//                 // Trạng thái focus của react-select
+//                 border-color: #007bff;
+//                 box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+//             }
+
+//             .css-yk16xz-control {
+//                 &:hover {
+//                     cursor: pointer;
+//                 }
+
+//                 border: none;
+//             }
+//         }
+
+//         // Style cho DatePicker (react-datepicker)
+//         .modal-device-body-datePicker {
+//             .react-datepicker-wrapper {
+//                 width: 100% !important;
+
+//                 input {
+//                     width: 100% !important;
+//                     height: 38px;
+//                     padding: 8px 12px;
+//                     border-radius: 4px;
+//                     border: 1px solid #ced4da;
+//                     font-size: 0.9rem;
+//                     color: #495057;
+
+//                     &:focus {
+//                         border-color: #007bff;
+//                         box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+//                     }
+//                 }
+//             }
+//         }
+
+//         // Điều chỉnh cho các cột lớn hơn (col-6)
+//         &.col-6 {
+//             .form-control {
+//                 width: 100%;
+//             }
+//         }
+//     }
+
+//     // Đảm bảo DatePicker không bị che
+//     .modal-device-body-datePicker {
+//         z-index: 1060 !important;
+//         position: relative;
+//     }
+
+//     .react-datepicker-wrapper {
+//         position: relative;
+//         z-index: 1060 !important;
+//     }
+
+//     .react-datepicker {
+//         z-index: 1060 !important;
+//         font-size: 0.9rem;
+//         border: 1px solid #ced4da;
+//         border-radius: 4px;
+//         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+//     }
+
+//     .react-datepicker__portal {
+//         z-index: 1070 !important; // Đảm bảo portal hiển thị trên cùng
+//     }
+
+//     .react-datepicker__close-icon {
+//         width: 25px;
+//         height: 31px;
+
+//     }
+
+//     .react-datepicker__close-icon::after {
+//         font-size: 25px;
+//         /* Điều chỉnh kích thước dấu x */
+//         color: rgb(226, 223, 223);
+//         font-weight: bold;
+//         background: none;
+//     }
+
+//     /* Đổi màu khi hover */
+//     .react-datepicker__close-icon:hover::after {
+//         color: #f83c3c;
+//     }
+// }
+
+// // Modal footer
+// .modal-device-footer {
+//     display: flex;
+//     justify-content: flex-end;
+//     padding: 5px 24px;
+//     border-top: 1px solid #e9ecef;
+//     background-color: #f8f9fa;
+
+//     .btn-modal {
+//         padding: 8px 20px;
+//         font-size: 0.9rem;
+//         font-weight: 500;
+//         border-radius: 4px;
+//         transition: all 0.2s ease;
+//         min-width: 100px;
+//         margin-left: 12px;
+
+//         &:hover {
+//             transform: translateY(-2px);
+//             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+//         }
+//     }
+
+//     .btn-primary {
+//         background-color: #007bff;
+//         border-color: #007bff;
+//         color: white;
+
+//         &:hover {
+//             background-color: #0056b3;
+//             border-color: #0056b3;
+//         }
+//     }
+
+//     .btn-danger {
+//         background-color: #dc3545;
+//         border-color: #dc3545;
+//         color: white;
+
+//         &:hover {
+//             background-color: #b02a37;
+//             border-color: #b02a37;
+//         }
+//     }
+// }
+
+// // Responsive
+// @media (max-width: 768px) {
+//     .modal-device-header {
+//         flex-direction: column;
+//         align-items: flex-start;
+//         padding: 12px 16px;
+
+//         .content-header {
+//             margin-bottom: 8px;
+//         }
+//     }
+
+//     .modal-device-body {
+//         padding: 16px;
+
+//         .form-group {
+//             margin-bottom: 12px;
+
+//             .form-control,
+//             .modal-device-body-select,
+//             .modal-device-body-datePicker {
+//                 font-size: 0.85rem;
+//             }
+
+//             &.col-3,
+//             &.col-6 {
+//                 width: 100%; // Chiếm toàn bộ chiều rộng trên màn hình nhỏ
+//                 max-width: 100%;
+//             }
+//         }
+//     }
+
+//     .modal-device-footer {
+//         flex-direction: column;
+//         padding: 12px 16px;
+
+//         .btn-modal {
+//             margin: 8px 0;
+//             width: 100%;
+//         }
+//     }
+// }
+
+// @media (max-width: 576px) {
+//     .modal-device-body {
+//         padding: 12px;
+
+//         .form-group {
+//             margin-bottom: 10px;
+//         }
+//     }
+
+//     .modal-device-footer {
+//         padding: 10px 12px;
+//     }
+// }
+
+
+
+
+
 // Reset cơ bản
 * {
     box-sizing: border-box;
@@ -5,211 +360,22 @@
     padding: 0;
 }
 
-// Modal container
-.Modal-device-container {
-    .modal-content {
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        border: none;
-    }
-
-    z-index: 1050 !important; // z-index của modal
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
 }
 
-.modal-backdrop {
-    z-index: 1040 !important; // Backdrop thấp hơn DatePicker
-}
-
-// Modal content
+// Cấu hình cho toàn bộ form modal
 .modal-device-content {
     display: flex;
     flex-direction: column;
-    min-height: 400px; // Đảm bảo modal có chiều cao tối thiểu
-}
+    min-width: 320px;
+    max-width: 100%;
+    background: #fff;
+    border-radius: 8px;
+    padding: 10px 20px;
 
-// Modal header
-.modal-device-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 24px;
-    border-bottom: 1px solid #e9ecef;
-    // background-color: #f8f9fa;
-
-    .content-header {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #333;
-    }
-
-    .btn-close {
-        cursor: pointer;
-        font-size: 1.5rem;
-        color: #6c757d;
-        transition: color 0.2s ease;
-
-        &:hover {
-            color: #343a40;
-        }
-    }
-}
-
-// Modal body
-.modal-device-body {
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
-    position: relative;
-
-    &.datepicker-container {
-        overflow: visible !important; // Đảm bảo DatePicker không bị cắt
-    }
-
-    // Đồng bộ chiều rộng và style cho các input/select/datepicker
-    .form-group {
-        margin-bottom: 16px;
-
-
-        .custom-warranty-group input {
-            border-radius: 5px 0 0 5px;
-
-        }
-
-        .custom-warranty-group span {
-            border-radius: 0 5px 5px 0;
-            height: 37.99px !important;
-
-            &:hover {
-                cursor: pointer;
-            }
-        }
-
-        label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #495057;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        // Style chung cho tất cả input/select/datepicker
-        .form-control,
-        .modal-device-body-select,
-        .modal-device-body-datePicker {
-            width: 100%;
-            max-width: 100%;
-            box-sizing: border-box;
-            font-size: 0.9rem;
-            border-radius: 4px;
-            border: 1px solid #ced4da;
-            transition: border-color 0.2s ease;
-
-            &:focus {
-                outline: none;
-                border-color: #84bcf8e5;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-            }
-        }
-
-        // Input mặc định (text, file, v.v.)
-        .form-control {
-            height: 38px;
-            padding: 8px 12px;
-            color: #495057;
-
-            &[type="file"] {
-                padding: 6px 12px; // Điều chỉnh padding cho input file
-            }
-        }
-
-        // Style cho Select (react-select)
-        .modal-device-body-select {
-            .css-1s2u09g-control {
-                // Class của react-select control
-                min-height: 38px;
-                width: 100% !important;
-                border-radius: 4px;
-                border: 1px solid #ced4da;
-                font-size: 0.9rem;
-
-                &:hover {
-                    border-color: #adb5bd;
-                }
-            }
-
-            .css-1pahdxg-control {
-                // Trạng thái focus của react-select
-                border-color: #007bff;
-                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-            }
-
-            .css-yk16xz-control {
-                &:hover {
-                    cursor: pointer;
-                }
-
-                border: none;
-            }
-        }
-
-        // Style cho DatePicker (react-datepicker)
-        .modal-device-body-datePicker {
-            .react-datepicker-wrapper {
-                width: 100% !important;
-
-                input {
-                    width: 100% !important;
-                    height: 38px;
-                    padding: 8px 12px;
-                    border-radius: 4px;
-                    border: 1px solid #ced4da;
-                    font-size: 0.9rem;
-                    color: #495057;
-
-                    &:focus {
-                        border-color: #007bff;
-                        box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-                    }
-                }
-            }
-        }
-
-        // Điều chỉnh cho các cột lớn hơn (col-6)
-        &.col-6 {
-            .form-control {
-                width: 100%;
-            }
-        }
-    }
-
-    // Đảm bảo DatePicker không bị che
-    .modal-device-body-datePicker {
-        z-index: 1060 !important;
-    }
-
-    .react-datepicker-wrapper {
-        position: relative;
-        z-index: 1060 !important;
-    }
-
-    .react-datepicker {
-        z-index: 1060 !important;
-        font-size: 0.9rem;
-        border: 1px solid #ced4da;
-        border-radius: 4px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .react-datepicker__portal {
-        z-index: 1070 !important; // Đảm bảo portal hiển thị trên cùng
-    }
-
-    .react-datepicker__close-icon {
-        width: 25px;
-        height: 31px;
-
-    }
-
+    // css lại datePicker
     .react-datepicker__close-icon::after {
         font-size: 25px;
         /* Điều chỉnh kích thước dấu x */
@@ -218,19 +384,130 @@
         background: none;
     }
 
+    .react-datepicker__close-icon {
+        width: 25px;
+        height: 31px;
+    }
+
     /* Đổi màu khi hover */
     .react-datepicker__close-icon:hover::after {
         color: #f83c3c;
     }
+
+
+    // Áp dụng cho tất cả các input, select, button khi bị disabled
+    .form-control:disabled,
+    .modal-device-body-select .css-1s2u09g-control[aria-disabled="true"],
+    .modal-device-body-datePicker input:disabled,
+    .btn-modal:disabled {
+        background-color: #e9ecef !important; // Màu nền giống nhau
+        color: #6c757d !important; // Màu chữ mờ đi để thể hiện trạng thái disabled
+        border-color: #ced4da !important; // Giữ đồng bộ viền
+        cursor: not-allowed !important;
+        opacity: 0.65; // Giảm độ đậm
+    }
+
+    //         // Đặc biệt với react-select, cần style thêm cho placeholder
+    .modal-device-body-select {
+        .css-1s2u09g-control[aria-disabled="true"] {
+            .css-1wa3eu0-placeholder {
+                color: #6c757d !important;
+            }
+        }
+    }
 }
+
+// Reset và thiết lập chung
+* {
+    box-sizing: border-box;
+}
+
+input,
+select,
+button {
+    font-size: 1rem;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    outline: none;
+}
+
+input:focus,
+select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.custom-w {
+    display: flex;
+    align-items: center;
+
+    .custom-w-label {
+        flex: 1;
+    }
+
+    .custom-w-content {
+        flex-grow: 1;
+    }
+}
+
+
+.modal-content {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-modal {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease-in-out;
+}
+
+.btn-modal:hover {
+    opacity: 0.85;
+}
+
+// Modal header
+.modal-device-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    border-bottom: 1px solid #e9ecef;
+
+    .content-header {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn-close {
+        cursor: pointer;
+        font-size: 1.3rem;
+        color: #6c757d;
+        transition: color 0.2s ease;
+
+        &:hover {
+            color: #e94a16;
+        }
+    }
+}
+
 
 // Modal footer
 .modal-device-footer {
     display: flex;
     justify-content: flex-end;
-    padding: 5px 24px;
+    padding: 10px 24px;
     border-top: 1px solid #e9ecef;
-    background-color: #f8f9fa;
+    // background-color: #f8f9fa;
 
     .btn-modal {
         padding: 8px 20px;
@@ -253,8 +530,8 @@
         color: white;
 
         &:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            // background-color: #0056b3;
+            // border-color: #0056b3;
         }
     }
 
@@ -264,65 +541,83 @@
         color: white;
 
         &:hover {
-            background-color: #b02a37;
-            border-color: #b02a37;
+            // background-color: #b02a37;
+            // border-color: #b02a37;
         }
     }
 }
 
-// Responsive
+// Chỉnh lại boder và hight của input + span Hạn bảo hành
+.form-group {
+    margin-bottom: 16px;
+
+
+    .custom-warranty-group input {
+        border-radius: 5px 0 0 5px;
+
+    }
+
+    .custom-warranty-group span {
+        border-radius: 0 5px 5px 0;
+        height: 37.99px !important;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    label {
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #495057;
+        margin-bottom: 6px;
+        display: block;
+    }
+}
+
+
+
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
 @media (max-width: 768px) {
-    .modal-device-header {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 12px 16px;
-
-        .content-header {
-            margin-bottom: 8px;
-        }
-    }
-
-    .modal-device-body {
-        padding: 16px;
-
-        .form-group {
-            margin-bottom: 12px;
-
-            .form-control,
-            .modal-device-body-select,
-            .modal-device-body-datePicker {
-                font-size: 0.85rem;
-            }
-
-            &.col-3,
-            &.col-6 {
-                width: 100%; // Chiếm toàn bộ chiều rộng trên màn hình nhỏ
-                max-width: 100%;
-            }
-        }
-    }
-
-    .modal-device-footer {
-        flex-direction: column;
-        padding: 12px 16px;
-
-        .btn-modal {
-            margin: 8px 0;
-            width: 100%;
-        }
+    .modal-content {
+        grid-template-columns: 1fr;
     }
 }
 
-@media (max-width: 576px) {
-    .modal-device-body {
-        padding: 12px;
-
-        .form-group {
-            margin-bottom: 10px;
-        }
+@media screen and (max-width: 576px) {
+    .modal-device-content {
+        width: 100%;
+        padding: 10px;
     }
 
-    .modal-device-footer {
-        padding: 10px 12px;
+    .btn-close {
+        top: 5px;
+        right: 10px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn-modal {
+        width: 100%;
     }
 }
